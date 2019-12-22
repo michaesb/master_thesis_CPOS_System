@@ -8,8 +8,7 @@
 % The signal power is detrended by filtering the measurement time series Iorig(t) with a 6th order Butterworth low-pass filter,
 % and then dividing Iorig(t) by the filter output Ifiltered(t).
 %
-% The sigma phi index is calculated by detrending raw measurements by a 6th order Butterworth high-pass filter, with a cutoff
-frequency of 0.3 Hz.
+% The sigma phi index is calculated by detrending raw measurements by a 6th order Butterworth high-pass filter, with a cutoff frequency of 0.3 Hz.
 % After detrending, the first and last parts of the time series is truncated to avoid any edge effects.
 % Finally, the index is calculated based on one minute of data.
 %

@@ -1,0 +1,73 @@
+# VERSION 1.3
+# RECEIVER tro2
+# AGENCY Norwegian Mapping Authority
+# YEARDOY 2018 283
+%
+% The S4 index is calculated by computing the normalized standard deviation of the detrended signal power time series,
+% and correcting for the ambient noise level.
+% The signal power is detrended by filtering the measurement time series Iorig(t) with a 6th order Butterworth low-pass filter,
+% and then dividing Iorig(t) by the filter output Ifiltered(t).
+%
+% The sigma phi index is calculated by detrending raw measurements by a 6th order Butterworth high-pass filter, with a cutoff frequency of 0.3 Hz.
+% After detrending, the first and last parts of the time series is truncated to avoid any edge effects.
+% Finally, the index is calculated based on one minute of data.
+%
+%
+% Short format description:
+%
+% This file contains one or more epochs. Each epoch contains zero or more data records.
+%
+% An epoch line contains these fields:
+% year
+% month
+% day
+% hour
+% minute
+% second
+% nrOfDataRecords
+%
+% A data record line contains these fields:
+% satelliteId
+% longitude
+% latitude
+% elevation
+% S4_L1
+% SigmaPhi_L1
+% [RESERVED/NOTINUSE]
+% S4_L2
+% SigmaPhi_L2
+% [RESERVED/NOTINUSE]
+%
+% For all details, consult the full format description document.
+%
+%
+2018 10 09 23 60 0.0 028
+1 1 6.20 75.60 13.50 2.50 4 5Q 0.000 0.063 0.000 1C 0.034 0.066 0.000 2W 0.000 0.056 0.000 2L -1.000 0.077 0.000
+1 3 42.00 75.70 10.30 31.30 4 5Q 0.000 0.048 0.000 1C 0.012 0.071 0.000 2W 0.000 0.075 0.000 2L -1.000 0.082 0.000
+1 6 26.30 58.10 17.90 110.30 5 1C 0.000 0.062 0.000 2W 0.000 0.058 0.000 1W 0.000 -1.000 0.000 2L -1.000 0.080 0.000 5Q -1.000 0.064 0.000
+1 12 8.80 59.30 58.80 220.60 3 1C 0.000 0.046 0.000 2W 0.000 0.042 0.000 2L -1.000 0.053 0.000
+1 14 359.00 65.20 25.90 321.20 2 1C 0.000 0.069 0.000 2W -1.000 0.061 0.000
+1 17 18.90 63.50 38.00 60.00 3 1C 0.000 0.028 0.000 2W 0.000 0.024 0.000 2L -1.000 0.037 0.000
+1 19 15.70 60.70 52.80 97.50 2 1C 0.000 0.030 0.000 2W -1.000 0.025 0.000
+1 22 13.60 73.40 17.20 10.80 2 1C 0.000 0.055 0.000 2W -1.000 0.051 0.000 10 / 131 24 11.90 58.50 49.70 170.80 4 5Q 0.000 0.074 0.000 1C 0.060 0.089 0.000 2W 0.000 0.068 0.000 2L -1.000 0.076 0.000
+1 25 1.90 57.80 22.90 247.10 4 5Q 0.000 0.071 0.000 1C 0.105 0.064 0.000 2W 0.000 0.061 0.000 2L -1.000 0.081 0.000
+1 32 2.70 62.00 37.50 297.90 5 1C 0.000 0.033 0.000 2W 0.000 0.027 0.000 1W 0.000 -1.000 0.000 2L -1.000 0.030 0.000 5Q -1.000 0.022 0.000
+2 2 0.20 57.80 19.10 252.00 2 1C 0.000 0.254 0.000 2C 0.048 0.204 0.000
+2 3 3.30 62.80 38.90 309.00 2 1C 0.000 0.076 0.000 2C 0.015 0.066 0.000
+2 4 11.20 72.40 18.90 7.60 2 1C 0.000 0.231 0.000 2C 0.037 0.179 0.000
+2 11 14.40 60.00 56.20 120.10 2 2C 0.000 0.087 0.000 1C 0.034 0.110 0.000
+# incorrect data point
+2 12 8.40 60.50 
+#
+2 13 349.10 60.60 10.50 285.10 1 1C 0.000 -1.000 0.000
+2 20 15.70 64.50 41.00 37.60 2 1C 0.000 0.055 0.000 2C 0.013 0.045 0.000
+2 21 15.40 59.50 48.70 124.40 2 1C 0.000 0.088 0.000 2C 0.009 0.070 0.000
+2 22 16.00 51.90 7.30 166.90 2 1C 0.000 -1.000 0.000 2C 0.063 -1.000 0.000
+3 3 1.80 60.40 32.40 276.50 2 1C 0.000 0.030 0.000 5Q 0.010 0.021 0.000
+3 5 1.80 54.40 9.90 228.00 2 5Q 0.000 0.082 0.000 1C 0.000 0.076 0.000
+3 8 0.40 67.10 24.70 335.50 2 1C 0.000 0.040 0.000 5Q 0.019 0.040 0.000
+3 12 18.40 56.50 22.50 140.90 2 1C 0.000 0.060 0.000 5Q 0.025 0.068 0.000
+3 24 11.00 59.90 72.90 176.40 2 1C 0.000 0.053 0.000 5Q 0.103 0.063 0.000
+3 25 3.70 59.70 37.40 262.80 2 1C 0.000 0.028 0.000 5Q 0.011 0.021 0.000
+3 26 20.00 70.30 21.50 25.30 2 1C 0.000 0.048 0.000 5Q 0.020 0.046 0.000
+3 31 21.20 59.40 29.00 108.50 2 1C 0.000 0.037 0.000 5Q 0.023 0.037 0.000

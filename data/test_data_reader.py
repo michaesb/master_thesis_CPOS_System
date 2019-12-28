@@ -12,7 +12,7 @@ class DataReaderTest(unittest.TestCase):
         """
         self.assertEqual(2, 2)
 
-    def test_textdocument(self):
+    def test_error_raises(self):
         """
         testing that the correct error is raised, when inporoperly
         """
@@ -30,17 +30,14 @@ class DataReaderTest(unittest.TestCase):
             obj.epochs
         with self.assertRaises(SyntaxError):
             obj.datapoints
-
+        with self.assertRaises(SyntaxError):
+            obj.satellite_Id
         with self.assertRaises(ValueError):
             obj.read_textfile("data/example_incorrect_data")
 
-
-
-    def test_test(self):
+    def test_datapoint_counter(self):
         obj = ReadData()
 
-        with self.assertRaises(SyntaxError):
-            obj.satelliteId
         # obj.read_textfile("data/example_data")
 
 

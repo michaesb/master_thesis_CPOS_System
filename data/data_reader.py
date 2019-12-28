@@ -18,11 +18,10 @@ class ReadData():
 
     def read_textfile(self,textfile,):
         """
-        read textfile specified in the input and extract
+        read textfile specified in the input and extract data from the data
         """
+
         with open(textfile+".txt", 'r') as infile:
-            #reading the first line and getting info about the structure of the textfile
-            # print (data)
             self.textfile = textfile
             for line in infile:
                 if not line[0] == "%" and not line[0] == "#":
@@ -47,28 +46,44 @@ class ReadData():
         #return table_array
         # return self.x
     def check_read_data(self):
+        """
+        A test for the funtions that returns data.
+        This raises an error and exits, if the read_data function
+        has not been used.
+        """
         if not self.textfile:
             raise SyntaxError("need to read the data first, using read_textfile")
             exit()
 
     @property
     def satellite_Id(self):
-        print("Hello")
+        """
+        return the satelitteId that the measurement was used.
+
+        """
         self.check_read_data()
-        print("Hello")
         return self.satelliteId[0:self.nr_satID]
 
     @property
     def datapoints(self):
+        """
+        returns the number of datapoints extracted from the file.
+        """
         self.check_read_data()
         return self.nr_datapoints
 
     @property
     def epochs(self):
+        """
+        returns the list of the times the data was retrived
+        """
         self.check_read_data()
         return self._epochs
 
     def display_epochs(self):
+        """
+        Prints the times the data was retrived in a table
+        """
         self.check_read_data()
         print("--------------------------------")
         print ("year", " month","day", "hour", "minute", "second", "nrofDataRecords","\n")
@@ -79,6 +94,10 @@ class ReadData():
         print("--------------------------------")
 
     def display_data(self):
+        """
+        Display the data in a table form. (needs develepment to make the data.
+        readable)
+        """
         self.check_read_data()
         print("--------------------------------")
         for i in range(len(self._data)):
@@ -110,7 +129,7 @@ class ReadData():
 
 if __name__ == '__main__':
     obj = ReadData()
-    # obj.display_epochs()
-    # obj.display_location_satellite()
-    print(obj.satellite_Id)
     obj.read_textfile("data/example_data")
+    obj.display_epochs()
+    obj.display_location_satellite()
+    obj.satellite_Id

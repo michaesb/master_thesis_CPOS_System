@@ -14,24 +14,34 @@ class DataReaderTest(unittest.TestCase):
 
     def test_textdocument(self):
         """
-        testing that the correct error is raised, when inporoperly handled
+        testing that the correct error is raised, when inporoperly
         """
         obj = ReadData()
+
         with self.assertRaises(SyntaxError):
             obj.display_epochs()
+        with self.assertRaises(SyntaxError):
+            obj.display_location_satellite()
+        with self.assertRaises(SyntaxError):
+            obj.display_data()
+        with self.assertRaises(SyntaxError):
+            obj.display_epochs()
+        with self.assertRaises(SyntaxError):
+            obj.epochs
+        with self.assertRaises(SyntaxError):
+            obj.datapoints
+
         with self.assertRaises(ValueError):
             obj.read_textfile("data/example_incorrect_data")
 
 
-    def test_undersampling(self):
-        """
-        Checks that the ratio property of the function is working properly
-        """
+
+    def test_test(self):
         obj = ReadData()
-        obj.read_textfile("data/example_data")
 
-
-
+        with self.assertRaises(SyntaxError):
+            obj.satelliteId
+        # obj.read_textfile("data/example_data")
 
 
 

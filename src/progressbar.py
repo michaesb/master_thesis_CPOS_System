@@ -1,10 +1,8 @@
 import numpy as np
-import timeobj = ReadData()
-    obj.read_textfile("data/example_data")
+import time
 
 def progress_bar(i,size):
     print(int(100*i/size), "%", end= "\r")
-
 
 if __name__ == '__main__':
     """

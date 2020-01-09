@@ -31,6 +31,8 @@ class DataReaderTest(unittest.TestCase):
             obj.textdocument_version_display()
         with self.assertRaises(SyntaxError):
             obj.display_single_datapoint(0)
+        with self.assertRaises(SyntaxError):
+            obj.receiver_display()
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.epochs

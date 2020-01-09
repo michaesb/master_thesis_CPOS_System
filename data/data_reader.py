@@ -10,6 +10,7 @@ class ReadData():
         self.textfile = False # name for the textfile
         self.version_number = "No textdocument has been read"  #version of the file format
         self.version = -1
+        self.receiver = "not read"
         #lists of info
         self._epochs = [] #list of times the data was taken
         self._data = [] # nested list of all the data unfiltered
@@ -30,10 +31,11 @@ class ReadData():
         what version the texfile is
         """
         # print("satelitteId longitude latitude elevation  S4_L1 SigmaPhi_L1 [] S4_L2 SigmaPhi_L2 []")
+        self.textfile = textfile
         with open(textfile+".txt", 'r') as infile:
-            self.textfile = textfile
             self.version = infile.readline()[2:]
             self.version_number = float(self.version.split(" ")[1])
+            self.receiver = infile.readline()[2:]
             if self.version_number == 1.3:
                 self.read_version_1_3(infile)
             elif self.version_number == 1.1:
@@ -76,9 +78,8 @@ class ReadData():
                     self.nr_datapoints += 1
                 else:
                     #checks if a line is too short (numbers <7)
-                    print(self.nr_datapoints)
-                    print (line, "data line to short to be read")
-                    raise ValueError("non-readable data in the textfile")
+                    raise ValueError("non-readable data in the textfile \n"\
+                    +line + "data line to short to be read")
 
     def read_version_1_1(self,infile):
         for line in infile:
@@ -100,8 +101,8 @@ class ReadData():
                         self.nr_datapoints += 1
                 else:
                     #checks if a line is too short
-                    print (line[:-2], "data line to short to be read")
-                    raise ValueError("non-readable data in the textfile")
+                    raise ValueError("non-readable data in the textfile \n"\
+                    +line + "data line to short to be read")
 
 
 
@@ -146,7 +147,7 @@ class ReadData():
         returns the list of the times the data was retrived
         """
         self.check_read_data()
-        return self._epochs
+        return np.array(self._epochs[:])
 
     @property
     def satellite_Id(self):
@@ -170,6 +171,9 @@ class ReadData():
         self.check_read_data()
         print(self.version)
 
+    def receiver_display(self):
+        self.check_read_data()
+        print(self.receiver)
 
     def display_epochs(self):
         """
@@ -233,12 +237,11 @@ class ReadData():
 
 if __name__ == '__main__':
     obj = ReadData()
-    obj.read_textfile("data/example_data_ver_1_1")
-    # obj.display_epochs()
-    obj.display_location_satellite()
+    obj.read_textfile("data/example_data_ver_1_3")
     print("datapoints = ",obj.datapoints)
     print(obj.datasizes)
-    # print(obj.epochs)
-    # print(obj._epochs_indexing)
-    print(obj.textdocument_version)
+    print(obj.epochs)
+    #print(obj.epochs)
+    #print(obj._epochs_indexing)
+    # print(obj.textdocument_version)
     obj.textdocument_version_display()

@@ -13,10 +13,12 @@ Where the datareader, plotting tools and other is located
 Code that process the data and more (Still to be established)
 
 
-### run_script
+### run script
 
 Where bash script is located, that lets you run the files from the command line easily. (Needs a bash script compiler)
 
+#### ./run_script/begin_work.sh
+opens the master thesis plan, atom of the code and runs the unit test on this project
 
 
 Will be processing information done on server and may not be able to put the information on this github.

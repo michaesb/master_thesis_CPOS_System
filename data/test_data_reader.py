@@ -33,6 +33,9 @@ class DataReaderTest(unittest.TestCase):
             obj.display_single_datapoint(0)
         with self.assertRaises(SyntaxError):
             obj.receiver_display()
+        with self.assertRaises(SyntaxError):
+            obj.display_date()
+
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.epochs
@@ -44,6 +47,8 @@ class DataReaderTest(unittest.TestCase):
             obj.textdocument_version
         with self.assertRaises(SyntaxError):
             obj.datasizes
+        with self.assertRaises(SyntaxError):
+            obj.day_year
         #checking that reading files with error in them raises an error
         with self.assertRaises(ValueError):
             obj.read_textfile("data/example_data_ver_1_3_incorrect")
@@ -51,19 +56,32 @@ class DataReaderTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             obj1_1.read_textfile("data/example_data_ver_1_1_incorrect")
 
-    def test_datapoint_counter(self):
+    def test_known_example1_1(self):
         """
-        Testing that the total number of datapoints matched the sizes of
-        each sprecified dataset size in the textfile.
+        Testing for a known example with version 1.1. This include:
+        *
+        *the datacounter is equal 11 and equal to the sum of datasizes
         """
         #testing with version 1.1
-        obj1_1 = ReadData()
-        obj1_1.read_textfile("data/example_data_ver_1_1")
-        self.assertEqual(np.sum(obj1_1.datasizes),obj1_1.datapoints)
-        #testing with version 1.3
-        obj1_3 = ReadData()
-        obj1_3.read_textfile("data/example_data_ver_1_3")
-        self.assertEqual(np.sum(obj1_3.datasizes),obj1_3.datapoints)
+        obj = ReadData()
+
+        #checking the datacounter
+        obj.read_textfile("data/example_data_ver_1_1")
+        self.assertEqual(obj.datapoints, 11)
+        self.assertEqual(np.sum(obj.datasizes),obj.datapoints)
+
+    def test_known_example1_3(self):
+        """
+        testing with version 1.3. This include:
+        *
+        *the datacounter is equal 33 and equal to the sum of datasizes
+        """
+        obj = ReadData()
+
+        #checking the datacounter
+        obj.read_textfile("data/example_data_ver_1_3")
+        self.assertEqual(obj.datapoints, 33)
+        self.assertEqual(np.sum(obj.datasizes),obj.datapoints)
 
 
     def test_(self):

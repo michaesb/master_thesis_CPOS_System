@@ -1,9 +1,0 @@
-Epochs:
-year month day hour minute second nrOfDataRecords
-
-Data record line:
-satelitteId longitude latitude elevation  S4_L1 SigmaPhi_L1 [] S4_L2 SigmaPhi_L2 []
-
-5Q 1C
-1C 2W
-2C 1C

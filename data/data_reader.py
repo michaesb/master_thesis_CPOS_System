@@ -20,7 +20,15 @@ class ReadData():
         self._epochs_indexing = [] #list of the indexing
         self.satelittesystem = [] # list of the sattellite systems
         self.satelliteId = [] #list of satelitteId found in chronological
-        self.data_dict = {} #dictionary to be filled with all the data
+        self.data_dict = {} #dictionary to be filled with all the data (not in use)
+        #L1 measurements
+        self._S4_L1 = []
+        self._sigma_phi_L1 =[]
+        self._slope_L1 = []
+        #L2 measurements
+        self._S4_L2 = []
+        self._sigma_phi_L2 =[]
+        self._slope_L2 = []
         #counters
         self.nr_satID = 0 #number of different satelitte used in the textfile
         self.nr_satSys = 0 #tracks the number of satelittesystem used in the texfile
@@ -29,8 +37,9 @@ class ReadData():
 
     def read_textfile(self,textfile):
         """
-        read textfile specified and selects the right textfile_reader based on
-        what version the texfile is
+        read textfile (without .txt at teh end) specified and selects the
+        right textfile_reader based on what version the texfile is. Also reads
+        the specifications for the for the data recording.
         """
         # print("satelitteId longitude latitude elevation  S4_L1 SigmaPhi_L1 [] S4_L2 SigmaPhi_L2 []")
         self.textfile = textfile
@@ -44,7 +53,7 @@ class ReadData():
             self.agency = infile.readline()[2:]
             # getting the date where the info is recorded
             date = infile.readline().split(" ")[2:]
-            self.year, self.day_of_year = float(date[0]),float(date[1])
+            self.year, self.day_of_year = int(float(date[0])),int(float(date[1]))
             if self.version_number == 1.3:
                 self.read_version_1_3(infile)
             elif self.version_number == 1.1:
@@ -55,14 +64,15 @@ class ReadData():
         self._create_indexes()
         self._check_data_extraction()
 
+
     #reads the different versions of the textfiles
-    def read_version_1_3(self,infile1):
+    def read_version_1_3(self,infile3):
         """
         reads version 1.3 and sorts the information stored in the textfiles to
         the class variables
         """
 
-        for line in infile1:
+        for line in infile3:
             if not line[0] == "%" and not line[0] == "#":
                 numbers = line.split(" ")
                 if len(numbers) == 7:
@@ -74,10 +84,10 @@ class ReadData():
                 elif len(numbers) > 7:
                     #read the data points
                     if sum([float(numbers[0])==i for i in self.satelittesystem])==0:
-                        self.satelittesystem.append(numbers[0]) #taking satelitte number
+                        self.satelittesystem.append(int(float(numbers[0]))) #taking satelitte number
                         self.nr_satSys += 1
                     if sum([float(numbers[1])==i for i in self.satelliteId])==0:
-                        self.satelliteId.append(numbers[1]) #taking satelitte number
+                        self.satelliteId.append(int(float(numbers[1]))) #taking satelitte number
                         self.nr_satID += 1
                     self._data.append(numbers)
                     self.nr_datapoints += 1
@@ -86,39 +96,48 @@ class ReadData():
                     raise ValueError("non-readable data in the textfile \n"\
                     +line + "data line to short to be read")
 
-    def read_version_1_1(self,infile3):
+    def read_version_1_1(self,infile1):
         """
         reads version 1.1 and sorts the information stored in the textfiles to
         the class variables
         """
 
-        for line in infile3:
+        for line in infile1:
             if not line[0] == "%" and not line[0] == "#":
                 numbers = line.split(" ")
-                if len(numbers) == 7:
 
-                    if float(numbers[0]) > 1900: #checking for year
-                        #reads the epochs
-                        self._epochs.append([int(float(i)) for i in numbers])
-                        self._datasizes.append(int(float(numbers[-1])))
-                        self.nr_datasets += 1
+                if int(float(numbers[0])) > 1900: #checking if year
+                    #reads the epochs
+                    self._epochs.append([int(float(i)) for i in numbers])
+                    self._datasizes.append(int(float(numbers[-1])))
+                    self.nr_datasets += 1
 
-                    elif (float(numbers[0])) < 40: #checking for satelitteId
-                        #reads the data points
-                        if sum([float(numbers[0])==i for i in self.satelittesystem])==0:
-                            self.satelittesystem.append(numbers[0]) #taking satelitte system
-                            self.nr_satSys += 1
-                        self._data.append(numbers)
-                        self.nr_datapoints += 1
 
-                    else:
-                        ValueError("Error in the first number" \
-                        + "which is not a year or a satteliteID"\
-                        + line+ str(self.nr_datapoints))
+                elif int(float(numbers[0])) < 40: #checking if satelitteId
+                    #reads the data points
+                    self._data.append(numbers) #saving data for debugging purposes
+                    # satelitteId
+                    if sum([float(numbers[0])==i for i in self.satelliteId])==0:
+                        self.satelliteId.append(int(float(numbers[0]))) #taking satelitte number
+                        self.nr_satID += 1
+                    #Location
+
+
+                    #L1
+                    self._S4_L1.append(int(float(numbers[4])))
+                    self._sigma_phi_L1.append(int(float(numbers[5])))
+                    self._slope_L1.append(int(float(numbers[6])))
+                    #L2
+                    self._S4_L2.append(int(float(numbers[7])))
+                    self._sigma_phi_L2.append(int(float(numbers[8])))
+                    self._slope_L2.append(int(float(numbers[9])))
+
+                    self.nr_datapoints += 1 #counting the datapoints
                 else:
-                    #checks if a line is too short
+
                     raise ValueError("non-readable data in the textfile \n"\
-                    +line + "number of elements not 7")
+                    +line + "data line to short to be read")
+                    # + line+ str(self.nr_datapoints)) #for debugging purposes
 
     #different checks and internal programs that other functions use
     def _create_indexes(self):
@@ -134,10 +153,11 @@ class ReadData():
         """
         Internal tests to check that reading the textfile correctly
         """
+        #checks that the number of read datapoints, matches the specified sizes
+        #of the datasets
         if not np.sum(self._datasizes) == self.nr_datapoints:
             print("Warning: number of datapoints, not equal to all datasizes"\
-                   +"might still work, but somethiing may be incorrect")
-
+                   +"might still work, but something may be incorrect")
 
     def check_read_data(self):
         """
@@ -165,7 +185,7 @@ class ReadData():
         returns the datasizes in the textfile
         """
         self.check_read_data()
-        return np.array(self._datasizes[0:self.nr_datasets])
+        return np.array(self._datasizes)
 
     @property
     def epochs(self):
@@ -176,12 +196,30 @@ class ReadData():
         return np.array(self._epochs[:])
 
     @property
-    def satellite_Id(self):
+    def satellite_Id(self,):
         """
         return the satelitteId that the measurement used.
         """
         self.check_read_data()
-        return np.array(self.satelliteId[0:self.nr_satID])
+        return np.sort(np.array(self.satelliteId))
+
+
+    @property
+    def S4(self):
+        """
+        Returns the S4 measurements L1 and L2.
+        """
+        self.check_read_data()
+        return np.array(self._S4_L1),np.array(self._S4_L2)
+
+    @property
+    def Sigma(self):
+        """
+        Returns the sigma measurements L1 and L2.
+        """
+        self.check_read_data()
+        return np.array(self._sigma_phi_L1),np.array(self._sigma_phi_L2)
+
 
     @property
     def textdocument_version(self):
@@ -220,7 +258,6 @@ class ReadData():
         """
         self.check_read_data()
         print("Receiver: "+self.receiver)
-
 
     def display_epochs(self):
         """
@@ -273,13 +310,14 @@ class ReadData():
         plt.ylabel("S4")
         plt.title("")
         plt.show()
+        print("not functional yet")
 
     def display_single_datapoint(self, index):
         """
         displays a single datpoint. (not functional yet)
-        """
         self.check_read_data()
-        print("unfinished function")
+        """
+        print("not functional yet")
 
 
 if __name__ == '__main__':

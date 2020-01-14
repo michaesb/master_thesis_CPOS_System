@@ -50,9 +50,11 @@ class DataReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.day_year
         with self.assertRaises(SyntaxError):
-            obj.S4
+            obj.L2_data
         with self.assertRaises(SyntaxError):
-            obj.Sigma
+            obj.L1_data
+        with self.assertRaises(SyntaxError):
+            obj.location
         #checking that reading files with error in them raises an error
         with self.assertRaises(ValueError):
             obj.read_textfile("data/example_data_ver_1_3_incorrect")

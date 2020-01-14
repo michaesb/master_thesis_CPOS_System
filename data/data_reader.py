@@ -19,8 +19,13 @@ class ReadData():
         self._datasizes = [] #the sizes of each epoch
         self._epochs_indexing = [] #list of the indexing
         self.satelittesystem = [] # list of the sattellite systems
-        self.satelliteId = [] #list of satelitteId found in chronological
+        self._satelliteId = [] #list of satelitteId found in chronological
         self.data_dict = {} #dictionary to be filled with all the data (not in use)
+        #Location of stations
+        self._location = [] #location for display
+        self._latitude = [] #latitude coordinate
+        self._longitude = [] #longitude coordinate
+        self._elevation = [] #elevation coordinate
         #L1 measurements
         self._S4_L1 = []
         self._sigma_phi_L1 =[]
@@ -86,8 +91,8 @@ class ReadData():
                     if sum([float(numbers[0])==i for i in self.satelittesystem])==0:
                         self.satelittesystem.append(int(float(numbers[0]))) #taking satelitte number
                         self.nr_satSys += 1
-                    if sum([float(numbers[1])==i for i in self.satelliteId])==0:
-                        self.satelliteId.append(int(float(numbers[1]))) #taking satelitte number
+                    if sum([float(numbers[1])==i for i in self._satelliteId])==0:
+                        self._satelliteId.append(int(float(numbers[1]))) #taking satelitte number
                         self.nr_satID += 1
                     self._data.append(numbers)
                     self.nr_datapoints += 1
@@ -117,20 +122,25 @@ class ReadData():
                     #reads the data points
                     self._data.append(numbers) #saving data for debugging purposes
                     # satelitteId
-                    if sum([float(numbers[0])==i for i in self.satelliteId])==0:
-                        self.satelliteId.append(int(float(numbers[0]))) #taking satelitte number
+                    if sum([float(numbers[0])==i for i in self._satelliteId])==0:
+                        self._satelliteId.append(int(float(numbers[0]))) #taking satelitte number
                         self.nr_satID += 1
                     #Location
+                    if sum([float(numbers[1])==i for i in self._longitude])==0:
+                        self._location.append([float(numbers[1]),float(numbers[2]),\
+                                               float(numbers[3])])
 
-
+                    self._longitude.append(float(numbers[1]))
+                    self._latitude.append(float(numbers[2]))
+                    self._elevation.append(float(numbers[3]))
                     #L1
-                    self._S4_L1.append(int(float(numbers[4])))
-                    self._sigma_phi_L1.append(int(float(numbers[5])))
-                    self._slope_L1.append(int(float(numbers[6])))
+                    self._S4_L1.append(float(numbers[4]))
+                    self._sigma_phi_L1.append(float(numbers[5]))
+                    self._slope_L1.append(float(numbers[6]))
                     #L2
-                    self._S4_L2.append(int(float(numbers[7])))
-                    self._sigma_phi_L2.append(int(float(numbers[8])))
-                    self._slope_L2.append(int(float(numbers[9])))
+                    self._S4_L2.append(float(numbers[7]))
+                    self._sigma_phi_L2.append(float(numbers[8]))
+                    self._slope_L2.append(float(numbers[9]))
 
                     self.nr_datapoints += 1 #counting the datapoints
                 else:
@@ -201,24 +211,26 @@ class ReadData():
         return the satelitteId that the measurement used.
         """
         self.check_read_data()
-        return np.sort(np.array(self.satelliteId))
+        return np.sort(np.array(self._satelliteId))
 
 
     @property
-    def S4(self):
+    def L1_data(self):
         """
         Returns the S4 measurements L1 and L2.
         """
         self.check_read_data()
-        return np.array(self._S4_L1),np.array(self._S4_L2)
+        return np.array(self._S4_L1),np.array(self._sigma_phi_L1),\
+        np.array(self._slope_L1)
 
     @property
-    def Sigma(self):
+    def L2_data(self):
         """
         Returns the sigma measurements L1 and L2.
         """
         self.check_read_data()
-        return np.array(self._sigma_phi_L1),np.array(self._sigma_phi_L2)
+        return np.array(self._S4_L2),np.array(self._sigma_phi_L2), \
+        np.array(self._slope_L2)
 
 
     @property
@@ -236,6 +248,14 @@ class ReadData():
         """
         self.check_read_data()
         return self.day_of_year, self.year
+
+    @property
+    def location(self,):
+        """
+        returns the locations of the measurements (non repatative)
+        """
+        self.check_read_data()
+        return np.array(self._location)
 
     #functions that display the data with print
     def display_date(self):
@@ -278,19 +298,28 @@ class ReadData():
         readable)
         """
         self.check_read_data()
-        print("--------------------------------")
-        for i in range(len(self._data)):
-            print("satelliteId", "longitude", "latitude", "elevation", "S4_L1",\
-            "SigmaPhi_L1", "[RESERVED/NOTINUSE]", "S4_L2", "SigmaPhi_L2", "[RESERVED/NOTINUSE]")
-            for j in range(len(self._data[i])):
-                print(self._data[i][j], end=" ")
-            print("\n")
-        print("--------------------------------")
-
+        if self.version_number == 1.3:
+            print("--------------------------------")
+            for i in range(len(self._data)):
+                print("_satelliteId", "longitude", "latitude", "elevation", "S4_L1",\
+                "SigmaPhi_L1", "[RESERVED/NOTINUSE]", "S4_L2", "SigmaPhi_L2", "[RESERVED/NOTINUSE]")
+                for j in range(len(self._data[i])):
+                    print(self._data[i][j], end=" ")
+                print("\n")
+            print("--------------------------------")
+        if self.version_number == 1.1:
+            print("--------------------------------")
+            for i in range(len(self._data)):
+                print("_satelliteId", "longitude", "latitude", "elevation", "S4_L1",\
+                "SigmaPhi_L1", "slope L1", "S4_L2", "SigmaPhi_L2", "L2_slope")
+                for j in range(len(self._data[i])):
+                    print(self._data[i][j], end=" ")
+                print("\n")
+            print("--------------------------------")
     def display_location_satellite(self):
         self.check_read_data()
         print("--------------------------------")
-        print("satelliteId", "longitude", "latitude")
+        print("_satelliteId", "longitude", "latitude")
         for i in range(len(self._data)):
             for j in range(3):
                 print(self._data[i][j], end="          |")
@@ -300,9 +329,21 @@ class ReadData():
     #plotting functions that let you visualise the data
     #and view simple parts of it
 
-    def plotting_disturbances(self):
+    def plotting_L1(self):
         """
-        plotting all disturbances. Not functionning yet.
+        plotting L1. Not functionning yet.
+        """
+        self.check_read_data()
+        plt.plot()
+        plt.xlabel("time")
+        plt.ylabel("S4")
+        plt.title("")
+        plt.show()
+        print("not functional yet")
+
+    def plotting_L2(self):
+        """
+        plotting L2. not functionning yet
         """
         self.check_read_data()
         plt.plot()
@@ -323,8 +364,11 @@ class ReadData():
 if __name__ == '__main__':
     obj1_1 = ReadData()
     obj1_1.read_textfile("data/example_data_ver_1_1")
-    obj1_1.receiver_display()
+    # obj1_1.receiver_display()
+    # print(obj1_1.L1_data)
+    print(obj1_1.location)
 
     obj1_3 = ReadData()
     obj1_3.read_textfile("data/example_data_ver_1_3")
-    obj1_3.receiver_display()
+    # obj1_3.receiver_display()
+    # print(obj1_1.L2_data)

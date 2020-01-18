@@ -13,6 +13,7 @@ class ReadData():
         self.receiver = "No textdocument has been read" # receiver type for printing
         self.year = -1 #which year the data is recorded
         self.day_of_year = -1  #which day the data is recorded
+        self._t_axis = []
         #lists of info
         self._epochs = [] #list of times the data was taken
         self._data = [] # nested list of all the data unfiltered
@@ -26,6 +27,7 @@ class ReadData():
         self._latitude = [] #latitude coordinate
         self._longitude = [] #longitude coordinate
         self._elevation = [] #elevation coordinate
+        # for version 1.1 
         #L1 measurements
         self._S4_L1 = []
         self._sigma_phi_L1 =[]
@@ -94,6 +96,7 @@ class ReadData():
                     if sum([float(numbers[1])==i for i in self._satelliteId])==0:
                         self._satelliteId.append(int(float(numbers[1]))) #taking satelitte number
                         self.nr_satID += 1
+
                     self._data.append(numbers)
                     self.nr_datapoints += 1
                 else:
@@ -129,7 +132,7 @@ class ReadData():
                     if sum([float(numbers[1])==i for i in self._longitude])==0:
                         self._location.append([float(numbers[1]),float(numbers[2]),\
                                                float(numbers[3])])
-
+                    #locations
                     self._longitude.append(float(numbers[1]))
                     self._latitude.append(float(numbers[2]))
                     self._elevation.append(float(numbers[3]))
@@ -141,7 +144,7 @@ class ReadData():
                     self._S4_L2.append(float(numbers[7]))
                     self._sigma_phi_L2.append(float(numbers[8]))
                     self._slope_L2.append(float(numbers[9]))
-
+                    #counting datapoints
                     self.nr_datapoints += 1 #counting the datapoints
                 else:
 
@@ -155,9 +158,12 @@ class ReadData():
         creates indexes to retrieve information from :::: (Unfinished)
         """
         temp = -1
+        self._epochs_indexing.append(0)
         for i in self._datasizes:
             temp += i
             self._epochs_indexing.append(temp)
+        self._epochs_indexing.append(-1)
+
 
     def _check_data_extraction(self):
         """
@@ -179,7 +185,7 @@ class ReadData():
             raise SyntaxError("need to read the data first, using read_textfile")
             exit()
 
-    # properties that return lengths and information about the dataset
+    # properties that return information about the dataset
 
     @property
     def datapoints(self):
@@ -316,7 +322,11 @@ class ReadData():
                     print(self._data[i][j], end=" ")
                 print("\n")
             print("--------------------------------")
+
     def display_location_satellite(self):
+        """
+        only works for version 1.3
+        """
         self.check_read_data()
         print("--------------------------------")
         print("_satelliteId", "longitude", "latitude")
@@ -326,32 +336,6 @@ class ReadData():
             print("\n")
         print("--------------------------------")
 
-    #plotting functions that let you visualise the data
-    #and view simple parts of it
-
-    def plotting_L1(self):
-        """
-        plotting L1. Not functionning yet.
-        """
-        self.check_read_data()
-        plt.plot()
-        plt.xlabel("time")
-        plt.ylabel("S4")
-        plt.title("")
-        plt.show()
-        print("not functional yet")
-
-    def plotting_L2(self):
-        """
-        plotting L2. not functionning yet
-        """
-        self.check_read_data()
-        plt.plot()
-        plt.xlabel("time")
-        plt.ylabel("S4")
-        plt.title("")
-        plt.show()
-        print("not functional yet")
 
     def display_single_datapoint(self, index):
         """
@@ -364,11 +348,8 @@ class ReadData():
 if __name__ == '__main__':
     obj1_1 = ReadData()
     obj1_1.read_textfile("data/example_data_ver_1_1")
-    # obj1_1.receiver_display()
-    # print(obj1_1.L1_data)
-    print(obj1_1.location)
+    obj1_1.receiver_display()
 
     obj1_3 = ReadData()
     obj1_3.read_textfile("data/example_data_ver_1_3")
-    # obj1_3.receiver_display()
-    # print(obj1_1.L2_data)
+    obj1_3.receiver_display()

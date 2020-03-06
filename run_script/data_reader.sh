@@ -1,4 +1,4 @@
 #!/bin/bash
-python data/test_data_reader.py
+pytest -v
 sleep 0.3
-python data/data_reader.py
+python data_reader/data_reader_main.py

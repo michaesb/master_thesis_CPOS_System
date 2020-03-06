@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from extra.progressbar import progress_bar
+
+
 
 class ReadData():
     def __init__(self):
@@ -13,6 +16,7 @@ class ReadData():
         self.receiver = "No textdocument has been read" # receiver type for printing
         self.year = -1 #which year the data is recorded
         self.day_of_year = -1  #which day the data is recorded
+        self.nr_lines = -1
         self._t_axis = []
         #lists of info
         self._epochs = [] #list of times the data was taken
@@ -27,7 +31,7 @@ class ReadData():
         self._latitude = [] #latitude coordinate
         self._longitude = [] #longitude coordinate
         self._elevation = [] #elevation coordinate
-        # for version 1.1 
+        # for version 1.1
         #L1 measurements
         self._S4_L1 = []
         self._sigma_phi_L1 =[]
@@ -36,24 +40,33 @@ class ReadData():
         self._S4_L2 = []
         self._sigma_phi_L2 =[]
         self._slope_L2 = []
+        # version 1.3
+        self.QQQQQ = []
+        self.LL = []
+        self.C = []
+        self.CC = []
+        self.WW = []
+        self.W = []
         #counters
         self.nr_satID = 0 #number of different satelitte used in the textfile
         self.nr_satSys = 0 #tracks the number of satelittesystem used in the texfile
         self.nr_datapoints = 0 # tracks the number of datapoints in the textfile
         self.nr_datasets = 0 # tracks the number of datasets
 
-    def read_textfile(self,textfile):
+    def read_textfile(self,textfile, verbose= False):
         """
-        read textfile (without .txt at teh end) specified and selects the
+        read textfile specified and selects the
         right textfile_reader based on what version the texfile is. Also reads
         the specifications for the for the data recording.
         """
-        # print("satelitteId longitude latitude elevation  S4_L1 SigmaPhi_L1 [] S4_L2 SigmaPhi_L2 []")
+        #print("satelitteId longitude latitude elevation  S4_L1 SigmaPhi_L1 [] S4_L2 SigmaPhi_L2 []")
+        self.verbose = verbose
+        self.nr_lines = sum(1 for line in open(textfile))
         self.textfile = textfile
-        with open(textfile+".txt", 'r') as infile:
+        with open(textfile, 'r') as infile:
             #getting the version of the textfile
             self.version = infile.readline()[2:]
-            self.version_number = float(self.version.split(" ")[1])
+            self.version_number = float(self.version.split(" ")[3])
             # get the receiver name for the recorder
             self.receiver = infile.readline().split(" ")[2]
             # get the agency where the information was recorded by
@@ -71,17 +84,26 @@ class ReadData():
         self._create_indexes()
         self._check_data_extraction()
 
-
     #reads the different versions of the textfiles
     def read_version_1_3(self,infile3):
         """
         reads version 1.3 and sorts the information stored in the textfiles to
         the class variables
         """
-
+        if self.verbose:
+            count = 0
         for line in infile3:
             if not line[0] == "%" and not line[0] == "#":
-                numbers = line.split(" ")
+                #removing empty spaces from the list
+                raw_numbers = line.split(" ")
+                numbers = []
+                for i in raw_numbers:
+                    if not i == "":
+                        numbers.append(i)
+                if self.verbose:
+                    count +=1
+                    progress_bar(count,self.nr_lines)
+
                 if len(numbers) == 7:
                     #reads the epochs
                     self._epochs.append([int(float(i)) for i in numbers])
@@ -109,20 +131,28 @@ class ReadData():
         reads version 1.1 and sorts the information stored in the textfiles to
         the class variables
         """
-
+        if self.verbose:
+            count = 0
         for line in infile1:
             if not line[0] == "%" and not line[0] == "#":
-                numbers = line.split(" ")
+                raw_numbers = line.split(" ")
+                numbers = []
+                for i in raw_numbers:
+                    if not i == "":
+                        numbers.append(i)
+                if self.verbose:
+                    count +=1
+                    progress_bar(count,self.nr_lines)
 
-                if int(float(numbers[0])) > 1900: #checking if year
+                if int(float(numbers[0])) > 1900: #checking for year
                     #reads the epochs
-                    self._epochs.append([int(float(i)) for i in numbers])
+                    self._epochs.append([int(float(i)) for i in numbers[0:4]] )
+                    self._epochs.append([int(float(numbers[6]))])
                     self._datasizes.append(int(float(numbers[-1])))
                     self.nr_datasets += 1
-
-
-                elif int(float(numbers[0])) < 40: #checking if satelitteId
+                elif int(float(numbers[0])) < 62: #checking if satelitteId
                     #reads the data points
+                    # print("praise Cthulu, destroyer of worlds")
                     self._data.append(numbers) #saving data for debugging purposes
                     # satelitteId
                     if sum([float(numbers[0])==i for i in self._satelliteId])==0:
@@ -149,7 +179,7 @@ class ReadData():
                 else:
 
                     raise ValueError("non-readable data in the textfile \n"\
-                    +line + "data line to short to be read")
+                    +line+ str(len(numbers)) + "data line to short to be read")
                     # + line+ str(self.nr_datapoints)) #for debugging purposes
 
     #different checks and internal programs that other functions use
@@ -219,7 +249,6 @@ class ReadData():
         self.check_read_data()
         return np.sort(np.array(self._satelliteId))
 
-
     @property
     def L1_data(self):
         """
@@ -237,7 +266,6 @@ class ReadData():
         self.check_read_data()
         return np.array(self._S4_L2),np.array(self._sigma_phi_L2), \
         np.array(self._slope_L2)
-
 
     @property
     def textdocument_version(self):
@@ -264,6 +292,7 @@ class ReadData():
         return np.array(self._location)
 
     #functions that display the data with print
+
     def display_date(self):
         """
         displays the year and which day of the year
@@ -336,7 +365,6 @@ class ReadData():
             print("\n")
         print("--------------------------------")
 
-
     def display_single_datapoint(self, index):
         """
         displays a single datpoint. (not functional yet)
@@ -346,10 +374,11 @@ class ReadData():
 
 
 if __name__ == '__main__':
-    obj1_1 = ReadData()
-    obj1_1.read_textfile("data/example_data_ver_1_1")
-    obj1_1.receiver_display()
+
+    # obj1_1 = ReadData()
+    # obj1_1.read_textfile("data_reader/example_data_ver_1_1.txt")
+    # obj1_1.receiver_display()
 
     obj1_3 = ReadData()
-    obj1_3.read_textfile("data/example_data_ver_1_3")
+    obj1_3.read_textfile("data_reader/example_data_ver_1_3.txt")
     obj1_3.receiver_display()

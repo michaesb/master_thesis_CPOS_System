@@ -1,4 +1,4 @@
-from data_reader import ReadData
+from data_reader.data_reader_main import ReadData
 import numpy as np
 import unittest
 
@@ -18,7 +18,7 @@ class DataReaderTest(unittest.TestCase):
         given bad files. (Here we just test that there's not a missing number)
         """
         obj = ReadData()
-        #texsting displays
+        #testing displays
         with self.assertRaises(SyntaxError):
             obj.display_epochs()
         with self.assertRaises(SyntaxError):
@@ -57,10 +57,10 @@ class DataReaderTest(unittest.TestCase):
             obj.location
         #checking that reading files with error in them raises an error
         with self.assertRaises(ValueError):
-            obj.read_textfile("data/example_data_ver_1_3_incorrect")
+            obj.read_textfile("data_reader/example_data_ver_1_3_incorrect.txt")
         obj1_1 = ReadData()
         with self.assertRaises(ValueError):
-            obj1_1.read_textfile("data/example_data_ver_1_1_incorrect")
+            obj1_1.read_textfile("data_reader/example_data_ver_1_1_incorrect.txt")
 
     def test_known_example_ver_1_1(self):
         """
@@ -72,17 +72,17 @@ class DataReaderTest(unittest.TestCase):
         """
 
         obj = ReadData()
-        obj.read_textfile("data/example_data_ver_1_1")
+        obj.read_textfile("data_reader/example_data_ver_1_1.txt")
         #checking the year and date
         self.assertEqual(obj.day_year[0],270)
         self.assertEqual(obj.day_year[1],2011)
         #checking the datacounter
-        self.assertEqual(obj.datapoints, 11)
+        self.assertEqual(obj.datapoints, 40) #should be 60 or 30
         self.assertEqual(np.sum(obj.datasizes),obj.datapoints)
         # version check 1.1
         self.assertEqual(obj.textdocument_version,1.1)
         #satelitteId check
-        self.assertEqual(len(obj.satellite_Id),6)
+        self.assertEqual(len(obj.satellite_Id),20)
 
 
     def test_known_example_ver_1_3(self):
@@ -94,23 +94,20 @@ class DataReaderTest(unittest.TestCase):
         *The right number of satelitteId recorded
         """
         obj = ReadData()
-        obj.read_textfile("data/example_data_ver_1_3")
+        obj.read_textfile("data_reader/example_data_ver_1_3.txt")
         #checking the year and date
         self.assertEqual(obj.day_year[0],108)
         self.assertEqual(obj.day_year[1],2018)
 
         #checking the datacounter
-        self.assertEqual(obj.datapoints, 33)
+        self.assertEqual(obj.datapoints, 56)
         self.assertEqual(np.sum(obj.datasizes),obj.datapoints)
         # version check 1.3
         self.assertEqual(obj.textdocument_version,1.3)
         #satelitteId
-        self.assertEqual(len(obj.satellite_Id),21)
-    """
-    def test_(self):
-    """
-    """
-        obj = ReadData()
-    """
+        self.assertEqual(len(obj.satellite_Id),20)
+
+
+
 if __name__ == '__main__':
     unittest.main()

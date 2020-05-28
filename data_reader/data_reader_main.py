@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time,sys
+sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
 
 
@@ -17,7 +19,6 @@ class ReadData():
         self.year = -1 #which year the data is recorded
         self.day_of_year = -1  #which day the data is recorded
         self.nr_lines = -1
-        self._t_axis = []
         #lists of info
         self._epochs = [] #list of times the data was taken
         self._data = [] # nested list of all the data unfiltered
@@ -32,6 +33,9 @@ class ReadData():
         self._longitude = [] #longitude coordinate
         self._elevation = [] #elevation coordinate
         # for version 1.1
+        #time
+        self.start_time = [] # hour minute second
+        self.end_time =  [] # hour minute second
         #L1 measurements
         self._S4_L1 = []
         self._sigma_phi_L1 =[]
@@ -41,12 +45,18 @@ class ReadData():
         self._sigma_phi_L2 =[]
         self._slope_L2 = []
         # version 1.3
-        self.QQQQQ = []
-        self.LL = []
-        self.C = []
-        self.CC = []
-        self.WW = []
-        self.W = []
+        self._types_of_measurements = []
+        self.C = [] #1C
+        self.WW = [] #2W
+        self.LL = [] #2L
+        self.W = [] #1W
+        self.QQQQQ = [] #5Q
+        self.CC = [] #2C
+        self.QQQQQQQ = [] #7Q
+        self.QQQQQQQQ = [] #8Q
+        self.CCCCCC = [] #6C
+        # testing version 1.3
+        self._list_of_scintillation_types = []
         #counters
         self.nr_satID = 0 #number of different satelitte used in the textfile
         self.nr_satSys = 0 #tracks the number of satelittesystem used in the texfile
@@ -59,9 +69,8 @@ class ReadData():
         right textfile_reader based on what version the texfile is. Also reads
         the specifications for the for the data recording.
         """
-        #print("satelitteId longitude latitude elevation  S4_L1 SigmaPhi_L1 [] S4_L2 SigmaPhi_L2 []")
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(textfile))
+        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
         with open(textfile, 'r') as infile:
             #getting the version of the textfile
@@ -92,6 +101,8 @@ class ReadData():
         """
         if self.verbose:
             count = 0
+            print("reading a version 1.3 with "+ str(self.nr_lines) +" lines")
+            t0 = time.time()
         for line in infile3:
             if not line[0] == "%" and not line[0] == "#":
                 #removing empty spaces from the list
@@ -100,6 +111,7 @@ class ReadData():
                 for i in raw_numbers:
                     if not i == "":
                         numbers.append(i)
+
                 if self.verbose:
                     count +=1
                     progress_bar(count,self.nr_lines)
@@ -107,6 +119,7 @@ class ReadData():
                 if len(numbers) == 7:
                     #reads the epochs
                     self._epochs.append([int(float(i)) for i in numbers])
+
                     self._datasizes.append(int(float(numbers[-1])))
                     self.nr_datasets += 1
 
@@ -118,13 +131,22 @@ class ReadData():
                     if sum([float(numbers[1])==i for i in self._satelliteId])==0:
                         self._satelliteId.append(int(float(numbers[1]))) #taking satelitte number
                         self.nr_satID += 1
+                    nr_measurements = (len(numbers)-7)/4 #measurements after 7 every 4
+                    # print("numbers",len(numbers), "measurements", nr_measurements)
 
-                    self._data.append(numbers)
+                    for i in range(int(nr_measurements)):
+                        if sum([numbers[7+4*i]==j for j in self._types_of_measurements])==0:
+                            self._types_of_measurements.append(numbers[7+4*i])
+                    # self._data.append(numbers)
                     self.nr_datapoints += 1
                 else:
                     #checks if a line is too short (numbers <7)
                     raise ValueError("non-readable data in the textfile \n"\
                     +line + "data line to short to be read")
+        if self.verbose:
+            t2 =time.time()
+            print("time taken to read = ","%g"%(t2-t1) )
+        print(self._types_of_measurements)
 
     def read_version_1_1(self,infile1):
         """
@@ -133,6 +155,8 @@ class ReadData():
         """
         if self.verbose:
             count = 0
+            print("reading version 1.1 with "+ str(self.nr_lines) +" lines")
+            t1 = time.time()
         for line in infile1:
             if not line[0] == "%" and not line[0] == "#":
                 raw_numbers = line.split(" ")
@@ -146,14 +170,16 @@ class ReadData():
 
                 if int(float(numbers[0])) > 1900: #checking for year
                     #reads the epochs
+
                     self._epochs.append([int(float(i)) for i in numbers[0:4]] )
                     self._epochs.append([int(float(numbers[6]))])
                     self._datasizes.append(int(float(numbers[-1])))
+                    print(self._epochs)
                     self.nr_datasets += 1
                 elif int(float(numbers[0])) < 62: #checking if satelitteId
                     #reads the data points
                     # print("praise Cthulu, destroyer of worlds")
-                    self._data.append(numbers) #saving data for debugging purposes
+                    # self._data.append(numbers) #saving data for debugging purposes
                     # satelitteId
                     if sum([float(numbers[0])==i for i in self._satelliteId])==0:
                         self._satelliteId.append(int(float(numbers[0]))) #taking satelitte number
@@ -173,6 +199,8 @@ class ReadData():
                     #L2
                     self._S4_L2.append(float(numbers[7]))
                     self._sigma_phi_L2.append(float(numbers[8]))
+                    if float(numbers[8])>1e+5:
+                        print(numbers)
                     self._slope_L2.append(float(numbers[9]))
                     #counting datapoints
                     self.nr_datapoints += 1 #counting the datapoints
@@ -181,7 +209,9 @@ class ReadData():
                     raise ValueError("non-readable data in the textfile \n"\
                     +line+ str(len(numbers)) + "data line to short to be read")
                     # + line+ str(self.nr_datapoints)) #for debugging purposes
-
+        if self.verbose:
+            t2 =time.time()
+            print("time taken to read = ","%g"%(t2-t1))
     #different checks and internal programs that other functions use
     def _create_indexes(self):
         """
@@ -215,6 +245,18 @@ class ReadData():
             raise SyntaxError("need to read the data first, using read_textfile")
             exit()
 
+    def check_measurements_type(self):
+        """
+        A test for version 1.3, where we check the measurement types with the
+        known test types, so the user can receive a warning that unfamiliar types
+        are being read and therefore ignored.
+        """
+        common_types = ["1C", "2W", "2L", "1W", "5Q", "2C", "7Q", "8Q", "6C"]
+        if sum([common_types==i for i in self._types_of_measurements])==0:
+            pass
+
+
+
     # properties that return information about the dataset
 
     @property
@@ -233,6 +275,7 @@ class ReadData():
         self.check_read_data()
         return np.array(self._datasizes)
 
+
     @property
     def epochs(self):
         """
@@ -240,6 +283,17 @@ class ReadData():
         """
         self.check_read_data()
         return np.array(self._epochs[:])
+
+    @property
+    def time(self):
+        """
+        returns the time from the start of the data and to the end data
+        This assumes that it's continous and gives output in minutes
+        """
+        self.check_read_data()
+        n = len(self._S4_L1)
+        t = np.linspace(self._epochs[0],self._epochs[-1],n)
+        return t
 
     @property
     def satellite_Id(self,):
@@ -298,7 +352,7 @@ class ReadData():
         displays the year and which day of the year
         """
         self.check_read_data()
-        print("year: ",self.year," date: ", self.day_of_year )
+        print("year: ",self.year," day: ", self.day_of_year )
 
     def textdocument_version_display(self):
         """
@@ -334,14 +388,15 @@ class ReadData():
         """
         self.check_read_data()
         if self.version_number == 1.3:
-            print("--------------------------------")
-            for i in range(len(self._data)):
-                print("_satelliteId", "longitude", "latitude", "elevation", "S4_L1",\
-                "SigmaPhi_L1", "[RESERVED/NOTINUSE]", "S4_L2", "SigmaPhi_L2", "[RESERVED/NOTINUSE]")
-                for j in range(len(self._data[i])):
-                    print(self._data[i][j], end=" ")
-                print("\n")
-            print("--------------------------------")
+            print("not working for 1.3")
+            # print("--------------------------------")
+            # for i in range(len(self._data)):
+            #     print("_satelliteId", "longitude", "latitude", "elevation", "S4_L1",\
+            #     "SigmaPhi_L1", "[RESERVED/NOTINUSE]", "S4_L2", "SigmaPhi_L2", "[RESERVED/NOTINUSE]")
+            #     for j in range(len(self._data[i])):
+            #         print(self._data[i][j], end=" ")
+            #     print("\n")
+            # print("--------------------------------")
         if self.version_number == 1.1:
             print("--------------------------------")
             for i in range(len(self._data)):
@@ -375,10 +430,12 @@ class ReadData():
 
 if __name__ == '__main__':
 
-    # obj1_1 = ReadData()
-    # obj1_1.read_textfile("data_reader/example_data_ver_1_1.txt")
-    # obj1_1.receiver_display()
 
-    obj1_3 = ReadData()
-    obj1_3.read_textfile("data_reader/example_data_ver_1_3.txt")
-    obj1_3.receiver_display()
+    obj1_1 = ReadData()
+    obj1_1.read_textfile("example_data_ver_1_1.txt")
+    obj1_1.receiver_display()
+    print(obj1_1.time, len(obj1_1.time))
+    # obj1_3 = ReadData()
+    # obj1_3.read_textfile("example_data_ver_1_3.txt")
+    # obj1_3.receiver_display()
+    #

@@ -1,8 +1,11 @@
+"""
+Reading version 1.1
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from data_reader.data_reader_main import ReadData
 import time
-adress_bjn = "../../data_thesis/share_UiOMichael/Data/20150317/bjo22015076.scn"
+adress_bjo = "../../data_thesis/share_UiOMichael/Data/20150317/bjo22015076.scn"
 adress_bod = "../../data_thesis/share_UiOMichael/Data/20150317/bod22015076.scn"
 adress_hon = "../../data_thesis/share_UiOMichael/Data/20150317/hon22015076.scn"
 adress_hop = "../../data_thesis/share_UiOMichael/Data/20150317/hop22015076.scn"
@@ -14,7 +17,7 @@ adress_veg = "../../data_thesis/share_UiOMichael/Data/20150317/veg22015076.scn"
 print(1/8.)
 
 bjn = ReadData()
-bjn.read_textfile(adress_bjn, True)
+bjn.read_textfile(adress_bjo, True)
 bjn.textdocument_version_display()
 bjn.receiver_display()
 bjn.display_date()

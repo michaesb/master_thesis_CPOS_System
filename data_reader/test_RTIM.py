@@ -1,8 +1,8 @@
-from data_reader.data_reader_main import ReadData
+from data_reader.RTIM_data_reader import ReadRTIMData
 import numpy as np
 import unittest
 
-class DataReaderTest(unittest.TestCase):
+class RTIMDataReaderTest(unittest.TestCase):
     """
     This class is a testfunction for the datareader.
     """
@@ -17,7 +17,7 @@ class DataReaderTest(unittest.TestCase):
         testing that the correct error is raised, when inporoperly used and
         given bad files. (Here we just test that there's not a missing number)
         """
-        obj = ReadData()
+        obj = ReadRTIMData()
         #testing displays
         with self.assertRaises(SyntaxError):
             obj.display_epochs()
@@ -33,12 +33,12 @@ class DataReaderTest(unittest.TestCase):
             obj.receiver_display()
         with self.assertRaises(SyntaxError):
             obj.display_date()
+        with self.assertRaises(SyntaxError):
+            obj.time()
 
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.epochs
-        with self.assertRaises(SyntaxError):
-            obj.time
         with self.assertRaises(SyntaxError):
             obj.datapoints
         with self.assertRaises(SyntaxError):
@@ -58,7 +58,7 @@ class DataReaderTest(unittest.TestCase):
         #checking that reading files with error in them raises an error
         with self.assertRaises(ValueError):
             obj.read_textfile("data_reader/example_data_ver_1_3_incorrect.txt")
-        obj1_1 = ReadData()
+        obj1_1 = ReadRTIMData()
         with self.assertRaises(ValueError):
             obj1_1.read_textfile("data_reader/example_data_ver_1_1_incorrect.txt")
 
@@ -71,7 +71,7 @@ class DataReaderTest(unittest.TestCase):
         *The right number of satelitteId recorded in the textfile
         """
 
-        obj = ReadData()
+        obj = ReadRTIMData()
         obj.read_textfile("data_reader/example_data_ver_1_1.txt")
         #checking the year and date
         self.assertEqual(obj.day_year[0],270)
@@ -93,7 +93,7 @@ class DataReaderTest(unittest.TestCase):
         *Version check
         *The right number of satelitteId recorded
         """
-        obj = ReadData()
+        obj = ReadRTIMData()
         obj.read_textfile("data_reader/example_data_ver_1_3.txt")
         #checking the year and date
         self.assertEqual(obj.day_year[0],108)

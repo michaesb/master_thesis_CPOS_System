@@ -3,7 +3,7 @@ Reading version 1.3
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from data_reader.data_reader_main import ReadData
+from data_reader.RTIM_data_reader import ReadRTIMData
 import time
 
 
@@ -20,7 +20,7 @@ adress_veg = "../../data_thesis/share_UiOMichael/Data/20200101/veg22020001.scn"
 
 print(1/9.)
 
-bod = ReadData()
+bod = ReadRTIMData()
 bod.read_textfile(adress_bod, False)
 bod.textdocument_version_display()
 bod.receiver_display()
@@ -28,7 +28,7 @@ bod.display_date()
 
 print(2/9.)
 
-bjn = ReadData()
+bjn = ReadRTIMData()
 bjn.read_textfile(adress_far, False)
 bjn.textdocument_version_display()
 bjn.receiver_display()
@@ -36,7 +36,7 @@ bjn.display_date()
 
 print(3./9.)
 
-hon = ReadData()
+hon = ReadRTIMData()
 hon.read_textfile(adress_hof, False)
 hon.textdocument_version_display()
 hon.receiver_display()
@@ -44,7 +44,7 @@ hon.display_date()
 
 print(4./9.)
 
-hop = ReadData()
+hop = ReadRTIMData()
 hop.read_textfile(adress_hon, False)
 hop.textdocument_version_display()
 hop.receiver_display()
@@ -52,7 +52,7 @@ hop.display_date()
 
 print(5/9.)
 
-kau = ReadData()
+kau = ReadRTIMData()
 kau.read_textfile(adress_hop, False)
 kau.textdocument_version_display()
 kau.receiver_display()
@@ -60,7 +60,7 @@ kau.display_date()
 
 print(6/9.)
 
-nya = ReadData()
+nya = ReadRTIMData()
 nya.read_textfile(adress_jan, False)
 nya.textdocument_version_display()
 nya.receiver_display()
@@ -68,7 +68,7 @@ nya.display_date()
 
 print(7/9.)
 
-tro = ReadData()
+tro = ReadRTIMData()
 tro.read_textfile(adress_kau, False)
 tro.textdocument_version_display()
 tro.receiver_display()
@@ -76,7 +76,7 @@ tro.display_date()
 
 print(8/9.)
 
-veg = ReadData()
+veg = ReadRTIMData()
 veg.read_textfile(adress_nya, False)
 veg.textdocument_version_display()
 veg.receiver_display()
@@ -84,7 +84,7 @@ veg.display_date()
 
 print(1)
 
-veg = ReadData()
+veg = ReadRTIMData()
 veg.read_textfile(adress_veg, False)
 veg.textdocument_version_display()
 veg.receiver_display()

@@ -3,37 +3,34 @@ import time, sys
 import numpy as np
 import matplotlib.pyplot as plt
 sys.path.insert(0, "..")
-from data_reader.data_reader_main import ReadData
+from data_reader.RTIM_data_reader import ReadRTIMData
 
-print("command line arguments: ", sys.argv[:])
+
 adress = sys.argv[1]
 
+receiver_id = adress[52:55]
 
-
-obj = ReadData()
-obj.read_textfile(adress, True)
+obj = ReadRTIMData()
+obj.read_textfile(adress, True,True)
 obj.textdocument_version_display()
 obj.receiver_display()
 obj.display_date()
-L1_amplitude, L1_phase, L1_slope = obj.L1_data
-L2_amplitude, L2_phase, L2_slope = obj.L2_data
+L1_amplitude, L1_phase = obj.L1_data
+L2_amplitude, L2_phase = obj.L2_data
+t = obj.time(unit=1) #retriving the hours from the data
 
-print("L1_slope check of any non-zero ", np.sum(L1_slope!=0))
-print("L2_slope check of any non-zero ", np.sum(L2_slope!=0))
-x = np.linspace(0,24,len(L1_amplitude)) #temp
 plt.subplot(2,1,1)
-plt.plot(x,L1_amplitude)
-plt.plot(x,L1_phase)
+plt.plot(t,L1_amplitude)
+plt.plot(t,L1_phase)
 plt.legend(["Amplitude","Carrier"])
-plt.title("L1 scintillation")
-plt.ylabel("interference")
-
-
+plt.title("L1 and L2 scintillation with receiver: "+receiver_id+\
+          " at 17 january")
+plt.ylabel("L1 scintillations")
 
 plt.subplot(2,1,2)
-plt.plot(x,L2_amplitude)
-plt.plot(x,L2_phase)
+plt.plot(t,L2_amplitude)
+plt.plot(t,L2_phase)
 plt.legend(["Amplitude","Carrier"])
 plt.xlabel("time [min]")
-plt.ylabel("interference")
-plt.show()
+plt.ylabel("L2 scintillations")
+plt.savefig("../plots/noisy_data_small_1_filtered/noisy_plot_24_hour_"+receiver_id)

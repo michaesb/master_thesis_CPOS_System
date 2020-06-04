@@ -1,12 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import time,sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
 
 
 
-class ReadData():
+class ReadRTIMData():
     def __init__(self):
         """
         initializing variables and lists
@@ -39,11 +38,9 @@ class ReadData():
         #L1 measurements
         self._S4_L1 = []
         self._sigma_phi_L1 =[]
-        self._slope_L1 = []
         #L2 measurements
         self._S4_L2 = []
         self._sigma_phi_L2 =[]
-        self._slope_L2 = []
         # version 1.3
         self._types_of_measurements = []
         self.C = [] #1C
@@ -63,13 +60,14 @@ class ReadData():
         self.nr_datapoints = 0 # tracks the number of datapoints in the textfile
         self.nr_datasets = 0 # tracks the number of datasets
 
-    def read_textfile(self,textfile, verbose= False):
+    def read_textfile(self,textfile, verbose=False, filter=False):
         """
         read textfile specified and selects the
         right textfile_reader based on what version the texfile is. Also reads
         the specifications for the for the data recording.
         """
         self.verbose = verbose
+        self.filter = filter
         self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
         with open(textfile, 'r') as infile:
@@ -157,6 +155,7 @@ class ReadData():
             count = 0
             print("reading version 1.1 with "+ str(self.nr_lines) +" lines")
             t1 = time.time()
+        time_counter=0
         for line in infile1:
             if not line[0] == "%" and not line[0] == "#":
                 raw_numbers = line.split(" ")
@@ -170,17 +169,22 @@ class ReadData():
 
                 if int(float(numbers[0])) > 1900: #checking for year
                     #reads the epochs
-
-                    self._epochs.append([int(float(i)) for i in numbers[0:4]] )
-                    self._epochs.append([int(float(numbers[6]))])
+                    if self.nr_datasets == 0:
+                        self.start_time = [float(numbers[3]), float(numbers[4])]
+                    self.end_time = [float(numbers[3]), float(numbers[4])]
                     self._datasizes.append(int(float(numbers[-1])))
-                    print(self._epochs)
                     self.nr_datasets += 1
                 elif int(float(numbers[0])) < 62: #checking if satelitteId
                     #reads the data points
                     # print("praise Cthulu, destroyer of worlds")
                     # self._data.append(numbers) #saving data for debugging purposes
                     # satelitteId
+
+                    if self.filter:
+                        if float(numbers[4])>2 or float(numbers[5])>2*np.pi:
+                            continue
+                        if float(numbers[7])>2 or float(numbers[8])>2*np.pi:
+                            continue
                     if sum([float(numbers[0])==i for i in self._satelliteId])==0:
                         self._satelliteId.append(int(float(numbers[0]))) #taking satelitte number
                         self.nr_satID += 1
@@ -195,13 +199,11 @@ class ReadData():
                     #L1
                     self._S4_L1.append(float(numbers[4]))
                     self._sigma_phi_L1.append(float(numbers[5]))
-                    self._slope_L1.append(float(numbers[6]))
                     #L2
                     self._S4_L2.append(float(numbers[7]))
                     self._sigma_phi_L2.append(float(numbers[8]))
                     if float(numbers[8])>1e+5:
                         print(numbers)
-                    self._slope_L2.append(float(numbers[9]))
                     #counting datapoints
                     self.nr_datapoints += 1 #counting the datapoints
                 else:
@@ -284,15 +286,24 @@ class ReadData():
         self.check_read_data()
         return np.array(self._epochs[:])
 
-    @property
-    def time(self):
+
+    def time(self, unit=0,start_time=0):
         """
         returns the time from the start of the data and to the end data
-        This assumes that it's continous and gives output in minutes
+        This assumes that it's continous and gives multiple output based on the
+        parameter unit. unit=0 gives seconds, unit =1 gives minutes, unit = 2
+        gives hours.
         """
         self.check_read_data()
+        hours = self.end_time[0]-self.start_time[0]
+        minutes = self.end_time[1]-self.start_time[1]
+
+        if unit ==0:
+            duration = minutes+ hours*60
+        if unit ==1:
+            duration = minutes/60 + hours
         n = len(self._S4_L1)
-        t = np.linspace(self._epochs[0],self._epochs[-1],n)
+        t = np.linspace(0,duration,n)
         return t
 
     @property
@@ -309,8 +320,7 @@ class ReadData():
         Returns the S4 measurements L1 and L2.
         """
         self.check_read_data()
-        return np.array(self._S4_L1),np.array(self._sigma_phi_L1),\
-        np.array(self._slope_L1)
+        return np.array(self._S4_L1),np.array(self._sigma_phi_L1)
 
     @property
     def L2_data(self):
@@ -318,8 +328,7 @@ class ReadData():
         Returns the sigma measurements L1 and L2.
         """
         self.check_read_data()
-        return np.array(self._S4_L2),np.array(self._sigma_phi_L2), \
-        np.array(self._slope_L2)
+        return np.array(self._S4_L2),np.array(self._sigma_phi_L2)
 
     @property
     def textdocument_version(self):
@@ -431,10 +440,10 @@ class ReadData():
 if __name__ == '__main__':
 
 
-    obj1_1 = ReadData()
+    obj1_1 = ReadRTIMData()
     obj1_1.read_textfile("example_data_ver_1_1.txt")
     obj1_1.receiver_display()
-    print(obj1_1.time, len(obj1_1.time))
+    print(obj1_1.time(unit=0), len(obj1_1.time(unit=0)))
     # obj1_3 = ReadData()
     # obj1_3.read_textfile("example_data_ver_1_3.txt")
     # obj1_3.receiver_display()

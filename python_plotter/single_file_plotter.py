@@ -3,7 +3,7 @@ import time, sys
 import numpy as np
 import matplotlib.pyplot as plt
 sys.path.insert(0, "..")
-from data_reader.RTIM_data_reader import ReadRTIMData
+from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
 
 
 adress = sys.argv[1]
@@ -33,4 +33,5 @@ plt.plot(t,L2_phase)
 plt.legend(["Amplitude","Carrier"])
 plt.xlabel("time [min]")
 plt.ylabel("L2 scintillations")
-plt.savefig("../plots/noisy_data_small_1_filtered/noisy_plot_24_hour_"+receiver_id)
+plt.show()
+#plt.savefig("../plots/noisy_data_small_1_filtered/noisy_plot_24_hour_"+receiver_id)

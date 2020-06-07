@@ -2,9 +2,9 @@ import numpy as np
 import time,sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
-
-
-
+"""
+RTIM
+"""
 class ReadRTIMData():
     def __init__(self):
         """
@@ -90,6 +90,24 @@ class ReadRTIMData():
                                  +"Only 1.1 and 1.3 used by this reader")
         self._create_indexes()
         self._check_data_extraction()
+
+
+    def read_textfile_only_specication_info(self,textfile):
+
+        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
+        self.textfile = textfile
+        with open(textfile, 'r') as infile:
+            #getting the version of the textfile
+            self.version = infile.readline()[2:]
+            self.version_number = float(self.version.split(" ")[3])
+            # get the receiver name for the recorder
+            self.receiver = infile.readline().split(" ")[2]
+            # get the agency where the information was recorded by
+            self.agency = infile.readline()[2:]
+            # getting the date where the info is recorded
+            date = infile.readline().split(" ")[2:]
+            self.year, self.day_of_year = int(float(date[0])),int(float(date[1]))
+
 
     #reads the different versions of the textfiles
     def read_version_1_3(self,infile3):

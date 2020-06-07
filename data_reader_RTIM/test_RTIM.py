@@ -1,4 +1,4 @@
-from data_reader.RTIM_data_reader import ReadRTIMData
+from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
 import numpy as np
 import unittest
 
@@ -57,10 +57,10 @@ class RTIMDataReaderTest(unittest.TestCase):
             obj.location
         #checking that reading files with error in them raises an error
         with self.assertRaises(ValueError):
-            obj.read_textfile("data_reader/example_data_ver_1_3_incorrect.txt")
+            obj.read_textfile("data_reader_RTIM/example_data_ver_1_3_incorrect.txt")
         obj1_1 = ReadRTIMData()
         with self.assertRaises(ValueError):
-            obj1_1.read_textfile("data_reader/example_data_ver_1_1_incorrect.txt")
+            obj1_1.read_textfile("data_reader_RTIM/example_data_ver_1_1_incorrect.txt")
 
     def test_known_example_ver_1_1(self):
         """
@@ -72,7 +72,7 @@ class RTIMDataReaderTest(unittest.TestCase):
         """
 
         obj = ReadRTIMData()
-        obj.read_textfile("data_reader/example_data_ver_1_1.txt")
+        obj.read_textfile("data_reader_RTIM/example_data_ver_1_1.txt")
         #checking the year and date
         self.assertEqual(obj.day_year[0],270)
         self.assertEqual(obj.day_year[1],2011)
@@ -94,7 +94,7 @@ class RTIMDataReaderTest(unittest.TestCase):
         *The right number of satelitteId recorded
         """
         obj = ReadRTIMData()
-        obj.read_textfile("data_reader/example_data_ver_1_3.txt")
+        obj.read_textfile("data_reader_RTIM/example_data_ver_1_3.txt")
         #checking the year and date
         self.assertEqual(obj.day_year[0],108)
         self.assertEqual(obj.day_year[1],2018)

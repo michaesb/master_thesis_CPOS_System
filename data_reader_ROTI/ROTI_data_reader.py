@@ -2,9 +2,9 @@ import numpy as np
 import time, sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
-
-
-
+"""
+ROTI
+"""
 class ReadROTIData():
     def __init__(self):
         """
@@ -36,31 +36,6 @@ class ReadROTIData():
         self.start_time = [] # hour minute second
         self.end_time =  [] # hour minute second
         #L1 measurements
-        self._S4_L1 = []
-        self._sigma_phi_L1 =[]
-        self._slope_L1 = []
-        #L2 measurements
-        self._S4_L2 = []
-        self._sigma_phi_L2 =[]
-        self._slope_L2 = []
-        # version 1.3
-        self._types_of_measurements = []
-        self.C = [] #1C
-        self.WW = [] #2W
-        self.LL = [] #2L
-        self.W = [] #1W
-        self.QQQQQ = [] #5Q
-        self.CC = [] #2C
-        self.QQQQQQQ = [] #7Q
-        self.QQQQQQQQ = [] #8Q
-        self.CCCCCC = [] #6C
-        # testing version 1.3
-        self._list_of_scintillation_types = []
-        #counters
-        self.nr_satID = 0 #number of different satelitte used in the textfile
-        self.nr_satSys = 0 #tracks the number of satelittesystem used in the texfile
-        self.nr_datapoints = 0 # tracks the number of datapoints in the textfile
-        self.nr_datasets = 0 # tracks the number of datasets
 
     def read_textfile(self,textfile, verbose=False, filter=False):
         """
@@ -432,4 +407,3 @@ class ReadROTIData():
 if __name__ == '__main__':
 
     obj = ReadROTIData()
-    

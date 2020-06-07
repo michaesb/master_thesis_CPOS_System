@@ -3,7 +3,7 @@ Reading version 1.3
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from data_reader.RTIM_data_reader import ReadRTIMData
+from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
 import time
 
 
@@ -18,74 +18,74 @@ adress_nya = "../../data_thesis/share_UiOMichael/Data/20200101/nya22020001.scn"
 adress_veg = "../../data_thesis/share_UiOMichael/Data/20200101/veg22020001.scn"
 
 
-print(1/9.)
-
-bod = ReadRTIMData()
-bod.read_textfile(adress_bod, False)
-bod.textdocument_version_display()
-bod.receiver_display()
-bod.display_date()
-
-print(2/9.)
+print("---------------------------")
 
 bjn = ReadRTIMData()
-bjn.read_textfile(adress_far, False)
+bjn.read_textfile_only_specication_info(adress_bod)
 bjn.textdocument_version_display()
 bjn.receiver_display()
 bjn.display_date()
 
-print(3./9.)
+print("---------------------------")
+
+bod = ReadRTIMData()
+bod.read_textfile_only_specication_info(adress_far)
+bod.textdocument_version_display()
+bod.receiver_display()
+bod.display_date()
+
+print("---------------------------")
+
+bod = ReadRTIMData()
+bod.read_textfile_only_specication_info(adress_hof)
+bod.textdocument_version_display()
+bod.receiver_display()
+bod.display_date()
+
+
+print("---------------------------")
 
 hon = ReadRTIMData()
-hon.read_textfile(adress_hof, False)
+hon.read_textfile_only_specication_info(adress_hon)
 hon.textdocument_version_display()
 hon.receiver_display()
 hon.display_date()
 
-print(4./9.)
+print("---------------------------")
 
 hop = ReadRTIMData()
-hop.read_textfile(adress_hon, False)
+hop.read_textfile_only_specication_info(adress_hop)
 hop.textdocument_version_display()
 hop.receiver_display()
 hop.display_date()
 
-print(5/9.)
+print("---------------------------")
+
+bod = ReadRTIMData()
+bod.read_textfile_only_specication_info(adress_jan)
+bod.textdocument_version_display()
+bod.receiver_display()
+bod.display_date()
+
+print("---------------------------")
 
 kau = ReadRTIMData()
-kau.read_textfile(adress_hop, False)
+kau.read_textfile_only_specication_info(adress_kau)
 kau.textdocument_version_display()
 kau.receiver_display()
 kau.display_date()
 
-print(6/9.)
+print("---------------------------")
 
 nya = ReadRTIMData()
-nya.read_textfile(adress_jan, False)
+nya.read_textfile_only_specication_info(adress_nya,)
 nya.textdocument_version_display()
 nya.receiver_display()
 nya.display_date()
 
-print(7/9.)
-
-tro = ReadRTIMData()
-tro.read_textfile(adress_kau, False)
-tro.textdocument_version_display()
-tro.receiver_display()
-tro.display_date()
-
-print(8/9.)
-
+print("---------------------------")
 veg = ReadRTIMData()
-veg.read_textfile(adress_nya, False)
-veg.textdocument_version_display()
-veg.receiver_display()
-veg.display_date()
-
-print(1)
-
-veg = ReadRTIMData()
-veg.read_textfile(adress_veg, False)
+veg.read_textfile_only_specication_info(adress_veg)
 veg.textdocument_version_display()
 veg.receiver_display()
 veg.display_date()

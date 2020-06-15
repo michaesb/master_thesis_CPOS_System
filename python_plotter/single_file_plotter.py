@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-import time, sys
+import time, sys, os
 import numpy as np
 import matplotlib.pyplot as plt
 sys.path.insert(0, "..")
 from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
+#../../../data_thesis/data/RTIM/2015/03/17/Scintillation/hon22015076.scn
+adress = sys.argv[1]
 
-type = sys.argv[1]
-adress = sys.argv[2]
+receiver_id = adress[56:59]
+folder = adress[31:41]
+folder_path = "../plots/"+folder
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
+path = folder_path + "/plot_24_hour_"+receiver_id
 
-receiver_id = adress[52:55]
-print(type)
 def plotting(receiver_id,type):
     obj = ReadRTIMData()
     obj.read_textfile(adress, True,True)
@@ -34,8 +38,7 @@ def plotting(receiver_id,type):
     plt.legend(["Amplitude","Carrier"])
     plt.xlabel("time [hours]")
     plt.ylabel("L2 scintillations")
+    plt.savefig(path)
     plt.show()
-    if type == "save":
-        plt.savefig("../plots/noisy_data/noisy_plot_24_hour_"+receiver_id)
 
 plotting(receiver_id,type)

@@ -4,19 +4,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 sys.path.insert(0, "..")
 from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
-#../../../data_thesis/data/RTIM/2015/03/17/Scintillation/hon22015076.scn
+#/home/michaelsb/data_thesis/data/RTIM/2015/03/18/Scintillation
+
 adress = sys.argv[1]
 
 receiver_id = adress[56:59]
-folder = adress[31:41]
-folder_path = "../plots/"+folder
+
+date = adress[31:41]
+folder_path = "../plots/"+date
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 path = folder_path + "/plot_24_hour_"+receiver_id
 
 def plotting(receiver_id,type):
     obj = ReadRTIMData()
-    obj.read_textfile(adress, True,True)
+    obj.read_textfile(adress,True,True)
     obj.textdocument_version_display()
     obj.receiver_display()
     obj.display_date()
@@ -29,7 +31,7 @@ def plotting(receiver_id,type):
     plt.plot(t,L1_phase)
     plt.legend(["Amplitude","Carrier"])
     plt.title("L1 and L2 scintillation with receiver: "+receiver_id+\
-              " at 17 january")
+              " at: " +date)
     plt.ylabel("L1 scintillations")
 
     plt.subplot(2,1,2)

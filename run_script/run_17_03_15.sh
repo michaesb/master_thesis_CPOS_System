@@ -1,8 +1,6 @@
 #!/bin/bash
 pytest -v
 
-bjo22015076.scn  bod22015076.scn  far22015076.scn  hon22015076.scn  hop22015076.scn  jan22015076.scn  kau22015076.scn  nya22015076.scn  tro22015076.scn  veg22015076.scn
-
 
 cd python_plotter
 xterm -T "bjo" -geometry 80x24+0+1 -hold -e 'python single_file_plotter.py ../../../data_thesis/data/RTIM/2015/03/17/Scintillation/bjo22015076.scn'&

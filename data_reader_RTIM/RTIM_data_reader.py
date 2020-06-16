@@ -18,6 +18,7 @@ class ReadRTIMData():
         self.year = -1 #which year the data is recorded
         self.day_of_year = -1  #which day the data is recorded
         self.nr_lines = -1
+        self.filtered_points = 0 #counting the number of points ignored by a condition
         #lists of info
         self._epochs = [] #list of times the data was taken
         self._data = [] # nested list of all the data unfiltered
@@ -199,9 +200,11 @@ class ReadRTIMData():
                     # satelitteId
 
                     if self.filter:
-                        if float(numbers[4])>2 or float(numbers[5])>2*np.pi:
+                        if float(numbers[4])>2 or float(numbers[5])>2:
+                            self.filtered_points +=1
                             continue
-                        if float(numbers[7])>2 or float(numbers[8])>2*np.pi:
+                        if float(numbers[7])>2 or float(numbers[8])>2:
+                            self.filtered_points +=1
                             continue
                     if sum([float(numbers[0])==i for i in self._satelliteId])==0:
                         self._satelliteId.append(int(float(numbers[0]))) #taking satelitte number
@@ -232,6 +235,7 @@ class ReadRTIMData():
         if self.verbose:
             t2 =time.time()
             print("time taken to read = ","%g"%(t2-t1))
+            print("number of ignored datapoints: " +str(self.filtered_points))
     #different checks and internal programs that other functions use
     def _create_indexes(self):
         """

@@ -16,7 +16,7 @@ class ReadRTIMData():
         self.version = "No textdocument has been read" # version line for printing
         self.receiver = "No textdocument has been read" # receiver type for printing
         self.year = -1 #which year the data is recorded
-        self.day_of_year = -1  #which day the data is recorded
+        self.day = -1  #which day the data is recorded
         self.nr_lines = -1
         self.filtered_points = 0 #counting the number of points ignored by a condition
         #lists of info
@@ -81,7 +81,7 @@ class ReadRTIMData():
             self.agency = infile.readline()[2:]
             # getting the date where the info is recorded
             date = infile.readline().split(" ")[2:]
-            self.year, self.day_of_year = int(float(date[0])),int(float(date[1]))
+            self.year, self.day = int(float(date[0])),int(float(date[1]))
             if self.version_number == 1.3:
                 self.read_version_1_3(infile)
             elif self.version_number == 1.1:
@@ -107,7 +107,7 @@ class ReadRTIMData():
             self.agency = infile.readline()[2:]
             # getting the date where the info is recorded
             date = infile.readline().split(" ")[2:]
-            self.year, self.day_of_year = int(float(date[0])),int(float(date[1]))
+            self.year, self.day = int(float(date[0])),int(float(date[1]))
 
 
     #reads the different versions of the textfiles
@@ -195,10 +195,6 @@ class ReadRTIMData():
                     self.nr_datasets += 1
                 elif int(float(numbers[0])) < 62: #checking if satelitteId
                     #reads the data points
-                    # print("praise Cthulu, destroyer of worlds")
-                    # self._data.append(numbers) #saving data for debugging purposes
-                    # satelitteId
-
                     if self.filter:
                         if float(numbers[4])>2 or float(numbers[5])>2:
                             self.filtered_points +=1
@@ -223,8 +219,6 @@ class ReadRTIMData():
                     #L2
                     self._S4_L2.append(float(numbers[7]))
                     self._sigma_phi_L2.append(float(numbers[8]))
-                    if float(numbers[8])>1e+5:
-                        print(numbers)
                     #counting datapoints
                     self.nr_datapoints += 1 #counting the datapoints
                 else:
@@ -319,7 +313,6 @@ class ReadRTIMData():
         self.check_read_data()
         hours = self.end_time[0]-self.start_time[0]
         minutes = self.end_time[1]-self.start_time[1]
-
         if unit ==0:
             duration = minutes+ hours*60
         if unit ==1:
@@ -366,7 +359,7 @@ class ReadRTIMData():
         returns of the day and year
         """
         self.check_read_data()
-        return self.day_of_year, self.year
+        return self.day, self.year
 
     @property
     def location(self,):
@@ -383,7 +376,7 @@ class ReadRTIMData():
         displays the year and which day of the year
         """
         self.check_read_data()
-        print("year: ",self.year," day: ", self.day_of_year )
+        print("year: ",self.year," day: ", self.day )
 
     def textdocument_version_display(self):
         """

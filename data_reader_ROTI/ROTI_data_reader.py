@@ -12,20 +12,23 @@ class ReadROTIData():
         """
         #info about the file
         self.textfile = False # name for the textfile
-        self.version_number = -1  #version of the file format
-        self.version = "No textdocument has been read" # version line for printing
-        self.receiver = "No textdocument has been read" # receiver type for printing
         self.year = -1 #which year the data is recorded
-        self.day_of_year = -1  #which day the data is recorded
+        self.day = -1  #which day the data is recorded
         self.nr_lines = -1
-        #lists of info
-        self._data = [] # nested list of all the data unfiltered
-        self._datasizes = [] #the sizes of each epoch
         #grid information
         self.ion_height =-1 #km. the ionospheric altitude.
         self.ROTI_deg = -1 #degrees. Elevation cutoff for ROTI
         self.ROTI_Ground_deg = -1 #degrees. Elevation cutoff for ROTI Ground
-
+        self.longitude = [] #from, to, interval.
+        self.latitude = [] #from, to, interval.
+        self.longitude_axis_size = -1
+        self.latitude_axis_size = -1
+        #datasets property
+        self.nr_datasets = 0
+        self.nr_datapoints = 0
+        self.nr_ROTI_ion_sets = 0
+        self.nr_ROTI_grid_sets = 0
+        self.unit = -1
         #time
         self.start_time = [] # hour minute second
         self.end_time =  [] # hour minute second
@@ -39,32 +42,122 @@ class ReadROTIData():
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
+        if self.verbose:
+            count = 0
+            print("reading ROTI textfile with " +str(self.nr_lines)+" lines")
+            t1 = time.time()
+        #opening the textfile
         with open(textfile, 'r') as infile:
-            #extracting information from the comments
-            nr_comments_read = 0
-            for line in infile:
-                line = line.split()
-                if len(line)==0:
-                    continue
-                nr_comments_read+=1
-                if nr_comments_read ==13:
-                    self.ion_height = line[2] #
-                if nr_comments_read ==14:
-                    self.ROTI_deg = line[8]
-                if nr_comments_read ==15:
-                    self.ROTI_Ground_deg = line[8]
-                if line[0] == "<EndOfComments>":
-                     break
+             #extracting information from the comments
+            self.read_comments(infile)
+
             #extracting grid information
+            self.read_grid(infile)
+            #creating the empty grid matrix
+            self.create_grid()
+            #Reading the data
             for line in infile:
                 line = line.split()
-                if len(line)==0:
+                if len(line)==0: #ignoring empty lines
                     continue
-                nr_comments_read+=1
+                #recording the time from the data
+                if line[0] == "<StartOfEpoch>":
+                    self.nr_datasets +=1
+                    #getting date and time
+                    self.date = [float(i) for i in infile.readline().split()]
+                    self.year = self.date[0]; self.month=self.date[1]
+                    self.day = self.date[2]
+                    if len(self.start_time)==0:
+                        self.start_time= [self.date[3],self.date[4],self.date[5]]
+                    self.end_time = [self.date[3],self.date[4],self.date[5]]
+                #reading the data
+                if line[0] == "<StartOfVariable>":
+                    measure_type = infile.readline().split()[0]
+                    if measure_type=="ROTI":
+                        self.read_ROTI_ion(infile)
+                    elif measure_type=="ROTI_Ground":
+                        self.read_ROTI_Grid(infile)
+                    else:
+                        raise TypeError("Unknown measurement type used")
+                    self.nr_datasets +=1
+
+        if self.verbose:
+            print(self.latitude, self.longitude, self.ion_height)
+            t2 = time.time()
+            print("time taken to read = ","%g"%(t2-t1))
 
 
-                if line[0] == "<EndOfHeader>":
-                    break
+    def read_ROTI_ion(self,infile):
+        self.nr_ROTI_ion_sets +=1
+        self.unit =infile.readline().split()[0]
+        for line in infile:
+            line = line.split()
+            if len(line)==0: #ignoring empty lines
+                continue
+            # print(line)
+            if line[0] == "<EndOfVariable>": #ending
+                break
+
+    def read_ROTI_Grid(self,infile):
+        self.unit =infile.readline().split()[0]
+        counter = 0
+        for line in infile:
+            line = line.split()
+            if len(line)==0: #ignoring empty lines
+                continue
+            for i in range(len(line)):
+                self.data_grid_scint(i,counter,self.nr_ROTI_grid_sets)=float(line[i])
+
+            if line[0] == "<EndOfVariable>": #ending
+                self.nr_ROTI_grid_sets += 1
+                break
+
+    def read_comments(self,infile):
+        nr_comments_read = 0
+        for line in infile:
+            line = line.split()
+            if len(line)==0: #ignoring empty lines
+                continue
+            nr_comments_read+=1
+            if nr_comments_read ==13:
+                self.ion_height = line[2] #
+            if nr_comments_read ==14:
+                self.ROTI_deg = line[8]
+            if nr_comments_read ==15:
+                self.ROTI_Ground_deg = line[8]
+            if line[0] == "<EndOfComments>":
+                 break
+
+    def read_grid(self,infile):
+        begin_read = 0
+        for line in infile:
+            line = line.split()
+            if line[0] == "<EndOfDefineGrid>": #ending
+                begin_read = 0
+            if begin_read:
+                self.longitude=[float(line[0]),float(line[1]),float(line[2])]
+                second_line = infile.readline().split()
+                self.latitude = [float(second_line[0]),float(second_line[1]),\
+                                     float(second_line[2])]
+            if line[0] == '<StartOfDefineGrid>': #starting to read the grid
+                begin_read = 1
+            if line[0] == "<EndOfHeader>": #ending the read of the grid
+                break
+
+
+    def create_grid(self):
+        if not len(self.longitude) or not len(self.latitude):
+            raise SyntaxError("need to read the data first, using read_textfile")
+
+        self.longitude_axis_size = int(abs(self.longitude[0])+ abs(self.longitude[1])\
+                                    /self.longitude[2])
+        self.latitude_axis_size = int(abs(self.latitude[0])+ abs(self.latitude[1])\
+                                    /self.latitude[2])
+        self.data_grid_ion = -1*np.ones((self.longitude_axis_size,\
+                                         self.latitude_axis_size,\
+                                         30),dtype=float )
+        self.data_grid_scint = -1 *np.ones(self.data_grid_ion)
+
 
 
     def check_read_data(self):
@@ -102,30 +195,20 @@ class ReadROTIData():
         self.check_read_data()
         return np.array(self._epochs[:])
 
-
-    def time(self, unit=0):
+    @property
+    def time(self):
         """
         returns the time from the start of the data and to the end data
-        This assumes that it's continous and gives multiple output based on the
-        parameter unit. unit=0 gives seconds, unit =1 gives minutes, unit = 2
-        gives hours.
+        This assumes that it's continous and there are 5 minutes in between the
+        points
         """
         self.check_read_data()
         hours = self.end_time[0]-self.start_time[0]
         minutes = self.end_time[1]-self.start_time[1]
-        seconds = self.end_time[2]-self.start_time[2]
-        if unit==0:
-            duration = seconds + minutes*60 +hours*3600
-        if unit ==1:
-            duration = seconds/60. + minutes+ hours*60
-        if unit==2:
-            duration = seconds/3600 + minutes/60 + hours
-        self.check_read_data()
-        n = len(self._S4_L1)
-        t = np.linspace(self.start_time[2-unit],self.start_time[2-unit]+duration,n)
-        print(t, len(t))
+        duration = minutes+ hours*60
+        t = np.arange(self.start_time[1],self.start_time[1]+duration+5,5)
+        #added plus five so it would create the final point as well.
         return t
-
 
     @property
     def day_year(self):
@@ -133,7 +216,7 @@ class ReadROTIData():
         returns of the day and year
         """
         self.check_read_data()
-        return self.day_of_year, self.year
+        return self.day, self.year
 
 
 
@@ -142,7 +225,7 @@ class ReadROTIData():
         displays the year and which day of the year
         """
         self.check_read_data()
-        print("year: ",self.year," day: ", self.day_of_year )
+        print("year: ",self.year," day: ", self.day )
 
 
 
@@ -151,3 +234,4 @@ if __name__ == '__main__':
 
     obj = ReadROTIData()
     obj.read_textfile("example_textfile_ROTI.txt")
+    obj.time

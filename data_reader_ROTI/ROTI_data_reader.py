@@ -105,13 +105,13 @@ class ReadROTIData():
             line = line.split()
             if len(line)==0: #ignoring empty lines
                 continue
-            for i in range(len(line)):
-                self.data_grid_scint(i,counter,self.nr_ROTI_grid_sets)=float(line[i])
-
             if line[0] == "<EndOfVariable>": #ending
                 self.nr_ROTI_grid_sets += 1
+                print(self.nr_ROTI_grid_sets)
                 break
-
+            for i in range(len(line)):
+                self.data_grid_scint[i,counter,self.nr_ROTI_grid_sets]=float(line[i])
+            counter+=1
     def read_comments(self,infile):
         nr_comments_read = 0
         for line in infile:
@@ -148,15 +148,16 @@ class ReadROTIData():
     def create_grid(self):
         if not len(self.longitude) or not len(self.latitude):
             raise SyntaxError("need to read the data first, using read_textfile")
-
         self.longitude_axis_size = int(abs(self.longitude[0])+ abs(self.longitude[1])\
-                                    /self.longitude[2])
+                                    /self.longitude[2])+1
         self.latitude_axis_size = int(abs(self.latitude[0])+ abs(self.latitude[1])\
-                                    /self.latitude[2])
+                                    /self.latitude[2]) +1
+
+
         self.data_grid_ion = -1*np.ones((self.longitude_axis_size,\
                                          self.latitude_axis_size,\
-                                         30),dtype=float )
-        self.data_grid_scint = -1 *np.ones(self.data_grid_ion)
+                                         30),dtype=float)
+        self.data_grid_scint = -1*np.ones_like(self.data_grid_ion)
 
 
 
@@ -225,13 +226,23 @@ class ReadROTIData():
         displays the year and which day of the year
         """
         self.check_read_data()
-        print("year: ",self.year," day: ", self.day )
+        print("year: ",self.year," day: ", self.day)
 
+    @property
+    def ROTI_Grid_data(self):
+        self.check_read_data()
+        return self.data_grid_scint[:,:,0:self.nr_ROTI_grid_sets]
 
-
+    @property
+    def coordinates(self):
+        return self.longitude, self.latitude
 
 if __name__ == '__main__':
-
+    import matplotlib.pyplot as plt
     obj = ReadROTIData()
     obj.read_textfile("example_textfile_ROTI.txt")
-    obj.time
+    print("time",obj.time)
+    print("latitude,longitude", obj.coordinates)
+    data = obj.ROTI_Grid_data
+    for i in range(len(data[0,:,0])):
+        print(i,data[:,i,0])

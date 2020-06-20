@@ -82,7 +82,8 @@ class ReadROTIData():
                     self.nr_datasets +=1
 
         if self.verbose:
-            print(self.latitude, self.longitude, self.ion_height)
+            print("longitude:",self.coordinates[0])
+            print("latitude:",self.coordinates[1])
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
 
@@ -107,9 +108,10 @@ class ReadROTIData():
                 continue
             if line[0] == "<EndOfVariable>": #ending
                 self.nr_ROTI_grid_sets += 1
-                print(self.nr_ROTI_grid_sets)
                 break
             for i in range(len(line)):
+                if line[i]=="9999999999":
+                    line[i]=float("nan")
                 self.data_grid_scint[i,counter,self.nr_ROTI_grid_sets]=float(line[i])
             counter+=1
     def read_comments(self,infile):
@@ -148,11 +150,10 @@ class ReadROTIData():
     def create_grid(self):
         if not len(self.longitude) or not len(self.latitude):
             raise SyntaxError("need to read the data first, using read_textfile")
-        self.longitude_axis_size = int(abs(self.longitude[0])+ abs(self.longitude[1])\
+        self.longitude_axis_size = int(abs(self.longitude[1] - self.longitude[0])\
                                     /self.longitude[2])+1
-        self.latitude_axis_size = int(abs(self.latitude[0])+ abs(self.latitude[1])\
+        self.latitude_axis_size = int(abs(self.latitude[1]- self.latitude[0])\
                                     /self.latitude[2]) +1
-
 
         self.data_grid_ion = -1*np.ones((self.longitude_axis_size,\
                                          self.latitude_axis_size,\
@@ -244,5 +245,9 @@ if __name__ == '__main__':
     print("time",obj.time)
     print("latitude,longitude", obj.coordinates)
     data = obj.ROTI_Grid_data
-    for i in range(len(data[0,:,0])):
-        print(i,data[:,i,0])
+    plt.imshow(data[:,:,0])
+    plt.colorbar()
+    plt.show()
+    plt.imshow(data[:,:,1])
+    plt.colorbar()
+    plt.show()

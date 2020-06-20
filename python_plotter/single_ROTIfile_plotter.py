@@ -6,7 +6,23 @@ sys.path.insert(0, "..")
 from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
 #/home/michaelsb/data_thesis/data/RTIM/2015/03/18/Scintillation
 
-adress = sys.argv[1]
+
+adress_midnight = "../../data_thesis/data/RTIM/2015/03/17/ROTI/ROTI_20150317_0000to0059.txt"
+
+frame = sys.argv[1]
+mid = ReadROTIData()
+mid.read_textfile(adress_midnight, True)
+print("time",mid.time)
+print("latitude,longitude", mid.coordinates)
+data = mid.ROTI_Grid_data
+
+plt.imshow(data[:,:,frame])
+plt.colorbar()
+plt.show()
+
+frame = sys.argv[1]
+
+adress = sys.argv[2]
 
 receiver_id = adress[56:59]
 
@@ -42,5 +58,3 @@ def plotting(receiver_id,type):
     plt.ylabel("L2 scintillations")
     plt.savefig(path)
     plt.show()
-
-plotting(receiver_id,type)

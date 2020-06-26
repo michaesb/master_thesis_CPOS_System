@@ -79,7 +79,7 @@ class ReadROTIData():
                         self.read_ROTI_Grid(infile)
                     else:
                         raise TypeError("Unknown measurement type used")
-                    self.nr_datasets +=1
+
 
         if self.verbose:
             print("longitude:",self.coordinates[0])
@@ -96,6 +96,7 @@ class ReadROTIData():
             if len(line)==0: #ignoring empty lines
                 continue
             # print(line)
+            self.nr_datapoints += 1
             if line[0] == "<EndOfVariable>": #ending
                 break
 
@@ -112,7 +113,8 @@ class ReadROTIData():
             for i in range(len(line)):
                 if line[i]=="9999999999":
                     line[i]=float("nan")
-                self.data_grid_scint[i,counter,self.nr_ROTI_grid_sets]=float(line[i])
+                self.data_grid_scint[counter,i,self.nr_ROTI_grid_sets]=float(line[i])
+                self.nr_datapoints += 1
             counter+=1
     def read_comments(self,infile):
         nr_comments_read = 0
@@ -155,8 +157,8 @@ class ReadROTIData():
         self.latitude_axis_size = int(abs(self.latitude[1]- self.latitude[0])\
                                     /self.latitude[2]) +1
 
-        self.data_grid_ion = -1*np.ones((self.longitude_axis_size,\
-                                         self.latitude_axis_size,\
+        self.data_grid_ion = -1*np.ones((self.latitude_axis_size,\
+                                         self.longitude_axis_size,\
                                          30),dtype=float)
         self.data_grid_scint = -1*np.ones_like(self.data_grid_ion)
 
@@ -172,6 +174,7 @@ class ReadROTIData():
             raise SyntaxError("need to read the data first, using read_textfile")
             exit()
 
+    #properties returns value
     @property
     def datapoints(self):
         """
@@ -181,21 +184,21 @@ class ReadROTIData():
         return self.nr_datapoints
 
     @property
-    def datasizes(self):
+    def datasets(self):
         """
         returns the datasizes in the textfile
         """
         self.check_read_data()
-        return np.array(self._datasizes)
+        return self.nr_datasets
 
 
     @property
-    def epochs(self):
+    def time_period(self):
         """
         returns the list of the times the data was retrived
         """
         self.check_read_data()
-        return np.array(self._epochs[:])
+        return self.start_time,self.end_time
 
     @property
     def time(self):
@@ -221,7 +224,18 @@ class ReadROTIData():
         return self.day, self.year
 
 
+    @property
+    def ROTI_Grid_data(self,):
+        self.check_read_data()
+        data = self.data_grid_scint[:,:,0:self.nr_ROTI_grid_sets]
+        return data[::-1]
 
+    @property
+    def coordinates(self):
+        self.check_read_data()
+        return self.longitude, self.latitude
+
+    #printing values or tables
     def display_date(self):
         """
         displays the year and which day of the year
@@ -229,14 +243,6 @@ class ReadROTIData():
         self.check_read_data()
         print("year: ",self.year," day: ", self.day)
 
-    @property
-    def ROTI_Grid_data(self):
-        self.check_read_data()
-        return self.data_grid_scint[:,:,0:self.nr_ROTI_grid_sets]
-
-    @property
-    def coordinates(self):
-        return self.longitude, self.latitude
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
@@ -244,6 +250,10 @@ if __name__ == '__main__':
     obj.read_textfile("example_textfile_ROTI.txt")
     print("time",obj.time)
     print("latitude,longitude", obj.coordinates)
+    print("day year", obj.day_year)
+    print("datapoints", obj.datapoints)
+    print("dataset", obj.datasets)
+    print("time_period", obj.time_period)
     data = obj.ROTI_Grid_data
     plt.imshow(data[:,:,0])
     plt.colorbar()

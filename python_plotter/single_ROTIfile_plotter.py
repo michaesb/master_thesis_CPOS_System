@@ -3,58 +3,42 @@ import time, sys, os
 import numpy as np
 import matplotlib.pyplot as plt
 sys.path.insert(0, "..")
-from data_reader_RTIM.RTIM_data_reader import ReadRTIMData
-#/home/michaelsb/data_thesis/data/RTIM/2015/03/18/Scintillation
+from data_reader_ROTI.ROTI_data_reader import ReadROTIData
+from scipy.ndimage.interpolation import rotate
 
 
-adress_midnight = "../../data_thesis/data/RTIM/2015/03/17/ROTI/ROTI_20150317_0000to0059.txt"
 
-frame = sys.argv[1]
-mid = ReadROTIData()
-mid.read_textfile(adress_midnight, True)
-print("time",mid.time)
-print("latitude,longitude", mid.coordinates)
-data = mid.ROTI_Grid_data
 
-plt.imshow(data[:,:,frame])
-plt.colorbar()
-plt.show()
+adress_folder = "../../../data_thesis/data/RTIM/2015/06/23/ROTI/"
 
-frame = sys.argv[1]
-
-adress = sys.argv[2]
-
-receiver_id = adress[56:59]
-
-date = adress[31:41]
-folder_path = "../plots/"+date
+date = adress_folder[31:35] +adress_folder[36:38]+adress_folder[39:41]
+date_plotting_path = adress_folder[31:35] +"/"+adress_folder[36:38]+"/"+adress_folder[39:41]
+date_folder = "ROTI_" +date_plotting_path+"/"
+folder_path = "../plots/"+date_folder
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
-path = folder_path + "/plot_24_hour_"+receiver_id
 
-def plotting(receiver_id,type):
-    obj = ReadRTIMData()
-    obj.read_textfile(adress,True,True)
-    obj.textdocument_version_display()
-    obj.receiver_display()
-    obj.display_date()
-    L1_amplitude, L1_phase = obj.L1_data
-    L2_amplitude, L2_phase = obj.L2_data
-    t = obj.time(unit=1) #retriving the hours from the data
 
-    plt.subplot(2,1,1)
-    plt.plot(t,L1_amplitude)
-    plt.plot(t,L1_phase)
-    plt.legend(["Amplitude","Carrier"])
-    plt.title("L1 and L2 scintillation with receiver: "+receiver_id+\
-              " at: " +date)
-    plt.ylabel("L1 scintillations")
+adresses = []
 
-    plt.subplot(2,1,2)
-    plt.plot(t,L2_amplitude)
-    plt.plot(t,L2_phase)
-    plt.legend(["Amplitude","Carrier"])
-    plt.xlabel("time [hours]")
-    plt.ylabel("L2 scintillations")
-    plt.savefig(path)
-    plt.show()
+for i in range(24):
+    if len(str(i))==1:
+        adress_temp = adress_folder + "ROTI_"+str(date)+ "_0"+str(i)+"00to0"+str(i)+"59.txt"
+        adresses.append(adress_temp)
+    else:
+        adress_temp = adress_folder + "ROTI_"+str(date)+ "_"+str(i)+"00to"+str(i)+"59.txt"
+        adresses.append(adress_temp)
+
+for i in adresses:
+    print(i) #../../../data_thesis/data/RTIM/2015/06/22/ROTI/ROTI_20150622_0000to0059.txt
+
+    ROTI_data = ReadROTIData()
+    ROTI_data.read_textfile(i, True)
+    print("time",ROTI_data.time)
+    print("latitude,longitude", ROTI_data.coordinates)
+    path = folder_path + "/"
+
+    data = np.sum(ROTI_data.ROTI_Grid_data,axis=2)
+    plt.imshow(data)
+    # plt.show()
+    plt.savefig(folder_path+str(i[61:71]))

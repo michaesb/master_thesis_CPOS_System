@@ -12,6 +12,4 @@ print("time",mid.time)
 print("latitude,longitude", mid.coordinates)
 data = mid.ROTI_Grid_data
 
-plt.imshow(data[:,:,frame])
-plt.colorbar()
-plt.show()
+#unfinished

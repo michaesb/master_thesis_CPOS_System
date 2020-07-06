@@ -1,12 +1,12 @@
 import numpy as np
 import unittest, sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
-from data_reader_ROTI.ROTI_data_reader import ReadROTIData
+from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 """
 ROTI
 """
 
-class ROTIDataReaderTest(unittest.TestCase):
+class NMEADataReaderTest(unittest.TestCase):
     """
     This class is a testfunction for the datareader.
     """
@@ -14,14 +14,14 @@ class ROTIDataReaderTest(unittest.TestCase):
         """
         testing that the simplest case works.
         """
-        self.assertEqual(2,2)
+        self.assertEqual(2, 2)
 
     def test_error_raises(self):
         """
         testing that the correct error is raised, when inporoperly used and
         given bad files. (Here we just test that there's not a missing number)
         """
-        obj = ReadROTIData()
+        obj = ReadNMEAData()
 
         #testing displays
         with self.assertRaises(SyntaxError):
@@ -35,45 +35,30 @@ class ROTIDataReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.day_year
         with self.assertRaises(SyntaxError):
-            obj.time
+            obj.time_m
         with self.assertRaises(SyntaxError):
             obj.day_year
-        with self.assertRaises(SyntaxError):
-            obj.ROTI_data
-        with self.assertRaises(SyntaxError):
-            obj.ROTI_Grid_data
-        with self.assertRaises(SyntaxError):
-            obj.coordinates
 
     def test_known_example(self):
         """
-        Testing know values from the ROTI_test data
+        Testing know values from NMEA_test data
         """
 
-        obj = ReadROTIData()
-        obj.read_textfile("data_reader_ROTI/example_textfile_ROTI.txt")
+        obj = ReadNMEAData()
+        obj.read_textfile("data_reader_NMEA/example_textfile_NMEA.txt")
         #checking number of datapoints
-        self.assertEqual(obj.datapoints,6324)
-        self.assertEqual(obj.datasets,2)
+        self.assertEqual(obj.datapoints,60)
         #day and year check
+        self.assertEqual(obj.day_year[2],2015)
+        self.assertEqual(obj.day_year[1],3)
         self.assertEqual(obj.day_year[0],17)
-        self.assertEqual(obj.day_year[1],2015)
-
         #checking the time
-        self.assertEqual(obj.time[0],0)
-        self.assertEqual(obj.time[1],5)
+        self.assertEqual(obj.time_m[0],0)
+        self.assertEqual(obj.time_m[1],1)
         start, end = obj.time_period
-        self.assertEqual(start,[0,0,0])
-        self.assertEqual(end,[0,5,0])
-        #checking coordinates
-        latitude,longitude = obj.coordinates
-        self.assertEqual(latitude[0],-10)
-        self.assertEqual(latitude[1],40)
-        self.assertEqual(latitude[2],1) #interval check
-        self.assertEqual(longitude[0],50)
-        self.assertEqual(longitude[1],80)
-        self.assertEqual(longitude[2],1) #interval check
-
+        self.assertEqual(start[2],0)
+        self.assertEqual(end[2],59)
+        
 
 
 if __name__ == '__main__':

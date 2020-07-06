@@ -35,9 +35,8 @@ class ReadROTIData():
 
     def read_textfile(self,textfile, verbose=False):
         """
-        read textfile specified and selects the
-        right textfile_reader based on what version the texfile is. Also reads
-        the specifications for the for the data recording.
+        reads ROTI grid information and stores in 3-dimensional arrays for both
+        ROTI and ROTI grid.
         """
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
@@ -49,12 +48,12 @@ class ReadROTIData():
         #opening the textfile
         with open(textfile, 'r') as infile:
              #extracting information from the comments
-            self.read_comments(infile)
+            self._read_comments(infile)
 
             #extracting grid information
-            self.read_grid(infile)
+            self._read_grid(infile)
             #creating the empty grid matrix
-            self.create_grid()
+            self._create_grid()
             #Reading the data
             for line in infile:
                 line = line.split()
@@ -89,17 +88,22 @@ class ReadROTIData():
 
 
     def read_ROTI_ion(self,infile):
-        self.nr_ROTI_ion_sets +=1
         self.unit =infile.readline().split()[0]
+        counter=0
         for line in infile:
             line = line.split()
             if len(line)==0: #ignoring empty lines
                 continue
-            # print(line)
-            self.nr_datapoints += 1
             if line[0] == "<EndOfVariable>": #ending
+                self.nr_ROTI_ion_sets +=1
                 break
 
+            for i in range(len(line)):
+                if line[i]=="9999999999":
+                    line[i]=float("nan")
+                self.data_grid_ion[counter,i,self.nr_ROTI_ion_sets]=float(line[i])
+                self.nr_datapoints += 1
+            counter+=1
     def read_ROTI_Grid(self,infile):
         self.unit =infile.readline().split()[0]
         counter = 0
@@ -116,7 +120,8 @@ class ReadROTIData():
                 self.data_grid_scint[counter,i,self.nr_ROTI_grid_sets]=float(line[i])
                 self.nr_datapoints += 1
             counter+=1
-    def read_comments(self,infile):
+
+    def _read_comments(self,infile):
         nr_comments_read = 0
         for line in infile:
             line = line.split()
@@ -132,7 +137,7 @@ class ReadROTIData():
             if line[0] == "<EndOfComments>":
                  break
 
-    def read_grid(self,infile):
+    def _read_grid(self,infile):
         begin_read = 0
         for line in infile:
             line = line.split()
@@ -149,9 +154,11 @@ class ReadROTIData():
                 break
 
 
-    def create_grid(self):
+    def _create_grid(self):
         if not len(self.longitude) or not len(self.latitude):
             raise SyntaxError("need to read the data first, using read_textfile")
+
+        aprox_time_axis = int((self.nr_lines -20)/70.)+5
         self.longitude_axis_size = int(abs(self.longitude[1] - self.longitude[0])\
                                     /self.longitude[2])+1
         self.latitude_axis_size = int(abs(self.latitude[1]- self.latitude[0])\
@@ -159,7 +166,7 @@ class ReadROTIData():
 
         self.data_grid_ion = -1*np.ones((self.latitude_axis_size,\
                                          self.longitude_axis_size,\
-                                         30),dtype=float)
+                                         aprox_time_axis),dtype=float)
         self.data_grid_scint = -1*np.ones_like(self.data_grid_ion)
 
 
@@ -225,6 +232,12 @@ class ReadROTIData():
 
 
     @property
+    def ROTI_data(self,):
+        self.check_read_data()
+        data = self.data_grid_ion[:,:,0:self.nr_ROTI_ion_sets]
+        return data[::-1]
+
+    @property
     def ROTI_Grid_data(self,):
         self.check_read_data()
         data = self.data_grid_scint[:,:,0:self.nr_ROTI_grid_sets]
@@ -254,7 +267,7 @@ if __name__ == '__main__':
     print("datapoints", obj.datapoints)
     print("dataset", obj.datasets)
     print("time_period", obj.time_period)
-    data = obj.ROTI_Grid_data
+    data = obj.ROTI_data
     plt.imshow(data[:,:,0])
     plt.colorbar()
     plt.show()

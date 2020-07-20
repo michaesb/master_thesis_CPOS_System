@@ -14,14 +14,20 @@ class ReadNMEAData():
         self.textfile = False # name for the textfile
         self.date = "False"
         self.year = -1 #which year the data is recorded
+        self.month = -1 #which month the data is recorded
         self.day = -1  #which day the data is recorded
         self.nr_lines = -1
+
         #time
         self.start_time = [] # hour minute second
         self.end_time =  [] # hour minute second
         #data
         self.nr_datapoints = 0
-
+        #position data
+        self.north_pos = False
+        self.south_pos = False
+        self.east_pos = False
+        self.west_pos = False
     def read_textfile(self,textfile, verbose=False):
         """
         read textfile specified and selects the
@@ -31,6 +37,7 @@ class ReadNMEAData():
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
+        self.initilize_arrays()
         if self.verbose:
             print("reading NMEA textfile with " +str(self.nr_lines)+" lines")
             t1 = time.time()
@@ -38,23 +45,45 @@ class ReadNMEAData():
         #opening the textfile
         with open(textfile, 'r') as infile:
             for line in infile:
-
-                self.date, self.time_temp, self.data_line = line.split()
+                #extractin the infor in 3 parts, the date, time and position data
+                self.date, time_temp, data_line = line.split()
+                #splitting the the data into multiple parts based on the comma
+                data_line = data_line.split(",")
+                #Grabbing initial data from line
                 if count_line ==0:
-                    self.start_time = float(self.time_temp[0:1]),\
-                                      float(self.time_temp[3:4]), \
-                                      float(self.time_temp[6:7])
-                #print(self.date, self.time_temp, self.data_line)
+                    self.start_time = float(time_temp[0:1]),\
+                                      float(time_temp[3:4]),\
+                                      float(time_temp[6:7])
+                    self._talker_identifier = data_line[0] #setting the type of identifier
+                    #Seing which coordinate is being displayed
+                    if data_line[3] == "N":
+                        self.north_pos =True
+                    if data_line[3] == "S":
+                        self.south_pos =True
+                    if data_line[5] == "E":
+                        self.east_pos =True
+                    if data_line[5] == "W":
+                        self.west_pos =True
+
+                if self._talker_identifier != data_line[0]:
+                    print("different talker_identifier",data_line[0],"not",\
+                           self._talker_identifier)
+
+                #print(self.date, time_temp, data_line)
                 count_line+=1
-                self.nr_datapoints+=1
-        self.end_time = float(self.time_temp[0:2]),\
-                        float(self.time_temp[3:5]), \
-                        float(self.time_temp[6:8])
+                self.nr_datapoints += 1
+                print(data_line[2:])
+
+        self.end_time = float(time_temp[0:2]),\
+                        float(time_temp[3:5]),\
+                        float(time_temp[6:8])
+
+
         if self.verbose:
             t2 = time.time()
             print("time taken to read = %g"%(t2-t1))
 
-
+    #intiliziing arrays and tests
     def check_read_data(self):
         """
         A test for the funtions that returns data.
@@ -64,6 +93,12 @@ class ReadNMEAData():
         if not self.textfile:
             raise SyntaxError("need to read the data first, using read_textfile")
             exit()
+
+    def initilize_arrays(self,):
+        self.North_position = np.zeros(self.nr_lines)
+        self.Earth_position = np.zeros(self.nr_lines)
+
+
 
     #properties returns value
     @property
@@ -111,6 +146,15 @@ class ReadNMEAData():
                                          float(self.date[8:10])
         return self.day, self.month, self.year
 
+    @property
+    def talker_identifier(self,):
+        """
+        returns the type of talker identifier
+        """
+        self.check_read_data()
+        return self._talker_identifier
+
+
     #printing values or tables
     def display_date(self):
         """
@@ -122,10 +166,28 @@ class ReadNMEAData():
                                          float(self.date[8:10])
         print("year: ",self.year," day: ", self.day)
 
+    def display_coordinates_type(self,):
+        """
+        Display the type of coordinates taken from the data
+        """
+        self.check_read_data()
+        axis= ""
+        if self.north_pos:
+            axis = axis+ "North and "
+        if self.south_pos:
+            axis = axis + "South and "
+        if self.east_pos:
+            axis = axis +"East"
+        if self.west_pos:
+            axis = axis + "West"
+        axis = axis + " coordinates"
+        print(axis)
 if __name__ == '__main__':
     obj = ReadNMEAData()
-    obj.read_textfile("example_textfile_NMEA.txt")
+    obj.read_textfile("example_textfile_NMEA.txt", verbose=True)
     print(obj.datapoints)
+    print(obj.talker_identifier)
     print(obj.day_year)
     print(obj.time_period)
     print(obj.time_m)
+    obj.display_coordinates_type()

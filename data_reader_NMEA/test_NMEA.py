@@ -26,7 +26,8 @@ class NMEADataReaderTest(unittest.TestCase):
         #testing displays
         with self.assertRaises(SyntaxError):
             obj.display_date()
-
+        with self.assertRaises(SyntaxError):
+            obj.display_coordinates_type()
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.time_period
@@ -38,6 +39,8 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.time_m
         with self.assertRaises(SyntaxError):
             obj.day_year
+        with self.assertRaises(SyntaxError):
+            obj.talker_identifier
 
     def test_known_example(self):
         """
@@ -56,9 +59,9 @@ class NMEADataReaderTest(unittest.TestCase):
         self.assertEqual(obj.time_m[0],0)
         self.assertEqual(obj.time_m[1],1)
         start, end = obj.time_period
-        self.assertEqual(start[2],0)
-        self.assertEqual(end[2],59)
-        
+        self.assertEqual(start[0]+start[1]+start[2],0)
+        self.assertEqual(end[0]+end[1]+end[2],59)
+
 
 
 if __name__ == '__main__':

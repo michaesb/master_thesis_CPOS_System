@@ -1,6 +1,5 @@
 import numpy as np
 import unittest, sys
-sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from data_reader_ROTI.ROTI_data_reader import ReadROTIData
 """
 ROTI

@@ -1,9 +1,8 @@
 import numpy as np
 import unittest, sys
-sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 """
-ROTI
+NMEA
 """
 
 class NMEADataReaderTest(unittest.TestCase):
@@ -28,6 +27,8 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.display_date()
         with self.assertRaises(SyntaxError):
             obj.display_coordinates_type()
+        with self.assertRaises(SyntaxError):
+            obj.display_coordinates()
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.time_period
@@ -41,12 +42,13 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.day_year
         with self.assertRaises(SyntaxError):
             obj.talker_identifier
+        with self.assertRaises(SyntaxError):
+            obj.coordinates
 
     def test_known_example(self):
         """
         Testing know values from NMEA_test data
         """
-
         obj = ReadNMEAData()
         obj.read_textfile("data_reader_NMEA/example_textfile_NMEA.txt")
         #checking number of datapoints
@@ -61,7 +63,6 @@ class NMEADataReaderTest(unittest.TestCase):
         start, end = obj.time_period
         self.assertEqual(start[0]+start[1]+start[2],0)
         self.assertEqual(end[0]+end[1]+end[2],59)
-
 
 
 if __name__ == '__main__':

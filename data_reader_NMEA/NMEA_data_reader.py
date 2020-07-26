@@ -2,6 +2,7 @@ import numpy as np
 import time, sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
+import matplotlib.pyplot as plt
 """
 NMEA
 """
@@ -16,7 +17,6 @@ class ReadNMEAData():
         self.year = -1 #which year the data is recorded
         self.month = -1 #which month the data is recorded
         self.day = -1  #which day the data is recorded
-        self.nr_lines = -1
 
         #time
         self.start_time = [] # hour minute second
@@ -35,14 +35,14 @@ class ReadNMEAData():
         the specifications for the for the data recording.
         """
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
+        self.nr_datapoints = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
-        self.initilize_arrays()
         if self.verbose:
-            print("reading NMEA textfile with " +str(self.nr_lines)+" lines")
+            print("reading NMEA textfile with " +str(self.nr_datapoints)+" lines")
             t1 = time.time()
         count_line = 0
         #opening the textfile
+        self.initilize_arrays()
         with open(textfile, 'r') as infile:
             for line in infile:
                 #extractin the infor in 3 parts, the date, time and position data
@@ -65,14 +65,24 @@ class ReadNMEAData():
                     if data_line[5] == "W":
                         self.west_pos =True
 
+                #filling arrays
+                if self.north_pos:
+                    self.north_position[count_line] = float(data_line[2])
+                if self.south_pos:
+                    self.south_position[count_line] = float(data_line[2])
+
+                if self.east_pos:
+                    self.east_position[count_line] = float(data_line[4])
+                if self.west_pos:
+                    self.west_position[count_line] = float(data_line[4])
+
                 if self._talker_identifier != data_line[0]:
                     print("different talker_identifier",data_line[0],"not",\
                            self._talker_identifier)
 
-                #print(self.date, time_temp, data_line)
                 count_line+=1
-                self.nr_datapoints += 1
-                print(data_line[2:])
+
+                # print(data_line[2:])
 
         self.end_time = float(time_temp[0:2]),\
                         float(time_temp[3:5]),\
@@ -95,10 +105,10 @@ class ReadNMEAData():
             exit()
 
     def initilize_arrays(self,):
-        self.North_position = np.zeros(self.nr_lines)
-        self.Earth_position = np.zeros(self.nr_lines)
-
-
+        self.north_position = np.zeros(self.nr_datapoints, dtype =float)
+        self.east_position = np.zeros(self.nr_datapoints, dtype =float)
+        self.west_position = np.zeros(self.nr_datapoints, dtype =float)
+        self.south_position = np.zeros(self.nr_datapoints, dtype =float)
 
     #properties returns value
     @property
@@ -128,9 +138,7 @@ class ReadNMEAData():
         hours = self.end_time[0]-self.start_time[0]
         minutes = self.end_time[1]-self.start_time[1]
         seconds = self.end_time[2]-self.start_time[2]
-        print(hours,minutes,seconds)
         duration = np.ceil(minutes+ hours*60. +seconds/60.)
-        print(duration)
         t = np.linspace(self.start_time[1],self.start_time[1]+duration,\
                         int(self.nr_datapoints/60.)+1)
         return t
@@ -154,6 +162,13 @@ class ReadNMEAData():
         self.check_read_data()
         return self._talker_identifier
 
+    @property
+    def coordinates(self):
+        """
+        returns the coordinates in the data. to be worked on
+        """
+        self.check_read_data()
+        return self.north_position, self.east_position
 
     #printing values or tables
     def display_date(self):
@@ -182,6 +197,22 @@ class ReadNMEAData():
             axis = axis + "West"
         axis = axis + " coordinates"
         print(axis)
+
+    def display_coordinates(self):
+        """
+        display the arrays
+        """
+        self.check_read_data()
+        for i in range(self.nr_datapoints):
+            if self.north_pos:
+                print("N",self.north_position[i], end = " ")
+            if self.south_pos:
+                print("S",self.south_position[i], end = " ")
+            if self.east_pos:
+                print(" E",self.east_position[i])
+            if self.west_pos:
+                print(" W",self.west_position[i])
+
 if __name__ == '__main__':
     obj = ReadNMEAData()
     obj.read_textfile("example_textfile_NMEA.txt", verbose=True)
@@ -190,4 +221,12 @@ if __name__ == '__main__':
     print(obj.day_year)
     print(obj.time_period)
     print(obj.time_m)
-    obj.display_coordinates_type()
+    N, E = obj.coordinates
+    plt.plot(N)
+    plt.title(str(N[0]))
+    plt.show()
+    plt.plot(E)
+    plt.title(str(E[0]))
+    plt.show()
+    # obj.display_coordinates_type()
+    # obj.display_coordinates()

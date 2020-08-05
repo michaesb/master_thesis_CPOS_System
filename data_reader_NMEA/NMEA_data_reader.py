@@ -190,6 +190,23 @@ class ReadNMEAData():
         return t
 
     @property
+    def time_h(self):
+        """
+        returns the time from the start of the data and to the end data
+        This assumes that it's continous and there are 5 minutes in between the
+        points
+        """
+        self.check_read_data()
+        hours = self.end_time[0]-self.start_time[0]
+        minutes = self.end_time[1]-self.start_time[1]
+        seconds = self.end_time[2]-self.start_time[2]
+        duration = np.ceil(hours+ minutes/60. +seconds/3600.)
+        t = np.linspace(self.start_time[1],self.start_time[1]+duration,\
+                        self.nr_datapoints)
+        print(t)
+        return t
+
+    @property
     def day_year(self):
         """
         returns of the day and year

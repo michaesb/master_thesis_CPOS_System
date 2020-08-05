@@ -41,6 +41,8 @@ class NMEADataReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.time_m
         with self.assertRaises(SyntaxError):
+            obj.time_h            
+        with self.assertRaises(SyntaxError):
             obj.day_year
         with self.assertRaises(SyntaxError):
             obj.talker_identifier

@@ -33,7 +33,6 @@ def plotting(receiver_id):
     plt.title("L1 and L2 scintillation with receiver: "+receiver_id+\
               " at: " +date)
     plt.ylabel("L1 scintillations")
-
     plt.subplot(2,1,2)
     plt.plot(t,L2_amplitude)
     plt.plot(t,L2_phase)

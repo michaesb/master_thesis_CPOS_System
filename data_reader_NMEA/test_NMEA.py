@@ -29,6 +29,8 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.display_coordinates_type()
         with self.assertRaises(SyntaxError):
             obj.display_coordinates()
+        with self.assertRaises(SyntaxError):
+            obj.display_GPS_indicator()
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.time_period
@@ -44,6 +46,17 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.talker_identifier
         with self.assertRaises(SyntaxError):
             obj.coordinates
+        with self.assertRaises(SyntaxError):
+            obj.qualities_indicator
+        with self.assertRaises(SyntaxError):
+            obj.nr_satellites
+        with self.assertRaises(SyntaxError):
+            obj.horizontal_dil_of_pos
+        with self.assertRaises(SyntaxError):
+            obj.altitude_measurement
+        with self.assertRaises(SyntaxError):
+            obj.geoidal_seperation
+
 
     def test_known_example(self):
         """

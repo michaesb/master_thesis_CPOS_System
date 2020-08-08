@@ -41,7 +41,7 @@ class NMEADataReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.time_m
         with self.assertRaises(SyntaxError):
-            obj.time_h            
+            obj.time_h
         with self.assertRaises(SyntaxError):
             obj.day_year
         with self.assertRaises(SyntaxError):
@@ -54,8 +54,6 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.nr_satellites
         with self.assertRaises(SyntaxError):
             obj.horizontal_dil_of_pos
-        with self.assertRaises(SyntaxError):
-            obj.altitude_measurement
         with self.assertRaises(SyntaxError):
             obj.geoidal_seperation
 

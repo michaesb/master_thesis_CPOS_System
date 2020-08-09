@@ -28,7 +28,7 @@ class ReadNMEAData():
         self.south_pos = False
         self.east_pos = False
         self.west_pos = False
-        #
+        # quality indicator
         self.quality_indicator_explained= ["0: Fix not available or invalid",
                                             "1: GPS SPS Mode, fix valid",
                                             "2:Differential GPS SPS Mode, fix valid",
@@ -45,6 +45,7 @@ class ReadNMEAData():
         self.geo_seperation = -1
         self.geo_seperation_unit = -1
         self.age_of_data = -1
+        self.checksum = []
 
     def read_textfile(self,textfile, verbose=False):
         """
@@ -73,7 +74,9 @@ class ReadNMEAData():
                     self.start_time = float(time_temp[0:1]),\
                                       float(time_temp[3:4]),\
                                       float(time_temp[6:7])
-                    self._talker_identifier = data_line[0] #setting the type of identifier
+                    #setting the type of identifier
+                    self._talker_identifier = data_line[0]
+
                     #Seing which coordinate is being displayed
                     if data_line[3] == "N":
                         self.north_pos =True
@@ -84,50 +87,64 @@ class ReadNMEAData():
                     if data_line[5] == "W":
                         self.west_pos =True
                     self.HDOP_unit = data_line[10]
+
                     self.geo_seperation_unit = data_line[12]
 
+                #checking if the talker changes as one reads the file
                 if self._talker_identifier != data_line[0]:
                     print("different talker_identifier",data_line[0],"not",\
                            self._talker_identifier)
 
                 #filling position arrays
+                degrees_lat, arcminutes_lat = float(data_line[2][0:2]), float(data_line[2][3:])
+                degrees_long, arcminutes_long = float(data_line[4][0:2]), float(data_line[4][3:])
                 if self.north_pos:
-                    self.north_position[count_line] = float(data_line[2])
+                    self.north_position[count_line] = degrees_lat + arcminutes_lat
                 if self.south_pos:
-                    self.south_position[count_line] = float(data_line[2])
+                    self.south_position[count_line] = degrees_lat + arcminutes_lat
                 if self.east_pos:
-                    self.east_position[count_line] = float(data_line[4])
+                    self.east_position[count_line] = degrees_long + arcminutes_long
                 if self.west_pos:
-                    self.west_position[count_line] = float(data_line[4])
-                #quality indicator
+                    self.west_position[count_line] = degrees_long + arcminutes_long
+
+                #quality indicator of the measured point
                 if sum([int(data_line[6])==i for i in self.quality_indicator_types])==0:
                     self.quality_indicator_types.append(int(data_line[6]))
                 self.quality_indicator[count_line] = data_line[6]
+
                 #number of satellites
                 self.nr_satellite[count_line] = data_line[7]
+
                 # Horizontal dilution of precision
                 self.HDOP[count_line] = data_line[8]
+
                 # measurements of height in the point
                 self.altitude[count_line]= data_line[9]
+
                 # geoidal seperation
                 self.geo_seperation[count_line] = data_line[11]
+
                 # age of differential GPS data
                 if data_line[13]=="":
                     self.age_of_data[count_line] = float("nan")
                 else:
                     self.age_of_data[count_line] = data_line[13]
 
-                # self.something[count_line]= data_line[14]
+                #getting station_ID and checksum
+                diff_station_ID,checksum = data_line[14].split("*")
+
+                if diff_station_ID == "":
+                    self.diff_station_ID[count_line] = float("nan")
+                else:
+                    self.diff_station_ID[count_line] = diff_station_ID
+                self.checksum.append(checksum)
+
                 #keeping a counter of the lines in the textfile document
                 count_line+=1
-
-        print(len(data_line))
 
         self.end_time = float(time_temp[0:2]),\
                         float(time_temp[3:5]),\
                         float(time_temp[6:8])
-
-
         if self.verbose:
             t2 = time.time()
             print("time taken to read = %g"%(t2-t1))
@@ -144,18 +161,25 @@ class ReadNMEAData():
             exit()
 
     def initilize_arrays(self,):
+        """
+        initialize the arrays as the number of points is established
+        """
         #postion arrays
         self.north_position = np.zeros(self.nr_datapoints, dtype =float)
         self.east_position = np.zeros(self.nr_datapoints, dtype =float)
         self.west_position = np.zeros(self.nr_datapoints, dtype =float)
         self.south_position = np.zeros(self.nr_datapoints, dtype =float)
+        self.altitude = np.zeros(self.nr_datapoints,dtype = float)
+        self.HDOP = np.zeros(self.nr_datapoints,dtype = float)
+
         self.quality_indicator = np.zeros(self.nr_datapoints, dtype=int)
         self.nr_satellite = np.zeros(self.nr_datapoints, dtype=int)
-        self.HDOP = np.zeros(self.nr_datapoints,dtype = float)
-        self.altitude = np.zeros(self.nr_datapoints,dtype = float)
+
         self.geo_seperation= np.zeros(self.nr_datapoints,dtype=float)
         self.age_of_data = np.zeros(self.nr_datapoints,dtype=float)
-        # self.something = np.zeros(self.nr_datapoints, dtype=)
+        self.diff_station_ID = np.zeros(self.nr_datapoints, dtype=float)
+
+
     #properties returns value
     @property
     def datapoints(self):
@@ -265,6 +289,13 @@ class ReadNMEAData():
         self.check_read_data()
         return self.geo_seperation
 
+    @property
+    def station_ID(self,):
+        """
+        returns an array of the station ID
+        """
+        self.check_read_data()
+        return self.diff_station_ID
 
     #printing values or tables
     def display_date(self):
@@ -315,30 +346,32 @@ class ReadNMEAData():
         """
         self.check_read_data()
         for i in self.quality_indicator_types:
-            ratio = 100*np.sum(i==j for j in self.quality_indicator)/self.nr_datapoints
+            ratio = 100*sum(i==j for j in self.quality_indicator)/self.nr_datapoints
             print(self.quality_indicator_explained[i], round(ratio,2))
 
 if __name__ == '__main__':
     obj = ReadNMEAData()
     obj.read_textfile("example_textfile_NMEA.txt", verbose=True)
     print(obj.datapoints,"nr_datapoints")
-    print(obj.talker_identifier)
     print(obj.day_year, "day_year")
     print(obj.time_period, "time")
     print(obj.quality_indicator, "indicator")
     print(obj.nr_satellite,"sat")
     print(obj.horizontal_dil_of_pos, "dil of pos")
-    print(obj.geoidal_seperation, "geoid and ellipse")
-    #obj.display_GPS_indicator()
+    obj.display_GPS_indicator()
     N, E, Z = obj.coordinates
-    plt.plot(N)
+    ave_N, ave_E, ave_Z = np.sum(N)/obj.nr_datapoints,\
+    np.sum(E)/obj.nr_datapoints ,np.sum(Z)/obj.nr_datapoints
+    satellites = obj.nr_satellite
+    plt.plot(N-ave_N)
     plt.title(str(N[0]))
     plt.show()
-    plt.plot(E)
+    plt.plot(E-ave_E)
     plt.title(str(E[0]))
     plt.show()
-    plt.plot(Z)
+    plt.plot(Z-ave_Z)
     plt.title(str(Z[0]))
     plt.show()
-    # obj.display_coordinates_type()
-    # obj.display_coordinates()
+    plt.plot(satellites)
+    plt.title("satellites")
+    plt.show()

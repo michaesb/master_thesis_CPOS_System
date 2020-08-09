@@ -31,6 +31,7 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.display_coordinates()
         with self.assertRaises(SyntaxError):
             obj.display_GPS_indicator()
+
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.time_period
@@ -56,11 +57,15 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.horizontal_dil_of_pos
         with self.assertRaises(SyntaxError):
             obj.geoidal_seperation
-
-
+        with self.assertRaises(SyntaxError):
+            obj.station_ID
     def test_known_example(self):
         """
         Testing know values from NMEA_test data
+        """
+
+        """
+        Testing the time aspects of the Class
         """
         obj = ReadNMEAData()
         obj.read_textfile("data_reader_NMEA/example_textfile_NMEA.txt")
@@ -76,6 +81,10 @@ class NMEADataReaderTest(unittest.TestCase):
         start, end = obj.time_period
         self.assertEqual(start[0]+start[1]+start[2],0)
         self.assertEqual(end[0]+end[1]+end[2],59)
+
+        """
+        checking
+        """
 
 
 if __name__ == '__main__':

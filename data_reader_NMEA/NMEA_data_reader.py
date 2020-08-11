@@ -47,7 +47,7 @@ class ReadNMEAData():
         self.age_of_data = -1
         self.checksum = []
 
-    def read_textfile(self,textfile, verbose=False):
+    def read_textfile(self, textfile, verbose=False):
         """
         read textfile specified and selects the
         right textfile_reader based on what version the texfile is. Also reads
@@ -96,22 +96,22 @@ class ReadNMEAData():
                            self._talker_identifier)
 
                 #filling position arrays
-                degrees_lat, arcminutes_lat = float(data_line[2][0:2]), float(data_line[2][3:])
-                degrees_long, arcminutes_long = float(data_line[4][0:2]), float(data_line[4][3:])
+                degrees_lat, arcminutes_lat = float(data_line[2][:2]), float(data_line[2][2:])
+                degrees_long, arcminutes_long = float(data_line[4][:3]), float(data_line[4][3:])
                 if self.north_pos:
-                    self.north_position[count_line] = degrees_lat + arcminutes_lat
+                    self.north_position[count_line] = degrees_lat + arcminutes_lat/60
                 if self.south_pos:
-                    self.south_position[count_line] = degrees_lat + arcminutes_lat
+                    self.south_position[count_line] = degrees_lat + arcminutes_lat/60
                 if self.east_pos:
-                    self.east_position[count_line] = degrees_long + arcminutes_long
+                    self.east_position[count_line] = degrees_long + arcminutes_long/60
                 if self.west_pos:
-                    self.west_position[count_line] = degrees_long + arcminutes_long
+                    self.west_position[count_line] = degrees_long + arcminutes_long/60
 
                 #quality indicator of the measured point
                 if sum([int(data_line[6])==i for i in self.quality_indicator_types])==0:
                     self.quality_indicator_types.append(int(data_line[6]))
-                self.quality_indicator[count_line] = data_line[6]
 
+                self.quality_indicator[count_line] = data_line[6]
                 #number of satellites
                 self.nr_satellite[count_line] = data_line[7]
 
@@ -141,7 +141,7 @@ class ReadNMEAData():
 
                 #keeping a counter of the lines in the textfile document
                 count_line+=1
-
+        # end of for loop
         self.end_time = float(time_temp[0:2]),\
                         float(time_temp[3:5]),\
                         float(time_temp[6:8])
@@ -160,7 +160,7 @@ class ReadNMEAData():
             raise SyntaxError("need to read the data first, using read_textfile")
             exit()
 
-    def initilize_arrays(self,):
+    def initilize_arrays(self):
         """
         initialize the arrays as the number of points is established
         """
@@ -227,7 +227,6 @@ class ReadNMEAData():
         duration = np.ceil(hours+ minutes/60. +seconds/3600.)
         t = np.linspace(self.start_time[1],self.start_time[1]+duration,\
                         self.nr_datapoints)
-        print(t)
         return t
 
     @property
@@ -242,7 +241,7 @@ class ReadNMEAData():
         return self.day, self.month, self.year
 
     @property
-    def talker_identifier(self,):
+    def talker_identifier(self):
         """
         returns the type of talker identifier
         """
@@ -256,6 +255,13 @@ class ReadNMEAData():
         """
         self.check_read_data()
         return self.north_position, self.east_position, self.altitude
+
+    def coordinates_cartesian(self):
+        """
+        Turns the spherical coordinates into cartesian
+        """
+        self.check_read_data
+
 
     @property
     def qualities_indicator(self):
@@ -290,7 +296,7 @@ class ReadNMEAData():
         return self.geo_seperation
 
     @property
-    def station_ID(self,):
+    def station_ID(self):
         """
         returns an array of the station ID
         """
@@ -308,7 +314,7 @@ class ReadNMEAData():
                                          float(self.date[8:10])
         print("year: ",self.year," day: ", self.day)
 
-    def display_coordinates_type(self,):
+    def display_coordinates_type(self):
         """
         Display the type of coordinates taken from the data
         """
@@ -345,9 +351,11 @@ class ReadNMEAData():
         displaying the quaility of the data.
         """
         self.check_read_data()
+        print("checking the quality of the data ------")
         for i in self.quality_indicator_types:
             ratio = 100*sum(i==j for j in self.quality_indicator)/self.nr_datapoints
-            print(self.quality_indicator_explained[i], round(ratio,2))
+            print(self.quality_indicator_explained[i], round(ratio,2), "%")
+        print("---------------------------------------")
 
 if __name__ == '__main__':
     obj = ReadNMEAData()

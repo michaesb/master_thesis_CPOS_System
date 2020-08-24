@@ -7,12 +7,12 @@ def plotting():
     plt.subplot(4, 1, 1)
     plt.plot(obj.time_h,N-ave_N)
     plt.title("coordinates")
-    plt.ylabel("arcdegrees")
+    plt.ylabel("distance [m]")
     plt.xticks([])
 
     plt.subplot(4,1,2)
     plt.plot(obj.time_h,E-ave_E)
-    plt.ylabel("arcdegrees")
+    plt.ylabel("distance [m]")
     plt.xticks([])
 
     plt.subplot(4,1,3)
@@ -27,12 +27,12 @@ def plotting():
     plt.show()
 
 receiver = ["HFS", "NAK","RAN", "SIM","STA", "STE", "TRM"]
-date = "076"
+date = "157"
 for i in receiver:
-    adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2015/"+date+"/NMEA_M"\
+    adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2019/"+date+"/NMEA_M"\
     +i+"_"+date+"0.log"
     obj = ReadNMEAData()
-    obj.read_textfile(adress_M,verbose=False)
+    obj.read_textfile(adress_M,verbose=False,filter_4=False)
     obj.display_GPS_indicator()
     print(obj.day_year, "day_year")
     print(obj.datapoints, "number of datapoints (and lines)")
@@ -40,5 +40,5 @@ for i in receiver:
     N, E, Z = obj.coordinates
     ave_N, ave_E, ave_Z = np.sum(N)/obj.datapoints[0],\
     np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
-    print(ave_N, ave_E,"coordinates in ",i)
+    print(ave_N, ave_E,"coordinates in ", i)
     plotting()

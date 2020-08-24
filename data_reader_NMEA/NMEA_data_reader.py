@@ -115,10 +115,10 @@ class ReadNMEAData():
                            self._talker_identifier)
 
                 if float(data_line[6]) == 4 or not filter_4:
+                    # print(count_line, data_line)
                     #filling position arrays
                     degrees_lat, arcminutes_lat = float(data_line[2][:2]), float(data_line[2][2:])
                     degrees_long, arcminutes_long = float(data_line[4][:3]), float(data_line[4][3:])
-                    print(degrees_lat, degrees_long)
                     if self.north_pos:
                         self.north_position_temp[self.nr_datapoints] = degrees_lat + arcminutes_lat/60
                     if self.south_pos:
@@ -301,7 +301,8 @@ class ReadNMEAData():
     @property
     def coordinates(self):
         """
-        returns the coordinates in the data.
+        returns the coordinates in the data. with a transformation of axis.
+        From degrees to meters.
         """
         self.check_read_data()
         e_sq = self.flat * (2 - self.flat)
@@ -309,7 +310,6 @@ class ReadNMEAData():
         phi = np.pi*self.east_position/180;
         s = np.sin(lambda_);
         N = self.semi_major_a / np.sqrt(1 - e_sq * s * s);
-
         north = (self.altitude + N) * np.cos(lambda_) * np.cos(phi);
         east = (self.altitude + N) * np.cos(lambda_) * np.sin(phi);
         altitude = (self.altitude + (1 - e_sq) * N) * np.sin(lambda_);
@@ -401,6 +401,7 @@ class ReadNMEAData():
     def display_GPS_indicator(self):
         """
         displaying the quaility of the data.
+        Not functional when filter is on
         """
         self.check_read_data()
         print("checking the quality of the data ------")

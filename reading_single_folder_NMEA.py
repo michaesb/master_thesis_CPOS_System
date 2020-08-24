@@ -27,15 +27,18 @@ def plotting():
     plt.show()
 
 receiver = ["HFS", "NAK","RAN", "SIM","STA", "STE", "TRM"]
+date = "076"
 for i in receiver:
-    adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2015/076/NMEA_M"\
-    +i+"_0760.log"
+    adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2015/"+date+"/NMEA_M"\
+    +i+"_"+date+"0.log"
     obj = ReadNMEAData()
     obj.read_textfile(adress_M,verbose=False)
-    #obj.display_GPS_indicator()
-    # print(obj.day_year, "day_year")
+    obj.display_GPS_indicator()
+    print(obj.day_year, "day_year")
+    print(obj.datapoints, "number of datapoints (and lines)")
+    print(obj.quality_indicator)
     N, E, Z = obj.coordinates
-    ave_N, ave_E, ave_Z = np.sum(N)/obj.nr_datapoints,\
-    np.sum(E)/obj.nr_datapoints ,np.sum(Z)/obj.nr_datapoints
+    ave_N, ave_E, ave_Z = np.sum(N)/obj.datapoints[0],\
+    np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
     print(ave_N, ave_E,"coordinates in ",i)
-    #plotting()
+    plotting()

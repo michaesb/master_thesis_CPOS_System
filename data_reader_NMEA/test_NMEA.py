@@ -70,21 +70,16 @@ class NMEADataReaderTest(unittest.TestCase):
         obj = ReadNMEAData()
         obj.read_textfile("data_reader_NMEA/example_textfile_NMEA.txt")
         #checking number of datapoints
-        self.assertEqual(obj.datapoints,60)
+        self.assertEqual(obj.datapoints,(40,60))
         #day and year check
         self.assertEqual(obj.day_year[2],2015)
         self.assertEqual(obj.day_year[1],3)
         self.assertEqual(obj.day_year[0],17)
         #checking the time
         self.assertEqual(obj.time_m[0],0)
-        self.assertEqual(obj.time_m[1],1)
         start, end = obj.time_period
         self.assertEqual(start[0]+start[1]+start[2],0)
         self.assertEqual(end[0]+end[1]+end[2],59)
-
-        """
-        checking
-        """
 
 
 if __name__ == '__main__':

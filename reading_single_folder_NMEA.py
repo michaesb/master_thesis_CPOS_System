@@ -28,6 +28,7 @@ def plotting():
 
 receiver = ["HFS", "NAK","RAN", "SIM","STA", "STE", "TRM"]
 date = "157"
+
 for i in receiver:
     adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2019/"+date+"/NMEA_M"\
     +i+"_"+date+"0.log"

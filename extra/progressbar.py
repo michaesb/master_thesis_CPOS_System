@@ -1,8 +1,10 @@
 import numpy as np
 import time
 
-def progress_bar(i,size):
+def progress_bar(i,size,ending= "\r"):
+    print("\033[95m")
     print(int(100*i/size), "%", end= "\r")
+    print("\033[39m")
 
 if __name__ == '__main__':
     """

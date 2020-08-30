@@ -87,7 +87,10 @@ class ReadNMEAData():
                     self.quality_indicator_types.append(int(data_line[6]))
 
                 self.quality_indicator[count_line] = data_line[6]
-
+                if int(data_line[6]) == 4 or int(data_line[6])==1 :
+                    self.track_filter_4[count_line] = 1
+                else:
+                    self.track_filter_4[count_line] =0
                 if count_line ==0:
                     self.start_time = float(time_temp[0:1]),\
                                       float(time_temp[3:4]),\
@@ -165,7 +168,6 @@ class ReadNMEAData():
         if self.verbose:
             t2 = time.time()
             print("time taken to read = %g"%(t2-t1))
-
     #intiliziing arrays and tests
     def check_read_data(self):
         """
@@ -195,6 +197,7 @@ class ReadNMEAData():
         self.geo_seperation_temp = np.zeros(self.nr_lines,dtype=float)
         self.age_of_data_temp = np.zeros(self.nr_lines,dtype=float)
         self.diff_station_ID_temp = np.zeros(self.nr_lines, dtype=float)
+        self.track_filter_4 = np.zeros(self.nr_lines, dtype=int)
 
     def shorten_arrays(self):
         """
@@ -321,7 +324,7 @@ class ReadNMEAData():
         returns an array of all the indicators to the data
         """
         self.check_read_data()
-        return self.qualities_indicator
+        return self.quality_indicator
 
     @property
     def nr_satellites(self):
@@ -354,6 +357,14 @@ class ReadNMEAData():
         """
         self.check_read_data()
         return self.diff_station_ID
+
+    @property
+    def track_4(self):
+        """
+        returns the tracking of when the filter 4 is compaer to other fixes
+        """
+        self.check_read_data()
+        return self.track_filter_4
 
     #printing values or tables
     def display_date(self):
@@ -420,6 +431,7 @@ if __name__ == '__main__':
     print(obj.quality_indicator, "indicator")
     print(obj.nr_satellite,"sat")
     print(obj.horizontal_dil_of_pos, "dil of pos")
+    print(sum(obj.track_4),"tracking 4")
     obj.display_GPS_indicator()
     N, E, Z = obj.coordinates
     ave_N, ave_E, ave_Z = np.sum(N)/obj.nr_datapoints,\

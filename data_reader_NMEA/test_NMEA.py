@@ -59,6 +59,9 @@ class NMEADataReaderTest(unittest.TestCase):
             obj.geoidal_seperation
         with self.assertRaises(SyntaxError):
             obj.station_ID
+        with self.assertRaises(SyntaxError):
+            obj.track_4
+
     def test_known_example(self):
         """
         Testing know values from NMEA_test data
@@ -80,6 +83,7 @@ class NMEADataReaderTest(unittest.TestCase):
         start, end = obj.time_period
         self.assertEqual(start[0]+start[1]+start[2],0)
         self.assertEqual(end[0]+end[1]+end[2],59)
+        self.assertEqual(sum(obj.track_4),40)
 
 
 if __name__ == '__main__':

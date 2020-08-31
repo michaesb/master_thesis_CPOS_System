@@ -8,9 +8,14 @@ from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def plotting_track_4():
     divides = 100
+    t = np.linspace(0,24,len(obj.qualities_indicator))
+
     for i in range(divides):
         fra, til = int(i*len(obj.track_4)/divides), int((i+1)*len(obj.track_4)/divides)
-        plt.plot(obj.track_4[fra:til])
+        plt.plot(t[fra:til],obj.track_4[fra:til],'*')
+        plt.title("high resolution of the fix float change")
+        plt.xlabel("time [h]")
+        plt.ylabel("quality indicator")
         plt.show()
 
 def plotting_qualities():
@@ -63,6 +68,6 @@ for receiver in receiver_stations:
     np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
     print(obj.datapoints[0]/obj.datapoints[1],"datapoints")
     print(ave_N, ave_E,"coordinates in ", receiver)
-    #plotting_track_4
-    plotting_qualities()
+    plotting_track_4()
+    # plotting_qualities()
     plotting()

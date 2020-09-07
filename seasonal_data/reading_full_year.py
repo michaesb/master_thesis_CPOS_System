@@ -6,21 +6,55 @@ sys.path.insert(0, "..")
 from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
+def recording_data_2018(receiver):
+    adress = "/run/media/michaelsb/HDD Linux/data/NMEA/2018/"+date[i]+"/"+\
+    "NMEA_M"+receiver +"_"+date[i]+"0.log"
+    obj = ReadNMEAData()
+    if receiver == "HFS":
+        obj.read_textfile(adress,verbose=False)
+        #print(obj.day_year, receiver)
+        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
+        N,E,Z = obj.coordinates
+        yeardataHFS_z[i,:len(Z)] = Z
+    if receiver == "STE":
+        obj.read_textfile(adress,verbose=False)
+        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
+        N,E,Z = obj.coordinates
+        yeardataSTE_z[i,:len(Z)] = Z
+    if receiver == "TRM":
+        obj.read_textfile(adress,verbose=False)
+        #print(obj.day_year, receiver)
+        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
+        N,E,Z = obj.coordinates
+        yeardataTRM_z[i,:len(Z)] = Z
+
+
+def plot_datapoints():
+    plt.plot(datapoints_per_day)
+    plt.plot(dataline_per_day)
+    plt.legend(["gps fix","other point"])
+    plt.ylabel("datapoints /lines ")
+    plt.xlabel("time [days]")
+    plt.title("datapoints over a full year at "+receiver)
+    plt.show()
+
+def plot_coordinates():
+    plt.plot(np.sum(yeardataHFS_z, axis=1)/obj.datapoints[0])
+    plt.plot(np.sum(yeardataSTE_z, axis=1)/obj.datapoints[0])
+    plt.plot(np.sum(yeardataTRM_z, axis=1)/obj.datapoints[0])
+    plt.title("z-coordinate read at "+receiver+" over 2019")
+    plt.ylabel("offset from average [m]")
+    plt.xticks([])
+
+days_in_a_month  = np.array([31,28,31,30,31,30,31,31,30,31,30,31])
+
 receiver_stations = ["HFS","STE","TRM"]
-nr_days =365
+nr_days = 365
 datapoints_per_day= np.zeros(nr_days)
 dataline_per_day= np.zeros(nr_days)
 
 date = []
 
-def plotting_track_4():
-    print(sum(obj.track_4)/obj.datapoints[1],"track 4")
-    divides = 1
-    for i in range(divides):
-        fra, til = int(i*len(obj.track_4)/divides), int((i+1)*len(obj.track_4)/divides)
-        plt.plot(obj.track_4[fra:til],'*')
-        plt.title
-        plt.show()
 
 yeardataHFS_z = np.zeros((nr_days,84600))
 yeardataSTE_z = np.zeros((nr_days,84600))
@@ -36,41 +70,10 @@ for i in range(1,366):
         date.append(str(i))
 for receiver in receiver_stations:
     for i in range(len(date)):
-        progress_bar(i,len(date), ending="\n")
-        adress = "/run/media/michaelsb/HDD Linux/data/NMEA/2019/"+date[i]+"/"+\
-        "NMEA_M"+receiver +"_"+date[i]+"0.log"
-        obj = ReadNMEAData()
-        obj.read_textfile(adress,verbose=False)
-        print(obj.day_year, receiver)
-        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
-        N,E,Z = obj.coordinates
-        if receiver == "HFS":
-            print(np.sum(Z)/obj.datapoints[0], "HFS")
-            yeardataHFS_z[i,:len(Z)] = Z
-        if receiver == "STE":
-            print(np.sum(Z)/obj.datapoints[0], "STE")
-            yeardataSTE_z[i,:len(Z)] = Z
-        if receiver == "TRM":
-            print(np.sum(Z)/obj.datapoints[0], "TRM")
-            yeardataTRM_z[i,:len(Z)] = Z
-
-        # plotting_track_4()
-
-    plt.subplot(2, 1, 1)
-    if receiver == "HFS":
-        plt.plot(np.sum(yeardataHFS_z, axis=1)/obj.datapoints[0])
-    if receiver == "STE":
-        plt.plot(np.sum(yeardataSTE_z, axis=1)/obj.datapoints[0])
-    if receiver == "TRM":
-        plt.plot(np.sum(yeardataTRM_z, axis=1)/obj.datapoints[0])
-    plt.title("datapoints and z-coordinate read at "+receiver+" over 2019")
-    plt.ylabel("offset from average [m]")
-    plt.xticks([])
-
-    plt.subplot(2,1,2)
-    plt.plot(datapoints_per_day)
-    plt.plot(dataline_per_day)
-    plt.legend(["gps fix","other point"])
-    plt.ylabel("datapoints /lines ")
-    plt.xlabel("time [days]")
-    plt.show()
+        progress_bar(i,len(date))
+        # recording_data_2018()
+        try:
+            recording_data_2018(receiver)
+        except:
+            pass
+    plot_datapoints()

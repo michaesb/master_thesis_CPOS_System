@@ -21,7 +21,7 @@ def plotting_track_4():
 def plotting_qualities():
     t = np.linspace(0,24,len(obj.qualities_indicator))
     plt.plot(t,obj.qualities_indicator)
-    plt.title("6 of june at "+ receiver)
+    plt.title("day " +date+" at "+ receiver)
     plt.ylabel("Quality indicator")
     plt.xlabel("hours in day")
     plt.show()
@@ -52,22 +52,25 @@ def plotting():
     plt.show()
 
 receiver_stations = ["HFS", "NAK","RAN", "SIM","STA", "STE", "TRM"]
-date = "157"
+date = "362"
 
 for receiver in receiver_stations:
-    adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2019/"+date+"/NMEA_M"\
-    +receiver+"_"+date+"0.log"
-    obj = ReadNMEAData()
-    obj.read_textfile(adress_M,verbose=False,filter_4=True)
-    obj.display_GPS_indicator()
-    print(obj.day_year, "day_year")
-    print(obj.datapoints, "number of datapoints (and lines)")
-    print(obj.quality_indicator)
-    N, E, Z = obj.coordinates
-    ave_N, ave_E, ave_Z = np.sum(N)/obj.datapoints[0],\
-    np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
-    print(obj.datapoints[0]/obj.datapoints[1],"datapoints")
-    print(ave_N, ave_E,"coordinates in ", receiver)
-    plotting_track_4()
-    # plotting_qualities()
-    plotting()
+    try:
+        adress_M = "/run/media/michaelsb/HDD Linux/data/NMEA/2018/"+date+"/NMEA_M"\
+        +receiver+"_"+date+"0.log"
+        obj = ReadNMEAData()
+        obj.read_textfile(adress_M,verbose=False,filter_4=True)
+        obj.display_GPS_indicator()
+        print(obj.day_year, "day_year")
+        print(obj.datapoints, "number of datapoints (and lines)")
+        print(obj.quality_indicator)
+        N, E, Z = obj.coordinates
+        ave_N, ave_E, ave_Z = np.sum(N)/obj.datapoints[0],\
+        np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
+        print(obj.datapoints[0]/obj.datapoints[1],"datapoints")
+        print(ave_N, ave_E,"coordinates in ", receiver)
+        # plotting_track_4()
+        plotting_qualities()
+        plotting()
+    except:
+        print("no"+receiver+"file her")

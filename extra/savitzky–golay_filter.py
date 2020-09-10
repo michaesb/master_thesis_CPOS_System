@@ -2,6 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 
+"""
+example code of usage of savoksy golay filter
+"""
+
 np.random.seed(1)
 
 x = np.linspace(0,2*np.pi,100)

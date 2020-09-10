@@ -1,19 +1,16 @@
 import numpy as np
 
+"""
+the accuracy of a sample mean
+"""
 
-
-def accuracy_NMEA(x):
-  """
-  Calculates the noise over a time period t.
-  Assumes that the length of the vector is 60
-  """
-  length= 60
-  if not len(z)==length:
-     raise ValueError("the length of input variable is not 60")
-  sigma = 1./(N-1)
-  
-  sigma = sigma*np.sum( abs(x - np.sum(x)/length)**2 )
-  
-  sigma = sigma**0.5 #root of sigma
-
-  return sigma
+def accuracy_NMEA(z):
+    """
+    Calculates the noise over a time period t.
+    """
+    N = len(z); size = int(np.floor(N)/60)
+    sigma = np.zeros(size+1)
+    for i in range(0,N,60):
+        z_ave = np.sum(z[i:(i+60)])/size
+        sigma[int(i/60)] = ((np.sum(abs(z[i:(i+60)]) - z_ave)**2 )/((60)-1))**0.5
+    return sigma

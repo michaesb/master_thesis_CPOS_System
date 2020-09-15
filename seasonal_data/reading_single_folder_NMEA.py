@@ -4,6 +4,7 @@ from scipy.signal import savgol_filter
 import sys, time
 sys.path.insert(0, "..")
 from extra.progressbar import progress_bar
+from extra.error_calculation_NMA_standard import accuracy_NMEA, filtering_outliers
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def plotting_track_4():
@@ -60,17 +61,17 @@ for receiver in receiver_stations:
         +receiver+"_"+date+"0.log"
         obj = ReadNMEAData()
         obj.read_textfile(adress_M,verbose=False,filter_4=True)
-        obj.display_GPS_indicator()
-        print(obj.day_year, "day_year")
-        print(obj.datapoints, "number of datapoints (and lines)")
-        print(obj.quality_indicator)
-        N, E, Z = obj.coordinates
-        ave_N, ave_E, ave_Z = np.sum(N)/obj.datapoints[0],\
-        np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
-        print(obj.datapoints[0]/obj.datapoints[1],"datapoints")
-        print(ave_N, ave_E,"coordinates in ", receiver)
-        # plotting_track_4()
-        plotting_qualities()
-        plotting()
     except:
         print("no"+receiver+"file her")
+    obj.display_GPS_indicator()
+    print(obj.day_year, "day_year")
+    print(obj.datapoints, "number of datapoints (and lines)")
+    print(obj.quality_indicator)
+    N, E, Z = obj.coordinates
+    ave_N, ave_E, ave_Z = np.sum(N)/obj.datapoints[0],\
+    np.sum(E)/obj.datapoints[0] ,np.sum(Z)/obj.datapoints[0]
+    print(obj.datapoints[0]/obj.datapoints[1],"datapoints")
+    print(ave_N, ave_E,"coordinates in ", receiver)
+    # plotting_track_4()
+    plotting_qualities()
+    plotting()

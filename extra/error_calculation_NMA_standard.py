@@ -5,7 +5,7 @@ the accuracy of a sample mean
 """
 
 
-def filtering_outliers(z):
+def filtering_outliers(z,verbose=False):
     N = len(z)
     interval = 60
     z_copy = z.copy()
@@ -16,8 +16,8 @@ def filtering_outliers(z):
         z_temp = np.where( z_60 > 3*np.std(z_copy), np.nan,z_temp)
         z_copy[i:i+interval] = z_temp
     z_resized = z_copy[np.logical_not(np.isnan(z_copy))]
-
-    print(N,len(z_resized), "size of array", "percentage=", 100*len(z_resized)/N)
+    if verbose:
+        print(N,len(z_resized), "size of array", "percentage=", 100*len(z_resized)/N)
     return z, z_resized
 
 

@@ -51,5 +51,6 @@ for receiver in receiver_stations:
     print(obj.datapoints[0]/obj.datapoints[1],"percentage datapoints")
     Z,Z_filtered = filtering_outliers(Z)
     sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered))
-    sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5*60+1),polyorder=3)
+    print(sigma_Z, len(sigma_Z), "statements")
+    sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
     plotting_coordinates()

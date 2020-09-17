@@ -11,8 +11,8 @@ def filtering_outliers(z,verbose=False):
     for i in range(0,len(z),interval):
         ave_z = np.mean(z_copy[i:i+interval])
         z_60 = abs(z_copy[i:i+interval]-ave_z)
-        z_temp = np.where( z_60 > 0.2,np.nan,z_copy[i:i+interval])
-        z_temp = np.where( z_60 > 3*np.std(z_copy), np.nan,z_temp)
+        z_temp = np.where(z_60 > 0.2,np.nan,z_copy[i:i+interval])
+        z_temp = np.where(z_60 > 3*np.std(z_copy), np.nan,z_temp)
         z_copy[i:i+interval] = z_temp
     z_resized = z_copy[np.logical_not(np.isnan(z_copy))]
     if verbose:

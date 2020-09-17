@@ -22,12 +22,14 @@ def recording_data_2018(receiver):
         obj.read_textfile(adress,verbose=False)
         datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
         N,E,Z = obj.coordinates
+        z_n = obj.datapoints[0]
         yeardataSTE_z[i,:len(Z)] = Z
     if receiver == "TRM":
         obj.read_textfile(adress,verbose=False)
         #print(obj.day_year, receiver)
         datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
         N,E,Z = obj.coordinates
+        z_n = obj.datapoints
         yeardataTRM_z[i,:len(Z)] = Z
     return N,E,Z,z_n
 
@@ -64,7 +66,7 @@ def plotting_noise():
 
 days_in_a_month  = np.array([31,28,31,30,31,30,31,31,30,31,30,31])
 
-receiver_stations = ["HFS"]#["HFS","STE","TRM"]
+receiver_stations = ["HFS","STE","TRM"]
 nr_days = 365
 year = "2018"
 datapoints_per_day= np.zeros(nr_days)

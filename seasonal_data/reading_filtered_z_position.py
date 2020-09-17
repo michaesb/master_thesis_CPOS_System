@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
-
 import sys, time
 sys.path.insert(0, "..")
 from extra.progressbar import progress_bar
@@ -51,12 +50,13 @@ for receiver in receiver_stations:
          obj.read_textfile(adress_M,verbose=False,filter_4=True)
     except:
         print("no"+receiver+"file her")
+        print(adress_M)
         continue
     obj.display_GPS_indicator()
     print(obj.day_year, "day_year")
     N, E, Z = obj.coordinates
     ave_N, ave_E, ave_Z = np.mean(N),np.mean(E),np.mean(Z)
-    print(obj.datapoints[0]/obj.datapoints[1]," % datapoints")
+    print(int(100*obj.datapoints[0]/obj.datapoints[1])," % datapoints")
     Z,Z_filtered = filtering_outliers(Z)
     sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered))
     sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5*60+1),polyorder=3)

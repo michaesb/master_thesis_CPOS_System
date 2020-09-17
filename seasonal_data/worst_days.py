@@ -45,10 +45,10 @@ def plot_datapoints():
     plt.show()
 
 def plot_coordinates():
-    plt.plot(np.mean(yeardataHFS_z, axis=1))
-    plt.plot(np.mean(yeardataSTE_z, axis=1))
-    plt.plot(np.mean(yeardataTRM_z, axis=1))
-    plt.title("z-coordinate read at "+receiver+" over 2018")
+    plt.plot(np.median(yeardataHFS_z, axis=1))
+    plt.plot(np.median(yeardataSTE_z, axis=1))
+    plt.plot(np.median(yeardataTRM_z, axis=1))
+    plt.title("z-coordinate read at "+receiver+" over 2019")
     plt.ylabel("offset from average [m]")
 
     plt.show()
@@ -96,17 +96,19 @@ for receiver in receiver_stations:
     for i in range(len(date)):
         progress_bar(i,len(date))
         # recording_data_2018()
-        adress = "/run/media/michaelsb/HDD Linux/data/NMEA/2018/"+date[i]+"/"+\
-        "NMEA_M"+receiver +"_"+date[i]+"0.log"
+        #adress = "/run/media/michaelsb/HDD Linux/data/NMEA/2018/"+date[i]+"/"+\
+        #NMEA_M"+receiver +"_"+date[i]+"0.log"
+        adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
+         +receiver+"_"+date[i]+"0.log"
         try:
             N,E,Z,z_n = recording_data_2018(receiver)
             Z,Z_filtered = filtering_outliers(Z)
             sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered))
             sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
-            noise_Z_6[i] = np.mean(sigma_Z_smooth[:int(len(sigma_Z_smooth)/4)])
-            noise_Z_12[i] =np.mean(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
-            noise_Z_18[i] = np.mean(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
-            noise_Z_24[i] =np.mean(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
+            noise_Z_6[i] = np.median(sigma_Z_smooth[:int(len(sigma_Z_smooth)/4)])
+            noise_Z_12[i] =np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
+            noise_Z_18[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
+            noise_Z_24[i] =np.median(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
         except:
             print("no"+receiver+"file here at day: " + str(i) +" year: "+year)
             print(adress)

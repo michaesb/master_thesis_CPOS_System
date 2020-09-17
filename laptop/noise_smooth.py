@@ -33,6 +33,7 @@ def plotting_coordinates():
 
 receiver_stations = ["HFS", "NAK","RAN", "SIM","STA", "STE", "TRM"]
 date = "174"
+date = "076"
 year = "2015"
 for receiver in receiver_stations:
     try:

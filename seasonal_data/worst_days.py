@@ -48,7 +48,7 @@ def plot_coordinates():
     plt.plot(np.mean(yeardataHFS_z, axis=1))
     plt.plot(np.mean(yeardataSTE_z, axis=1))
     plt.plot(np.mean(yeardataTRM_z, axis=1))
-    plt.title("z-coordinate read at "+receiver+" over 2019")
+    plt.title("z-coordinate read at "+receiver+" over 2018")
     plt.ylabel("offset from average [m]")
 
     plt.show()
@@ -58,7 +58,7 @@ def plotting_noise():
     plt.plot(noise_Z_12, label="6-12")
     plt.plot(noise_Z_18, label="12-18")
     plt.plot(noise_Z_24, label="18-24")
-    plt.title("z-coordinate noise at "+receiver+" over 2019")
+    plt.title("z-coordinate noise at "+receiver+" over 2018")
     plt.ylabel("sample mean [m]")
     plt.xlabel("days")
     plt.legend()

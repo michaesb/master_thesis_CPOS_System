@@ -8,7 +8,6 @@ from extra.error_calculation_NMA_standard import accuracy_NMEA, filtering_outlie
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def plotting_coordinates():
-    ave_N, ave_E, ave_Z = np.mean(N),np.mean(E),np.mean(Z)
     t_filtered = np.linspace(0,24,len(Z_filtered))
 
     plt.subplot(3,1,1)
@@ -18,22 +17,22 @@ def plotting_coordinates():
     plt.xticks([])
 
     plt.subplot(3,1,2)
-    plt.plot(obj.time_h, Z-ave_Z, "r*", label="unfiltered")
+    plt.plot(obj.time_h, Z-np.mean(Z), "r*", label="unfiltered")
     plt.plot(t_filtered, Z_filtered-np.mean(Z_filtered), "b*",label="filtered")
     plt.ylabel("coordinate Z [m]")
     plt.legend()
     plt.xticks([])
 
     plt.subplot(3,1,3)
-    plt.plot(t_filtered[::60],sigma_Z, label="before savoksy golay filter")
-    plt.plot(t_filtered[::60],sigma_Z_smooth, label ="smoothed")
+    plt.plot(t_filtered[30:-30],sigma_Z, label="before savoksy golay filter")
+    plt.plot(t_filtered[30:-30],sigma_Z_smooth, label ="smoothed")
     plt.ylabel("noise (sample mean)")
     plt.xlabel("time of day [hours]")
     plt.legend()
     plt.show()
 
 receiver_stations = ["HFS", "NAK","RAN", "SIM","STA", "STE", "TRM"]
-date = "076"
+date = "174"
 year = "2015"
 for receiver in receiver_stations:
     try:
@@ -44,12 +43,13 @@ for receiver in receiver_stations:
     except:
         print("no"+receiver+"file here at day: " + date +" year: "+year)
         print(adress_M)
+        continue
 
     obj.display_GPS_indicator()
     print(obj.day_year, "day_year")
     N, E, Z = obj.coordinates
-    print(obj.datapoints[0]/obj.datapoints[1],"percentage datapoints")
+    print(obj.datapoints[0]/obj.datapoints[1],"percentage datapoints gps fix")
     Z,Z_filtered = filtering_outliers(Z)
     sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered))
-    sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
+    sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5*60+1),polyorder=3)
     plotting_coordinates()

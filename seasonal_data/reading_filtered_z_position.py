@@ -29,7 +29,7 @@ def plotting_coordinates():
     plt.subplot(3,1,3)
     plt.plot(t_filtered[30:-30],sigma_Z, label="before savoksy golay filter")
     plt.plot(t_filtered[30:-30],sigma_Z_smooth, label ="smoothed")
-    plt.ylabel("noise (sample mean)")
+    plt.ylabel("sample noise [m]")
     plt.xlabel("time of day [hours]")
     plt.legend()
     plt.show()

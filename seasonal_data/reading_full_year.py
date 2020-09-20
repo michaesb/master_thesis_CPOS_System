@@ -54,7 +54,7 @@ def plot_coordinates():
     plt.plot(HFS[ind_fil])
     # plt.plot(np.sum(yeardataSTE_z, axis=1)/z_n)
     # plt.plot(np.sum(yeardataTRM_z, axis=1)/z_n)
-    plt.title("z-coordinate read at "+receiver+" over 2019")
+    plt.title("z-coordinate read at "+receiver+" over 2018")
     plt.ylabel("offset from average [m]")
     plt.xticks([])
     plt.show()
@@ -67,21 +67,21 @@ def plot_coordinates():
 
 
     plt.plot(noise_Z[np.nonzero(noise_Z)])
-    plt.title("coordinates noise at "+receiver+" over 2019")
-    plt.ylabel("sample mean [m]")
+    plt.title("coordinates noise at "+receiver+" over 2018")
+    plt.ylabel("sample noise [m]")
     plt.xlabel("days")
     # plt.plot(noise_Z[np.nonzero(noise_Z),1],label= "Z_6_12")
-    # plt.title("coordinates noise at "+receiver+" over 2019")
+    # plt.title("coordinates noise at "+receiver+" over 2018")
     # plt.xlabel("days")
-    # plt.ylabel("sample mean [m]")
+    # plt.ylabel("sample noise [m]")
     # plt.plot(noise_Z[np.nonzero(noise_Z),2],label= "Z_12_18")
-    # plt.title("coordinates noise at "+receiver+" over 2019")
+    # plt.title("coordinates noise at "+receiver+" over 2018")
     # plt.xlabel("days")
-    # plt.ylabel("sample mean [m]")
+    # plt.ylabel("sample noise [m]")
     # plt.plot(noise_Z[np.nonzero(noise_Z),3],label= "Z_18_24")
-    # plt.title("coordinates noise at "+receiver+" over 2019")
+    # plt.title("coordinates noise at "+receiver+" over 2018")
     # plt.xlabel("days")
-    # plt.ylabel("sample mean [m]")
+    # plt.ylabel("sample noise [m]")
     plt.show()
     # plt.xticks([])
 
@@ -130,13 +130,13 @@ for receiver in receiver_stations:
             pass
         n = len(N)
         noise_N[i,0], noise_N[i,1], noise_N[i,2], noise_N[i,3] = \
-        np.mean(accuracy_NMEA(N[:int(n/4)])), np.mean(accuracy_NMEA(N[int(n/4):int(n/2)])),\
-        np.mean(accuracy_NMEA(N[int(n/2):3*int(n/4)])),np.mean(accuracy_NMEA(N[3*int(n/4):]))
+        np.median(accuracy_NMEA(N[:int(n/4)])), np.median(accuracy_NMEA(N[int(n/4):int(n/2)])),\
+        np.median(accuracy_NMEA(N[int(n/2):3*int(n/4)])),np.median(accuracy_NMEA(N[3*int(n/4):]))
         noise_E[i,0], noise_E[i,1], noise_E[i,2], noise_E[i,3] = \
-        np.mean(accuracy_NMEA(E[:int(n/4)])), np.mean(accuracy_NMEA(E[int(n/4):int(n/2)])),\
-        np.mean(accuracy_NMEA(E[int(n/2):3*int(n/4)])),np.mean(accuracy_NMEA(E[3*int(n/4):]))
+        np.median(accuracy_NMEA(E[:int(n/4)])), np.median(accuracy_NMEA(E[int(n/4):int(n/2)])),\
+        np.median(accuracy_NMEA(E[int(n/2):3*int(n/4)])),np.median(accuracy_NMEA(E[3*int(n/4):]))
         noise_Z[i,0], noise_Z[i,1], noise_Z[i,2], noise_Z[i,3] = \
-        np.mean(accuracy_NMEA(Z[:int(n/4)])), np.mean(accuracy_NMEA(Z[int(n/4):int(n/2)])),\
-        np.mean(accuracy_NMEA(Z[int(n/2):3*int(n/4)])),np.mean(accuracy_NMEA(Z[3*int(n/4):]))
+        np.median(accuracy_NMEA(Z[:int(n/4)])), np.median(accuracy_NMEA(Z[int(n/4):int(n/2)])),\
+        np.median(accuracy_NMEA(Z[int(n/2):3*int(n/4)])),np.median(accuracy_NMEA(Z[3*int(n/4):]))
     plot_datapoints()
     plot_coordinates()

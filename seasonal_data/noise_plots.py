@@ -48,7 +48,7 @@ def plot_coordinates():
     plt.plot(np.median(yeardataHFS_z, axis=1))
     plt.plot(np.median(yeardataSTE_z, axis=1))
     plt.plot(np.median(yeardataTRM_z, axis=1))
-    plt.title("z-coordinate read at "+receiver+" over 2019")
+    plt.title("z-coordinate read at "+receiver+" over "+year)
     plt.ylabel("offset from average [m]")
 
     plt.show()
@@ -58,13 +58,11 @@ def plotting_noise():
     plt.plot(noise_Z_12, label="6-12")
     plt.plot(noise_Z_18, label="12-18")
     plt.plot(noise_Z_24, label="18-24")
-    plt.title("z-coordinate noise at "+receiver+" over 2018")
+    plt.title("z-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample mean [m]")
     plt.xlabel("days")
     plt.legend()
     plt.show()
-
-days_in_a_month  = np.array([31,28,31,30,31,30,31,31,30,31,30,31])
 
 receiver_stations = ["HFS","STE","TRM"]
 nr_days = 365
@@ -77,6 +75,12 @@ date = []
 yeardataHFS_z = np.zeros((nr_days,84600))
 yeardataSTE_z = np.zeros((nr_days,84600))
 yeardataTRM_z = np.zeros((nr_days,84600))
+for i in range(int(yeardataHFS_z.shape[0])):
+    for j in range(int(yeardataHFS_z[1])):
+        yeardataHFS_z[i,j] = np.nan
+        yeardataSTE_z[i,j] = np.nan
+        yeardataTRM_z[i,j] = np.nan
+
 
 noise = np.zeros((nr_days))
 noise_Z_6 = np.zeros(nr_days)
@@ -95,24 +99,35 @@ for i in range(1,366):
 for receiver in receiver_stations:
     for i in range(len(date)):
         progress_bar(i,len(date))
-        # recording_data_2018()
-        #adress = "/run/media/michaelsb/HDD Linux/data/NMEA/2018/"+date[i]+"/"+\
-        #NMEA_M"+receiver +"_"+date[i]+"0.log"
-        adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
-         +receiver+"_"+date[i]+"0.log"
+
+        adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
+        "NMEA_M"+receiver +"_"+date[i]+"0.log"
+        #adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
+        # +receiver+"_"+date[i]+"0.log"
         try:
             N,E,Z,z_n = recording_data_2018(receiver)
-            Z,Z_filtered = filtering_outliers(Z)
-            sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered))
-            sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
-            noise_Z_6[i] = np.median(sigma_Z_smooth[:int(len(sigma_Z_smooth)/4)])
-            noise_Z_12[i] =np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
-            noise_Z_18[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
-            noise_Z_24[i] =np.median(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
+
         except:
             print("no"+receiver+"file here at day: " + str(i) +" year: "+year)
             print(adress)
+            yeardataHFS_z[i,:] = np.nan
+            print(yeardataHFS_z[i,:])
             continue
+
+        Z,Z_filtered = filtering_outliers(Z)
+        if len(Z_filtered)<60:
+            noise_Z_6[i] = np.nan
+            noise_Z_12[i] = np.nan
+            noise_Z_18[i] = np.nan
+            noise_Z_24[i] = np.nan
+            continue
+
+        sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered), t=obj.time_h)
+        sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
+        noise_Z_6[i] = np.median(sigma_Z_smooth[:int(len(sigma_Z_smooth)/4)])
+        noise_Z_12[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
+        noise_Z_18[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
+        noise_Z_24[i] = np.median(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
     plot_datapoints()
     plot_coordinates()
     plotting_noise()

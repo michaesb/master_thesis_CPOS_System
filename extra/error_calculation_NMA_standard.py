@@ -1,23 +1,23 @@
 import numpy as np
-
 """
 the accuracy of a sample mean
 """
 
-def filtering_outliers(z,verbose=False, t=False):
+def filtering_outliers(z,verbose=False, t=np.array([False])):
     N = len(z)
     interval = 60
-    z_copy = z.copy()
-    ave_z = np.median(z_copy)
-    z_60 = abs(z_copy-ave_z)
-    z_temp = np.where(z_60 > 0.2,np.nan,z_copy)
-    z_temp = np.where(z_60 > 3*np.std(z_copy),np.nan,z_temp)
+    ave_z = np.median(z)
+    z_60 = abs(z-ave_z)
+    z_temp = np.where(z_60 > 0.2,np.nan,z)
+    z_temp = np.where(z_60 > 3*np.std(z),np.nan,z_temp)
+    print(np.sum(np.isnan(z_temp)))
     if t.any():
-        t_temp = np.where
-    z_copy = z_temp
-    z_resized = z_copy[np.logical_not(np.isnan(z_copy))]
-    if verbose:
-        print(N,len(z_resized), "size of array", "percentage=", 100*len(z_resized)/N)
+        t = np.where(np.isnan(z_temp),np.nan,t)
+        t =t[np.logical_not(np.isnan(t))]
+        print(len(t),"t", len(z))
+        z_resized = z_temp[np.logical_not(np.isnan(z_temp))]
+        return z,z_resized,t
+    z_resized = z_temp[np.logical_not(np.isnan(z_temp))]
     return z, z_resized
 
 

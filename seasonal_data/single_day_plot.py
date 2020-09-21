@@ -52,7 +52,7 @@ for receiver in receiver_stations:
             continue
     obj.display_GPS_indicator()
     print(obj.day_year, "day_year")
-    print(100*obj.datapoints[0]/obj.datapoints[1],"percentage datapoints gps fix")
+    print(100*obj.datapoints[0]/obj.datapoints[1],"% datapoints gps fix")
     N, E, Z = obj.coordinates
     Z,Z_filtered,t = filtering_outliers(Z,verbose=True, t=obj.time_h)
     sigma_Z = accuracy_NMEA(Z_filtered-np.mean(Z_filtered))

@@ -102,17 +102,16 @@ for receiver in receiver_stations:
          +receiver+"_"+date[i]+"0.log"
         try:
             N,E,Z,z_n = recording_data_2018(receiver)
-            Z,Z_filtered = filtering_outliers(Z)
-            sigma_Z = accuracy_NMEA(Z_filtered-np.median(Z_filtered))
-            sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
-            noise_Z_6[i] = np.median(sigma_Z_smooth[:int(len(sigma_Z_smooth)/4)])
-            noise_Z_12[i] =np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
-            noise_Z_18[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
-            noise_Z_24[i] =np.median(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
+            # Z,Z_filtered = filtering_outliers(Z)
+            # sigma_Z = accuracy_NMEA(Z_filtered-np.median(Z_filtered))
+            # sigma_Z_smooth= savgol_filter(sigma_Z,window_length=(5),polyorder=3)
+            # noise_Z_6[i] = np.median(sigma_Z_smooth[:int(len(sigma_Z_smooth)/4)])
+            # noise_Z_12[i] =np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
+            # noise_Z_18[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
+            # noise_Z_24[i] =np.median(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
         except:
             print("no"+receiver+"file here at day: " + str(i) +" year: "+year)
             print(adress)
             continue
     plot_datapoints()
     plot_coordinates()
-    plotting_noise()

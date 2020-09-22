@@ -85,17 +85,17 @@ for receiver in receiver_stations:
         try: #1
             N,E,Z,t = recording_data_2018(receiver)
         except:
-	    try: #2
-		adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
-		receiver+"_"+date[i]+"0.log"
-		N,E,Z,t = recording_data_2018(receiver)
-	    except:				
-		print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
-		print(adress)
-		noise_Z_3_9[i] = np.nan
-		noise_Z_9_15[i] = np.nan
-		noise_Z_15_21[i] = np.nan
-		noise_Z_21_03[i] = np.nan
+            try: #2
+                adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
+                receiver+"_"+date[i]+"0.log"
+                N,E,Z,t = recording_data_2018(receiver)
+            except:
+                print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
+                print(adress)
+                noise_Z_3_9[i] = np.nan
+                noise_Z_9_15[i] = np.nan
+                noise_Z_15_21[i] = np.nan
+                noise_Z_21_03[i] = np.nan
                 continue
 
         Z,Z_filtered = filtering_outliers(Z,verbose=False)

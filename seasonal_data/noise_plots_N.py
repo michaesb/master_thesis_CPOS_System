@@ -78,21 +78,23 @@ N_stored = np.array([0])
 for receiver in receiver_stations:
     for i in range(len(date)):
         progress_bar(i,len(date))
-
-        adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
-        "NMEA_M"+receiver +"_"+date[i]+"0.log"
-        #adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
-        # +receiver+"_"+date[i]+"0.log"
         try:
+            adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
+            "NMEA_M"+receiver +"_"+date[i]+"0.log"
             N,E,Z,t = recording_data_2018(receiver)
         except:
-            print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
-            print(adress)
-            noise_N_3_9[i] = np.nan
-            noise_N_9_15[i] = np.nan
-            noise_N_15_21[i] = np.nan
-            noise_N_21_03[i] = np.nan
-            continue
+            try:
+                adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
+                +receiver+"_"+date[i]+"0.log"
+                N,E,Z,t = recording_data_2018(receiver)
+            except:
+                print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
+                print(adress)
+                noise_N_3_9[i] = np.nan
+                noise_N_9_15[i] = np.nan
+                noise_N_15_21[i] = np.nan
+                noise_N_21_03[i] = np.nan
+                continue
 
         N,N_filtered = filtering_outliers(N,verbose=False)
         if len(N_filtered) < 60:

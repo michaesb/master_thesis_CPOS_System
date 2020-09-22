@@ -80,18 +80,22 @@ for receiver in receiver_stations:
         progress_bar(i,len(date))
         adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
         "NMEA_M"+receiver +"_"+date[i]+"0.log"
-        #adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
-        # +receiver+"_"+date[i]+"0.log"
         try:
             N,E,Z,t = recording_data_2018(receiver)
         except:
-            print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
-            print(adress)
-            noise_E_3_9[i] = np.nan
-            noise_E_9_15[i] = np.nan
-            noise_E_15_21[i] = np.nan
-            noise_E_21_03[i] = np.nan
-            continue
+            try:
+                adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
+                +receiver+"_"+date[i]+"0.log"
+                N,E,Z,t = recording_data_2018(receiver)
+
+            except:
+                print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
+                print(adress)
+                noise_E_3_9[i] = np.nan
+                noise_E_9_15[i] = np.nan
+                noise_E_15_21[i] = np.nan
+                noise_E_21_03[i] = np.nan
+                continue
 
         E,E_filtered = filtering_outliers(E,verbose=False)
         if len(E_filtered) < 60:

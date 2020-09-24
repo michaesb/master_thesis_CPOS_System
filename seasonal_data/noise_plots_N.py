@@ -10,28 +10,13 @@ from extra.error_calculation_NMA_standard import accuracy_NMEA, filtering_outlie
 Office_computer = 0
 
 def recording_data_2018(receiver):
-
     obj = ReadNMEAData()
-    if receiver == "HFS":
-        obj.read_textfile(adress,verbose=False)
-        #print(obj.day_year, receiver)
-        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
-        N,E,Z = obj.coordinates
-        t = obj.time_h
-
-    if receiver == "STE":
-        obj.read_textfile(adress,verbose=False)
-        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
-        N,E,Z = obj.coordinates
-        t = obj.time_h
-    if receiver == "TRM":
-        obj.read_textfile(adress,verbose=False)
-        #print(obj.day_year, receiver)
-        datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
-        N,E,Z = obj.coordinates
-        t = obj.time_h
+    obj.read_textfile(adress,verbose=False)
+    #print(obj.day_year, receiver)
+    datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
+    N,E,Z = obj.coordinates
+    t = obj.time_h
     return N,E,Z,t
-
 
 def plot_datapoints():
     plt.plot(datapoints_per_day)
@@ -81,6 +66,8 @@ for i in range(1,366):
 
 N_stored = np.array([0])
 for receiver in receiver_stations:
+    datapoints_per_day = np.zeros(nr_days)
+    dataline_per_day = np.zeros(nr_days)
     for i in range(len(date)):
         progress_bar(i,len(date))
         try:

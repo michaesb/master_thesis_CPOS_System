@@ -7,8 +7,9 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 from extra.error_calculation_NMA_standard import accuracy_NMEA, filtering_outliers
 
-def recording_data_2018(receiver):
+Office_computer = 1
 
+def recording_data_2018(receiver):
     obj = ReadNMEAData()
     if receiver == "HFS":
         obj.read_textfile(adress,verbose=False)
@@ -50,9 +51,13 @@ def plotting_noise():
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
     plt.legend()
+    if Office_computer:
+        plt.savefig("../../plot_master_thesis/Z_coordinate_noise_"+\
+                    receiver+"_"+year)
+
     plt.show()
 
-receiver_stations = ["HFS","STE","TRM"]
+receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL"]
 nr_days = 365
 year = "2018"
 datapoints_per_day= np.zeros(nr_days)
@@ -89,6 +94,7 @@ for receiver in receiver_stations:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
                 receiver+"_"+date[i]+"0.log"
                 N,E,Z,t = recording_data_2018(receiver)
+                Office_computer = 1
             except:
                 print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
                 print(adress)

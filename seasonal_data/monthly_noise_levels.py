@@ -104,14 +104,14 @@ for receiver in receiver_stations:
         if len(N) < 60:
             noise_N[i,nr_stations] = np.nan
         else:
-            sigma = accuracy_NMEA(N_filtered-np.median(N_filtered))
+            sigma = accuracy_NMEA(N-np.median(N))
             # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
             noise_N[i,nr_stations] = np.nanmedian(sigma)
 
         if len(E) < 60:
             noise_E[i,nr_stations] = np.nan
         else:
-            sigma = accuracy_NMEA(E_filtered-np.median(E_filtered))
+            sigma = accuracy_NMEA(E-np.median(E))
             # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
             noise_E[i,nr_stations] = np.nanmedian(sigma)
 

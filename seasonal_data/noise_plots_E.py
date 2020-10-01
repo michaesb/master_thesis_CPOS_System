@@ -97,7 +97,8 @@ for receiver in receiver_stations:
                 continue
 
         # E,E_filtered = filtering_outliers(E,verbose=False)
-        if len(E_filtered) < 60:
+        if len(E) < 60:
+            print("hello there")
             noise_E_3_9[i] = np.nan
             noise_E_9_15[i] = np.nan
             noise_E_15_21[i] = np.nan

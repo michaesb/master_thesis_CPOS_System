@@ -82,7 +82,7 @@ for receiver in receiver_stations:
             N,E,Z,t = recording_data_2018(receiver)
             home_computer = 1
         except:
-            try: 
+            try:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
                 receiver+"_"+date[i]+"0.log"
                 N,E,Z,t = recording_data_2018(receiver)
@@ -96,15 +96,15 @@ for receiver in receiver_stations:
                 noise_Z_21_03[i] = np.nan
                 continue
 
-        Z,Z_filtered = filtering_outliers(Z,verbose=False)
-        if len(Z_filtered) < 60:
+        # Z,Z_filtered = filtering_outliers(Z,verbose=False)
+        if len(Z) < 60:
             noise_Z_3_9[i] = np.nan
             noise_Z_9_15[i] = np.nan
             noise_Z_15_21[i] = np.nan
             noise_Z_21_03[i] = np.nan
             continue
-        sigma = accuracy_NMEA(Z_filtered-np.median(Z_filtered))
-        sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
+        sigma = accuracy_NMEA(Z-np.median(Z))
+        # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
         N_s = len(sigma)
         if i==1 or i==len(date)-1:
             noise_Z_21_03[i] = np.nan

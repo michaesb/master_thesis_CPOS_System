@@ -95,7 +95,7 @@ for receiver in receiver_stations:
                 noise_N_21_03[i] = np.nan
                 continue
 
-        N,N_filtered = filtering_outliers(N,verbose=False)
+        # N,N_filtered = filtering_outliers(N,verbose=False)
         if len(N_filtered) < 60:
             noise_N_3_9[i] = np.nan
             noise_N_9_15[i] = np.nan
@@ -103,7 +103,7 @@ for receiver in receiver_stations:
             noise_N_21_03[i] = np.nan
             continue
         sigma = accuracy_NMEA(N_filtered-np.median(N_filtered))
-        sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
+        # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
         N_s = len(sigma)
         if i==1 or i==len(date)-1:
             noise_N_21_03[i] = np.nan

@@ -91,28 +91,28 @@ for receiver in receiver_stations:
                 noise_E[i,nr_stations] = np.nan
                 continue
 
-        N,N_filtered = filtering_outliers(N,verbose=False)
-        E,E_filtered = filtering_outliers(E,verbose=False)
-        Z,Z_filtered = filtering_outliers(Z,verbose=False)
-        if len(Z_filtered) < 60:
+        # N,N_filtered = filtering_outliers(N,verbose=False)
+        # E,E_filtered = filtering_outliers(E,verbose=False)
+        # Z,Z_filtered = filtering_outliers(Z,verbose=False)
+        if len(Z) < 60:
             noise_Z[i,nr_stations] = np.nan
         else:
-            sigma = accuracy_NMEA(Z_filtered-np.median(Z_filtered))
-            sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
+            sigma = accuracy_NMEA(Z-np.median(Z))
+            # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
             noise_Z[i,nr_stations] = np.nanmedian(sigma)
 
         if len(N_filtered) < 60:
             noise_N[i,nr_stations] = np.nan
         else:
             sigma = accuracy_NMEA(N_filtered-np.median(N_filtered))
-            sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
+            # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
             noise_N[i,nr_stations] = np.nanmedian(sigma)
 
         if len(E_filtered) < 60:
             noise_E[i,nr_stations] = np.nan
         else:
             sigma = accuracy_NMEA(E_filtered-np.median(E_filtered))
-            sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
+            # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
             noise_E[i,nr_stations] = np.nanmedian(sigma)
 
     nr_stations += 1

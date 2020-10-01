@@ -42,7 +42,6 @@ def plotting_noise():
         plt.savefig("../../plot_master_thesis/auto_plots/N_coordinate_noise_"+\
                     receiver+"_"+year)
     if home_computer:
-        print("favorite pizza place")
         plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/N_coordinate_noise_"+\
                     receiver+"_"+year)
     plt.show()

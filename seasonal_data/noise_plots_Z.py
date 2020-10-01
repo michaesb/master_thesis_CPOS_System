@@ -98,7 +98,6 @@ for receiver in receiver_stations:
 
         # Z,Z_filtered = filtering_outliers(Z,verbose=False)
         if len(Z) < 60:
-            print("hello there")
             noise_Z_3_9[i] = np.nan
             noise_Z_9_15[i] = np.nan
             noise_Z_15_21[i] = np.nan

@@ -104,7 +104,7 @@ for receiver in receiver_stations:
             noise_Z_15_21[i] = np.nan
             noise_Z_21_03[i] = np.nan
             continue
-        sigma = accuracy_NMEA(Z_filtered-np.median(Z_filtered))
+        sigma = accuracy_NMEA(Z-np.median(Z))
         # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
         N_s = len(sigma)
         if i==1 or i==len(date)-1:

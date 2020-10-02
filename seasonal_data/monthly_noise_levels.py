@@ -36,7 +36,7 @@ def plotting_noise(noise,title_part):
     plt.title("noise over "+year+ str(title_part))
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
-    plt.legend()
+    plt.legend(receiver_stations)
     if office_computer:
         plt.savefig("../../plot_master_thesis/auto_plots/Z_coordinate_noise_"+\
                     receiver+"_"+year)
@@ -114,7 +114,7 @@ for receiver in receiver_stations:
             sigma = accuracy_NMEA(E-np.median(E))
             # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
             noise_E[i,nr_stations] = np.nanmedian(sigma)
-
+    print(nr_stations, len(receiver_stations))
     nr_stations += 1
     # plot_datapoints()
 plotting_noise(noise_N," coordinate N")

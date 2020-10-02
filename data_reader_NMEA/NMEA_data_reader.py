@@ -119,7 +119,7 @@ class ReadNMEAData():
                            self._talker_identifier)
 
                 if float(data_line[6]) == 4 or not filter_4:
-                    print(data_line[6], )
+                    # print(data_line[6], )
                     # print(count_line, data_line)
                     #filling position arrays
                     degrees_lat, arcminutes_lat = float(data_line[2][:2]), float(data_line[2][2:])

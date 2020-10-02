@@ -64,6 +64,7 @@ class ReadNMEAData():
         right textfile_reader based on what version the texfile is. Also reads
         the specifications for the for the data recording.
         """
+
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
@@ -118,6 +119,7 @@ class ReadNMEAData():
                            self._talker_identifier)
 
                 if float(data_line[6]) == 4 or not filter_4:
+                    print(data_line[6], )
                     # print(count_line, data_line)
                     #filling position arrays
                     degrees_lat, arcminutes_lat = float(data_line[2][:2]), float(data_line[2][2:])

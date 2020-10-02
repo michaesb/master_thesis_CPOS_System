@@ -25,7 +25,7 @@ def plot_datapoints():
     plt.plot(datapoints_per_day,"*")
     plt.plot(dataline_per_day)
     plt.legend(["gps fix","other point"])
-    plt.ylabel("datapoints /lines ")
+    plt.ylabel("datapoints/lines ")
     plt.xlabel("time [days]")
     plt.title("datapoints over a full year at "+receiver)
     plt.show()
@@ -45,7 +45,7 @@ def plotting_noise(noise,title_part):
                     receiver+"_"+year)
     plt.show()
 
-receiver_stations = ["HFS","STE""TRM","NAK", "STA","RAN","FOL","SIM"]
+receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
 nr_days = 25
 year = "2018"
 datapoints_per_day= np.zeros(nr_days)

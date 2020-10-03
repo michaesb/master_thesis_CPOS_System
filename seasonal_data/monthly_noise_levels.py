@@ -99,21 +99,21 @@ for receiver in receiver_stations:
         else:
             sigma = accuracy_NMEA(Z-np.median(Z))
             # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
-            noise_Z[i,nr_stations] = np.nansum(sigma)
+            noise_Z[i,nr_stations] = np.nanmean(sigma)
 
         if len(N) < 60:
             noise_N[i,nr_stations] = np.nan
         else:
             sigma = accuracy_NMEA(N-np.median(N))
             # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
-            noise_N[i,nr_stations] = np.nansum(sigma)
+            noise_N[i,nr_stations] = np.nanmean(sigma)
 
         if len(E) < 60:
             noise_E[i,nr_stations] = np.nan
         else:
             sigma = accuracy_NMEA(E-np.median(E))
             # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
-            noise_E[i,nr_stations] = np.nansum(sigma)
+            noise_E[i,nr_stations] = np.nanmean(sigma)
     print(nr_stations, len(receiver_stations))
     nr_stations += 1
     # plot_datapoints()

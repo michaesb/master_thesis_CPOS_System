@@ -136,7 +136,7 @@ for receiver in receiver_stations:
         sigma_Z = accuracy_NMEA(Z-np.median(Z))
         sigma_N = accuracy_NMEA(N-np.median(N))
         sigma_E = accuracy_NMEA(E-np.median(E))
-        N_s = len(sigma)
+        N_s = len(sigma_Z)
         index_3, index_9, index_15 ,index_21 = int(N_s/8.),int(N_s*3/8.),\
                                                int(N_s*5/8.),int(N_s*7/8.)
         if i==1:
@@ -155,7 +155,7 @@ for receiver in receiver_stations:
         np.nansum(sigma_N[index_9:index_15]), np.nansum(sigma_E[index_9:index_15]), np.nansum(sigma_Z[index_9:index_15])
 
         noise_N[i,3], noise_E[i,3], noise_Z[i,3] = \
-        np.nansum(sigma_N[index_15:index_21]), np.nansum(sigma_N[index_15:index_21]), np.nansum(sigma_N[index_15:index_21]),
+        np.nansum(sigma_N[index_15:index_21]), np.nansum(sigma_E[index_15:index_21]), np.nansum(sigma_Z[index_15:index_21]),
 
         noise_stored = sigma_N[index_21:], sigma_E[index_21:], sigma_Z[index_21:]
 

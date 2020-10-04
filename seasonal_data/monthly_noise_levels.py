@@ -46,7 +46,7 @@ def plotting_noise(noise,title_part):
     plt.show()
 
 receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
-nr_days = 25
+nr_days = 365
 year = "2018"
 datapoints_per_day= np.zeros(nr_days)
 dataline_per_day= np.zeros(nr_days)
@@ -96,24 +96,15 @@ for receiver in receiver_stations:
         # Z,Z_filtered = filtering_outliers(Z,verbose=False)
         if len(Z) < 60:
             noise_Z[i,nr_stations] = np.nan
-        else:
-            sigma = accuracy_NMEA(Z-np.median(Z))
-            # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
-            noise_Z[i,nr_stations] = np.nanmedian(sigma)
-
-        if len(N) < 60:
             noise_N[i,nr_stations] = np.nan
-        else:
-            sigma = accuracy_NMEA(N-np.median(N))
-            # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
-            noise_N[i,nr_stations] = np.nanmedian(sigma)
-
-        if len(E) < 60:
             noise_E[i,nr_stations] = np.nan
         else:
-            sigma = accuracy_NMEA(E-np.median(E))
-            # sigma = savgol_filter(sigma,window_length=(5*60+1),polyorder=3)
-            noise_E[i,nr_stations] = np.nanmedian(sigma)
+            sigma_Z = accuracy_NMEA(Z-np.median(Z))
+            noise_Z[i,nr_stations] = np.nanmedian(sigma_Z)
+            sigma_N = accuracy_NMEA(N-np.median(N))
+            noise_N[i,nr_stations] = np.nanmedian(sigma_N)
+            sigma_E = accuracy_NMEA(E-np.median(E))
+            noise_E[i,nr_stations] = np.nanmedian(sigma_E)
     print(nr_stations, len(receiver_stations))
     nr_stations += 1
     # plot_datapoints()

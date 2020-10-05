@@ -109,10 +109,17 @@ for receiver in receiver_stations:
         if i==1 or i==len(date)-1:
             noise_Z_21_03[i] = np.nan
         else:
+<<<<<<< HEAD
             noise_Z_21_03[i] =np.nanmean(np.concatenate([sigma[int(N_s*7/8):],Z_stored]))
         noise_Z_3_9[i] = np.nanmean(sigma[int(N_s/8):int(N_s*3/8)])
         noise_Z_9_15[i] = np.nanmean(sigma[int(N_s*3/8):int(N_s*5/8)])
         noise_Z_15_21[i] = np.nanmedian(sigma[int(N_s*5/8):int(N_s*7/8)])
+=======
+            noise_Z_21_03[i] =np.nansum(np.concatenate([sigma[int(N_s*7/8):],Z_stored]))
+        noise_Z_3_9[i] = np.nansum(sigma[int(N_s/8):int(N_s*3/8)])
+        noise_Z_9_15[i] = np.nansum(sigma[int(N_s*3/8):int(N_s*5/8)])
+        noise_Z_15_21[i] = np.nansum(sigma[int(N_s*5/8):int(N_s*7/8)])
+>>>>>>> 99e70c979d608381edf6e9991e43a7675c979f13
         Z_stored = sigma[int(N_s*7/8):]
 
     # plot_datapoints()

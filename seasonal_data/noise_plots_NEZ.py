@@ -130,19 +130,19 @@ for receiver in receiver_stations:
                 continue
 
         # Z,Z_filtered = filtering_outliers(Z,verbose=False)
-        t_calc = time.time()
         if len(Z) < 60:
             noise_N[i,:] = np.nan
             noise_E[i,:] = np.nan
             noise_Z[i,:] = np.nan
             continue
+
+        t_calc = time.time() #start of calc
         sigma_N = accuracy_NMEA(N-np.mean(N))
         sigma_E = accuracy_NMEA(E-np.mean(E))
         sigma_Z = accuracy_NMEA(Z-np.mean(Z))
-
         index_3, index_9, index_15 ,index_21 = \
         int(len(sigma_Z)/8.),int(len(sigma_Z)*3/8.),int(len(sigma_Z)*5/8.),int(len(sigma_Z)*7/8.)
-
+        t_calc_1 = time.time()
         if i==0:
             noise_N[i,0] = np.nan
             noise_E[i,0] = np.nan
@@ -151,6 +151,8 @@ for receiver in receiver_stations:
             noise_N[i,0] =np.nanmean(np.concatenate([sigma_N[index_21:],noise_stored[0]]))
             noise_E[i,0] =np.nanmean(np.concatenate([sigma_E[index_21:],noise_stored[1]]))
             noise_Z[i,0] =np.nanmean(np.concatenate([sigma_Z[index_21:],noise_stored[2]]))
+        t_calc_2 = time.time() # concatenate
+
         noise_N[i,1], noise_E[i,1], noise_Z[i,1] = \
         np.nanmean(sigma_N[index_3:index_9]), np.nanmean(sigma_E[index_3:index_9]), np.nanmean(sigma_Z[index_3:index_9])
 
@@ -162,9 +164,13 @@ for receiver in receiver_stations:
 
         noise_stored = [sigma_N[index_21:], sigma_E[index_21:], sigma_Z[index_21:]]
         t2 = time.time()
-        print("time taken for the calculations:",t2-t_calc)
-        print("time taken for reading the file:",t_read-t_calc)
-        print("time taken in total:",-t_read+t2)
+        print("time consumption:")
+        print("reading the file:",t_read-t_calc)
+        print("the calculations:",t2-t_calc)
+        print("the calculations part1: noise calculations:",-t_calc+t_calc_1)
+        print("the calculations part2 concatenate:",-t_calc_1+t_calc_2)
+        print("the calculations part3 taking mean and indexing:",-t_calc_2+t2)
+        print("in total:",-t_read+t2)
 
     # plot_datapoints()
 

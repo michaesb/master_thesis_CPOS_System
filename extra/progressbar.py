@@ -15,3 +15,6 @@ if __name__ == '__main__':
     for i in range(size):
         progress_bar(i,size)
         time.sleep(0.2)
+    for i in range(4):
+        for j in range(100):
+            print(i*100+j)

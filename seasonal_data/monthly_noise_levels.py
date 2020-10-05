@@ -5,12 +5,12 @@ import sys, time
 sys.path.insert(0, "..")
 from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
-from extra.error_calculation_NMA_standard import accuracy_NMEA, filtering_outliers
+from extra.error_calculation_NMA_standard import accuracy_NMEA_opt, filtering_outliers
 
 office_computer = 0
 home_computer = 0
 
-def recording_data_2018(receiver):
+def recording_data_2018():
     obj = ReadNMEAData()
     obj.read_textfile(adress,verbose=False)
     #print(obj.day_year, receiver)
@@ -66,47 +66,42 @@ for i in range(1,nr_days):
         date.append(str(i))
 
 nr_stations = 0
-for receiver in receiver_stations:
+for j in range(len(receiver_stations)):
     datapoints_per_day = np.zeros(nr_days)
     dataline_per_day = np.zeros(nr_days)
     for i in range(len(date)):
-        progress_bar(i,len(date))
+        progress_bar(int(i+j*nr_days) ,nr_days*(1+len(receiver_stations)))
         adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
-        "NMEA_M"+receiver +"_"+date[i]+"0.log"
+        "NMEA_M"+receiver_stations[j] +"_"+date[i]+"0.log"
 
         try:
-            N,E,Z,t = recording_data_2018(receiver)
+            N,E,Z,t = recording_data_2018()
             home_computer = 1
         except:
             try:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
-                receiver+"_"+date[i]+"0.log"
-                N,E,Z,t = recording_data_2018(receiver)
+                receiver_stations[j]+"_"+date[i]+"0.log"
+                N,E,Z,t = recording_data_2018()
                 Office_computer = 1
             except:
-                print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
-                print(adress)
+                # print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
+                # print(adress)
                 noise_Z[i,nr_stations] = np.nan
                 noise_N[i,nr_stations] = np.nan
                 noise_E[i,nr_stations] = np.nan
                 continue
 
-        # N,N_filtered = filtering_outliers(N,verbose=False)
-        # E,E_filtered = filtering_outliers(E,verbose=False)
-        # Z,Z_filtered = filtering_outliers(Z,verbose=False)
         if len(Z) < 60:
             noise_Z[i,nr_stations] = np.nan
             noise_N[i,nr_stations] = np.nan
             noise_E[i,nr_stations] = np.nan
         else:
-            sigma_Z = accuracy_NMEA(Z-np.median(Z))
+            sigma_Z = accuracy_NMEA_opt(Z-np.median(Z))
             noise_Z[i,nr_stations] = np.nanmedian(sigma_Z)
-            sigma_N = accuracy_NMEA(N-np.median(N))
+            sigma_N = accuracy_NMEA_opt(N-np.median(N))
             noise_N[i,nr_stations] = np.nanmedian(sigma_N)
-            sigma_E = accuracy_NMEA(E-np.median(E))
+            sigma_E = accuracy_NMEA_opt(E-np.median(E))
             noise_E[i,nr_stations] = np.nanmedian(sigma_E)
-    print(nr_stations, len(receiver_stations))
-    nr_stations += 1
     # plot_datapoints()
 plotting_noise(noise_N," coordinate N")
 plotting_noise(noise_E," coordinate E")

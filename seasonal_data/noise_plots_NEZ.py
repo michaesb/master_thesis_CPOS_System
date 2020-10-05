@@ -162,9 +162,9 @@ for receiver in receiver_stations:
 
         noise_stored = [sigma_N[index_21:], sigma_E[index_21:], sigma_Z[index_21:]]
         t2 = time.time()
-        print("time taken for the calculations:",t_calc-t2)
-        print("time taken for the calculations:",t_read-t_calc-t2)
-        print("time taken in total:",t_read-t2)
+        print("time taken for the calculations:",t2-t_calc)
+        print("time taken for the calculations:",t2-t_read+t_calc)
+        print("time taken in total:",-t_read+t2)
 
     # plot_datapoints()
 

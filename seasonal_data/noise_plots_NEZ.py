@@ -17,6 +17,7 @@ def recording_data_2018(receiver):
     datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
     N,E,Z = obj.coordinates
     t = obj.time_h
+    print(obj.day_year)
     return N,E,Z,t
 
 
@@ -31,10 +32,10 @@ def plot_datapoints():
     plt.show()
 
 def plotting_noise_Z():
-    plt.plot(noise_Z[:,0], label="21-03")
-    plt.plot(noise_Z[:,1], label="3-9" )
-    plt.plot(noise_Z[:,2], label="9-15")
-    plt.plot(noise_Z[:,3], label="15-21")
+    plt.plot(noise_Z[:,1], "-g", label="3-9")
+    plt.plot(noise_Z[:,2], "blue", label="9-15")
+    plt.plot(noise_Z[:,3], "black", label="15-21" )
+    plt.plot(noise_Z[:,0],"-r",label="21-03",)
     plt.title("Z-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
@@ -48,10 +49,10 @@ def plotting_noise_Z():
     plt.show()
 
 def plotting_noise_N():
-    plt.plot(noise_N[:,0], label="21-03")
-    plt.plot(noise_N[:,1], label="3-9" )
-    plt.plot(noise_N[:,2], label="9-15")
-    plt.plot(noise_N[:,3], label="15-21")
+    plt.plot(noise_N[:,1], "-g", label="3-9")
+    plt.plot(noise_N[:,2], "blue", label="9-15")
+    plt.plot(noise_N[:,3], "black", label="15-21" )
+    plt.plot(noise_N[:,0],"-r",label="21-03",)
     plt.title("N-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
@@ -65,10 +66,10 @@ def plotting_noise_N():
     plt.show()
 
 def plotting_noise_E():
-    plt.plot(noise_E[:,0], label="21-03")
-    plt.plot(noise_E[:,1], label="3-9" )
-    plt.plot(noise_E[:,2], label="9-15")
-    plt.plot(noise_E[:,3], label="15-21")
+    plt.plot(noise_E[:,1], "-g", label="3-9")
+    plt.plot(noise_E[:,2], "blue", label="9-15")
+    plt.plot(noise_E[:,3], "black", label="15-21" )
+    plt.plot(noise_E[:,0],"-r",label="21-03",)
     plt.title("E-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
@@ -147,7 +148,6 @@ for receiver in receiver_stations:
             noise_N[i,0] =np.nansum(np.concatenate([sigma_N[index_21:],noise_stored[0]]))
             noise_E[i,0] =np.nansum(np.concatenate([sigma_E[index_21:],noise_stored[1]]))
             noise_Z[i,0] =np.nansum(np.concatenate([sigma_Z[index_21:],noise_stored[2]]))
-
         noise_N[i,1], noise_E[i,1], noise_Z[i,1] = \
         np.nansum(sigma_N[index_3:index_9]), np.nansum(sigma_E[index_3:index_9]), np.nansum(sigma_Z[index_3:index_9])
 

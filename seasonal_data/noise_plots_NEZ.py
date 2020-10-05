@@ -148,17 +148,17 @@ for receiver in receiver_stations:
             noise_E[i,0] = np.nan
             noise_Z[i,0] = np.nan
         else:
-            noise_N[i,0] =np.nansum(np.concatenate([sigma_N[index_21:],noise_stored[0]]))
-            noise_E[i,0] =np.nansum(np.concatenate([sigma_E[index_21:],noise_stored[1]]))
-            noise_Z[i,0] =np.nansum(np.concatenate([sigma_Z[index_21:],noise_stored[2]]))
+            noise_N[i,0] =np.nanmean(np.concatenate([sigma_N[index_21:],noise_stored[0]]))
+            noise_E[i,0] =np.nanmean(np.concatenate([sigma_E[index_21:],noise_stored[1]]))
+            noise_Z[i,0] =np.nanmean(np.concatenate([sigma_Z[index_21:],noise_stored[2]]))
         noise_N[i,1], noise_E[i,1], noise_Z[i,1] = \
-        np.nansum(sigma_N[index_3:index_9]), np.nansum(sigma_E[index_3:index_9]), np.nansum(sigma_Z[index_3:index_9])
+        np.nanmean(sigma_N[index_3:index_9]), np.nanmean(sigma_E[index_3:index_9]), np.nanmean(sigma_Z[index_3:index_9])
 
         noise_N[i,2], noise_E[i,2], noise_Z[i,2] = \
-        np.nansum(sigma_N[index_9:index_15]), np.nansum(sigma_E[index_9:index_15]), np.nansum(sigma_Z[index_9:index_15])
+        np.nanmean(sigma_N[index_9:index_15]), np.nanmean(sigma_E[index_9:index_15]), np.nanmean(sigma_Z[index_9:index_15])
 
         noise_N[i,3], noise_E[i,3], noise_Z[i,3] = \
-        np.nansum(sigma_N[index_15:index_21]), np.nansum(sigma_E[index_15:index_21]), np.nansum(sigma_Z[index_15:index_21]),
+        np.nanmean(sigma_N[index_15:index_21]), np.nanmean(sigma_E[index_15:index_21]), np.nanmean(sigma_Z[index_15:index_21]),
 
         noise_stored = [sigma_N[index_21:], sigma_E[index_21:], sigma_Z[index_21:]]
         t2 = time.time()

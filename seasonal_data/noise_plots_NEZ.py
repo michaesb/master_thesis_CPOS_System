@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter
+# from scipy.signal import savgol_filter
 import sys, time
 sys.path.insert(0, "..")
 from extra.progressbar import progress_bar
@@ -108,6 +108,7 @@ for receiver in receiver_stations:
     dataline_per_day = np.zeros(nr_days)
     for i in range(len(date)):
         progress_bar(i,len(date))
+        t_read = time.time()
         adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
         "NMEA_M"+receiver +"_"+date[i]+"0.log"
 
@@ -129,6 +130,7 @@ for receiver in receiver_stations:
                 continue
 
         # Z,Z_filtered = filtering_outliers(Z,verbose=False)
+        t_calc = time.time()
         if len(Z) < 60:
             noise_N[i,:] = np.nan
             noise_E[i,:] = np.nan
@@ -159,6 +161,10 @@ for receiver in receiver_stations:
         np.nansum(sigma_N[index_15:index_21]), np.nansum(sigma_E[index_15:index_21]), np.nansum(sigma_Z[index_15:index_21]),
 
         noise_stored = [sigma_N[index_21:], sigma_E[index_21:], sigma_Z[index_21:]]
+        t2 = time.time()
+        print("time taken for the calculations:",t_calc-t2)
+        print("time taken for the calculations:",t_read-t_calc-t2)
+        print("time taken in total:",t_read-t2)
 
     # plot_datapoints()
 

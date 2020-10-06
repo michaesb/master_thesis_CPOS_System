@@ -59,3 +59,4 @@ for j in range(len(receiver_stations)):
                 # print(adress)
                 pos_N[i,j] = np.nan
                 continue
+plot_datapoints()

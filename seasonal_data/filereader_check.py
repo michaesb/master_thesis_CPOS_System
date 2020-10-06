@@ -7,10 +7,11 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def extract_points():
-    obj = ReadNMEAData()
-    obj.read_textfile(adress,verbose=False)
-    pos_N[i,j] = np.mean(obj.coordinates[0])
-    print(obj.day_year,i)
+    with open(adress, 'r') as infile:
+         date,data = infile.readline().spilt(" ")
+         print(date[:11])
+         data = data.line(",")
+         pos_N[i,j] = data[2][:2]+ data[3:]/60
 
 
 

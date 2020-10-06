@@ -7,6 +7,7 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def extract_points():
+    obj = ReadNMEAData()
     obj.read_textfile(adress,verbose=False)
     N,E,Z = obj.coordinates
     pos_N[i,j] = np.mean(N)

@@ -77,13 +77,13 @@ for j in range(len(receiver_stations)):
         try:
             N,E,Z,t = recording_data_2018()
             home_computer = 1
-        except:
+        except FileNotFoundError:
             try:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
                 receiver_stations[j]+"_"+date[i]+"0.log"
                 N,E,Z,t = recording_data_2018()
                 Office_computer = 1
-            except:
+            except FileNotFoundError:
                 # print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
                 # print(adress)
                 noise_Z[i,nr_stations] = np.nan

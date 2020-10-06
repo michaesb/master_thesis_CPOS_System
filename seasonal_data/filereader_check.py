@@ -10,7 +10,6 @@ def extract_points():
     obj.read_textfile(adress,verbose=False)
     N,E,Z = obj.coordinates
     pos_N[i,j] = np.mean(N)
-    Office_computer = 1
     print(obj.day_year,i)
 
 
@@ -49,12 +48,14 @@ for j in range(len(receiver_stations)):
             adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
             "NMEA_M"+receiver_stations[j] +"_"+date[i]+"0.log"
             extract_points()
-        except:
+            home_computer = 1
+        except FileNotFoundError:
             try:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
                 receiver_stations[j]+"_"+date[i]+"0.log"
                 extract_points()
-            except:
+                office_computer = 1
+            except FileNotFoundError:
                 # print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
                 # print(adress)
                 pos_N[i,j] = np.nan

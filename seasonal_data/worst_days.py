@@ -109,7 +109,7 @@ for receiver in receiver_stations:
             noise_Z_12[i] =np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/4):int(len(sigma_Z_smooth)/2)])
             noise_Z_18[i] = np.median(sigma_Z_smooth[int(len(sigma_Z_smooth)/2):int(3*len(sigma_Z_smooth)/4)])
             noise_Z_24[i] =np.median(sigma_Z_smooth[int(3*len(sigma_Z_smooth)/4):])
-        except:
+        except FileNotFoundError:
             print("no"+receiver+"file here at day: " + str(i) +" year: "+year)
             print(adress)
             continue

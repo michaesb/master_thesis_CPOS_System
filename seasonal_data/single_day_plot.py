@@ -41,12 +41,12 @@ for receiver in receiver_stations:
     try:
         obj.read_textfile(adress,verbose=False,filter_4=True)
 
-    except:
+    except FileNotFoundError:
         try:
             adress = "/run/media/michaelsb/HDD Linux/data/NMEA/2018/"+date+"/"+\
             "NMEA_M"+receiver +"_"+date+"0.log"
             obj.read_textfile(adress,verbose=False,filter_4=True)
-        except:
+        except FileNotFoundError:
             print("path not found")
             print(adress)
             continue

@@ -18,8 +18,8 @@ pos_N = np.zeros((nr_days,len(receiver_stations)))
 
 def plot_datapoints():
     for j in range(len(receiver_stations)):
-        plt.plot(n_pos[:,j])
-        plt.plot(n_pos[:,j],"*")
+        plt.plot(pos_N[:,j])
+        plt.plot(pos_N[:,j],"*")
     plt.legend(receiver_stations)
     plt.ylabel("datapoints read with average N positions")
     plt.xlabel("time [days]")

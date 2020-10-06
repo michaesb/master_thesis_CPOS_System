@@ -9,8 +9,7 @@ from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 def extract_points():
     obj = ReadNMEAData()
     obj.read_textfile(adress,verbose=False)
-    N,E,Z = obj.coordinates
-    pos_N[i,j] = np.mean(N)
+    pos_N[i,j] = np.mean(obj.coordinates[0])
     print(obj.day_year,i)
 
 
@@ -27,7 +26,7 @@ pos_N = np.zeros((nr_days,len(receiver_stations)))
 
 def plot_datapoints():
     for j in range(len(receiver_stations)):
-        plt.plot(pos_N[:,j])
+        plt.plot(pos_N[:,j],'*')
     plt.legend(receiver_stations)
     plt.ylabel("datapoints read with average N positions")
     plt.xlabel("time [days]")

@@ -13,18 +13,16 @@ home_computer = 0
 def recording_data_2018(receiver):
     obj = ReadNMEAData()
     obj.read_textfile(adress,verbose=False)
-    #print(obj.day_year, receiver)
     datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
     N,E,Z = obj.coordinates
     t = obj.time_h
-    # print(obj.day_year)
     return N,E,Z,t
 
 
 def plot_datapoints():
-    plt.plot(datapoints_per_day)
-    plt.plot(datapoints_per_day,"*")
-    plt.plot(dataline_per_day)
+    plt.plot(date,datapoints_per_day)
+    plt.plot(date,datapoints_per_day,"*")
+    plt.plot(date,dataline_per_day)
     plt.legend(["gps fix","other point"])
     plt.ylabel("datapoints /lines ")
     plt.xlabel("time [days]")
@@ -32,10 +30,10 @@ def plot_datapoints():
     plt.show()
 
 def plotting_noise_Z():
-    plt.plot(noise_Z[:,1], "-g", label="3-9")
-    plt.plot(noise_Z[:,2], "blue", label="9-15")
-    plt.plot(noise_Z[:,3], "black", label="15-21" )
-    plt.plot(noise_Z[:,0],"-r",label="21-03",)
+    plt.plot(date,noise_Z[:,1], "-g", label="3-9")
+    plt.plot(date,noise_Z[:,2], "blue", label="9-15")
+    plt.plot(date,noise_Z[:,3], "black", label="15-21" )
+    plt.plot(date,noise_Z[:,0],"-r",label="21-03",)
     plt.title("Z-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
@@ -49,10 +47,10 @@ def plotting_noise_Z():
     plt.show()
 
 def plotting_noise_N():
-    plt.plot(noise_N[:,1], "-g", label="3-9")
-    plt.plot(noise_N[:,2], "blue", label="9-15")
-    plt.plot(noise_N[:,3], "black", label="15-21" )
-    plt.plot(noise_N[:,0],"-r",label="21-03",)
+    plt.plot(date,noise_N[:,1], "-g", label="3-9")
+    plt.plot(date,noise_N[:,2], "blue", label="9-15")
+    plt.plot(date,noise_N[:,3], "black", label="15-21" )
+    plt.plot(date,noise_N[:,0],"-r",label="21-03",)
     plt.title("N-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
@@ -66,10 +64,10 @@ def plotting_noise_N():
     plt.show()
 
 def plotting_noise_E():
-    plt.plot(noise_E[:,1], "-g", label="3-9")
-    plt.plot(noise_E[:,2], "blue", label="9-15")
-    plt.plot(noise_E[:,3], "black", label="15-21" )
-    plt.plot(noise_E[:,0],"-r",label="21-03",)
+    plt.plot(date,noise_E[:,1], "-g", label="3-9")
+    plt.plot(date,noise_E[:,2], "blue", label="9-15")
+    plt.plot(date,noise_E[:,3], "black", label="15-21" )
+    plt.plot(date,noise_E[:,0],"-r",label="21-03",)
     plt.title("E-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")

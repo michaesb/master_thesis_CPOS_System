@@ -5,7 +5,6 @@ import sys, time
 sys.path.insert(0, "..")
 from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
-from extra.error_calculation_NMA_standard import accuracy_NMEA_opt, filtering_outliers
 
 office_computer = 0
 home_computer = 0

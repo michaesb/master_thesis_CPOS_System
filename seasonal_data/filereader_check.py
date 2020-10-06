@@ -8,7 +8,8 @@ from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def extract_points():
     with open(adress, 'r') as infile:
-         date,data = infile.readline().spilt(" ")
+         data_main = infile.readline()
+         date, extra, data = data_main:split(" ")
          print(date[:11])
          data = data.line(",")
          pos_N[i,j] = data[2][:2]+ data[3:]/60

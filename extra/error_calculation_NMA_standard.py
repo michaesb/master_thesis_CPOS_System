@@ -25,6 +25,7 @@ def filtering_outliers(z,verbose=False, t=np.array([False])):
 def accuracy_NMEA(z):
     """
     Calculates the noise over a time period t.
+    Was the bottleneck where the most time was used here. See optimized version below.
     """
     N = len(z); size = int(N-60)
     sigma = np.zeros(size)
@@ -37,6 +38,7 @@ def accuracy_NMEA(z):
 def accuracy_NMEA_opt(z):
     """
     Calculates the noise over a time period t.
+    Optimized with numba which increased runtime greatly.
     """
     N = len(z); size = int(N-60)
     sigma = np.zeros(size)
@@ -54,13 +56,16 @@ def accuracy_NMEA_opt(z):
 
 
 if __name__ == '__main__':
-    x = np.linspace(0,1,120000)
+    """
+    Testing runtime on the regular
+    """
+    n = int(1e+6)
+    x = np.linspace(0,1,n)
     y =np.sin(x)
     t1 = time.time()
     n =accuracy_NMEA(x)
-    print(time.time()-t1)
+    print(time.time()-t1, "numpy array") #14 seconds
     t2 = time.time()
     n_opt = accuracy_NMEA_opt(x)
-    print(time.time()-t2)
-
-    print(accuracy_NMEA(y), "y")
+    print(time.time()-t2,"numba") # 0.5 seconds
+    #big improvement in runtime

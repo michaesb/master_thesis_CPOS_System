@@ -34,11 +34,12 @@ def accuracy_NMEA(z):
         sigma[i-30] = ((np.sum( abs(z[i-30:i+30]-z_ave)**2 ) )/((60)-1))**0.5
     return sigma
 
-@jit(nopython=True, parallel=True)
+@njit(parallel=True)
 def accuracy_NMEA_opt(z):
     """
     Calculates the noise over a time period t.
     Optimized with numba which increased runtime greatly.
+    (Mutliple cores and improved with fortran/C for loops)
     """
     N = len(z); size = int(N-60)
     sigma = np.zeros(size)
@@ -57,15 +58,15 @@ def accuracy_NMEA_opt(z):
 
 if __name__ == '__main__':
     """
-    Testing runtime on the regular
+    Testing runtime on the regular and the optimized script.
     """
-    n = int(1e+8)
+    n = int(5e+7)
     x = np.linspace(0,1,n)
     y =np.sin(x)
     t2 = time.time()
     n_opt = accuracy_NMEA_opt(y)
-    print(time.time()-t2,"numba") # 0.5 seconds
-    #big improvement in runtime
+    print(time.time()-t2,"numba") # 3 seconds
     t1 = time.time()
     n =accuracy_NMEA(y)
-    print(time.time()-t1, "numpy array") #14 seconds
+    print(time.time()-t1, "numpy array") #771 seconds = 12 min 51 sec
+    #big improvement in runtime

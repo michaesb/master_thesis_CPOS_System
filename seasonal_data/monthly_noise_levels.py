@@ -19,17 +19,6 @@ def recording_data_2018():
     t = obj.time_h
     return N,E,Z,t
 
-
-def plot_datapoints():
-    plt.plot(datapoints_per_day)
-    plt.plot(datapoints_per_day,"*")
-    plt.plot(dataline_per_day)
-    plt.legend(["gps fix","other point"])
-    plt.ylabel("datapoints/lines ")
-    plt.xlabel("time [days]")
-    plt.title("datapoints over a full year at "+receiver)
-    plt.show()
-
 def plotting_noise(noise,title_part):
     for i in range(nr_stations):
         plt.plot(noise[:,i])
@@ -39,10 +28,10 @@ def plotting_noise(noise,title_part):
     plt.legend(receiver_stations)
     if office_computer:
         plt.savefig("../../plot_master_thesis/auto_plots/Z_coordinate_noise_"+\
-                    receiver+"_"+year)
+                     "all_stations_"+"_"+year)
     if home_computer:
         plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/Z_coordinate_noise_"+\
-                    receiver+"_"+year)
+                     "all_stations_"+"_"+year)
     plt.show()
 
 receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]

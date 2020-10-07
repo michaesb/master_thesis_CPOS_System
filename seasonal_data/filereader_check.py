@@ -8,11 +8,14 @@ from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def extract_points():
     with open(adress, 'r') as infile:
-         data_main = infile.readline()
-         date, extra, data = data_main.split(" ")
-         print(date[:11])
-         data = data.line(",")
-         pos_N[i,j] = data[2][:2]+ data[3:]/60
+        data_main = infile.readline()
+        print(data_main.split(" ")[0],i,receiver_stations[j])
+        data = data_main.split(" ")[5]
+        try:
+            pos_N[i,j] = float(data.split(",")[2][:2])\
+                        + float(data.split(",")[2][3:])/60
+        except ValueError:
+            print("hello there")
 
 
 
@@ -23,8 +26,7 @@ receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
 nr_days = 365
 year = "2018"
 date = []
-pos_N = np.zeros((nr_days,len(receiver_stations)))
-
+pos_N = np.zeros((nr_days,len(receiver_stations)))*np.nan
 
 def plot_datapoints():
     for j in range(len(receiver_stations)):

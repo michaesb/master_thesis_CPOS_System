@@ -2,7 +2,6 @@ import numpy as np
 import time, sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
-import matplotlib.pyplot as plt
 """
 NMEA
 """
@@ -11,6 +10,7 @@ class ReadNMEAData():
         """
         initializing variables and lists
         """
+
         #info about the file
         self.textfile = False # name for the textfile
         self.date = "False"
@@ -46,7 +46,7 @@ class ReadNMEAData():
         self.geo_seperation_unit = -1
         self.age_of_data = -1
         self.checksum = []
-        self.nr_lines = -1
+        self.nr_lines = 0
 
         #WGS-84 geodetic constants
         self.semi_major_a = 6378137.0  # WGS-84 Earth semimajor axis (m)
@@ -66,8 +66,8 @@ class ReadNMEAData():
         """
 
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         self.textfile = textfile
+        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
         if self.verbose:
             print("reading NMEA textfile with " +str(self.nr_lines)+" lines")
             if filter_4:
@@ -170,6 +170,7 @@ class ReadNMEAData():
         if self.verbose:
             t2 = time.time()
             print("time taken to read = %g"%(t2-t1))
+
     #intiliziing arrays and tests
     def check_read_data(self):
         """

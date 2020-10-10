@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from numba import njit, jit, prange
+from numba import njit, prange
 """
 the accuracy of a sample mean
 """
@@ -25,7 +25,9 @@ def filtering_outliers(z,verbose=False, t=np.array([False])):
 def accuracy_NMEA(z):
     """
     Calculates the noise over a time period t.
-    Was the bottleneck where the most time was used here. See optimized version below.
+    Was the bottleneck where the most time was used here.
+    This does not require numba
+    See optimized version below.
     """
     N = len(z); size = int(N-60)
     sigma = np.zeros(size)
@@ -34,10 +36,11 @@ def accuracy_NMEA(z):
         sigma[i-30] = ((np.sum( abs(z[i-30:i+30]-z_ave)**2 ) )/((60)-1))**0.5
     return sigma
 
-@njit(parallel=True)
+@njit(parallel=True, nogil=True)
 def accuracy_NMEA_opt(z):
     """
     Calculates the noise over a time period t.
+    This requires numba.
     Optimized with numba which increased runtime greatly.
     (Mutliple cores and improved with fortran/C for loops)
     """

@@ -8,14 +8,18 @@ from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 
 def extract_points():
     with open(adress, 'r') as infile:
-        data_main = infile.readline()
-        print(data_main.split(" ")[0],i,receiver_stations[j])
-        data = data_main.split(" ")[5]
-        try:
-            pos_N[i,j] = float(data.split(",")[2][:2])\
+        counter = 1
+        for line in infile:
+            if counter:
+                print(line.split(" ")[0],i,receiver_stations[j])
+                counter = 0
+            data = line.split(" ")[5]
+            try:
+                pos_N[i,j] = float(data.split(",")[2][:2])\
                         + float(data.split(",")[2][3:])/60
-        except ValueError:
-            print("hello there")
+                break
+            except ValueError:
+                continue
 
 
 

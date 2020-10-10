@@ -16,22 +16,10 @@ def recording_data_2018():
     #print(obj.day_year, receiver)
     datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
     N,E,Z = obj.coordinates
-    t = obj.time_h
-    return N,E,Z,t
-
-
-def plot_datapoints():
-    plt.plot(datapoints_per_day)
-    plt.plot(datapoints_per_day,"*")
-    plt.plot(dataline_per_day)
-    plt.legend(["gps fix","other point"])
-    plt.ylabel("datapoints/lines ")
-    plt.xlabel("time [days]")
-    plt.title("datapoints over a full year at "+receiver)
-    plt.show()
+    return N,E,Z
 
 def plotting_noise(noise,title_part):
-    for i in range(nr_stations):
+    for i in range(len(receiver_stations)):
         plt.plot(noise[:,i])
     plt.title("noise over "+year+ str(title_part))
     plt.ylabel("sample noise [m]")
@@ -39,10 +27,10 @@ def plotting_noise(noise,title_part):
     plt.legend(receiver_stations)
     if office_computer:
         plt.savefig("../../plot_master_thesis/auto_plots/Z_coordinate_noise_"+\
-                    receiver+"_"+year)
+                     "all_stations_"+"_"+year)
     if home_computer:
         plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/Z_coordinate_noise_"+\
-                    receiver+"_"+year)
+                     "all_stations_"+"_"+year)
     plt.show()
 
 receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
@@ -51,9 +39,9 @@ year = "2018"
 datapoints_per_day= np.zeros(nr_days)
 dataline_per_day= np.zeros(nr_days)
 
-noise_Z = np.zeros((nr_days,len(receiver_stations)))
-noise_N = np.zeros((nr_days,len(receiver_stations)))
-noise_E = np.zeros((nr_days,len(receiver_stations)))
+noise_Z = np.zeros((nr_days,len(receiver_stations)))*np.nan
+noise_N = np.zeros((nr_days,len(receiver_stations)))*np.nan
+noise_E = np.zeros((nr_days,len(receiver_stations)))*np.nan
 
 date = []
 
@@ -67,21 +55,19 @@ for i in range(1,nr_days):
 
 nr_stations = 0
 for j in range(len(receiver_stations)):
-    datapoints_per_day = np.zeros(nr_days)
-    dataline_per_day = np.zeros(nr_days)
     for i in range(len(date)):
         progress_bar(int(i+j*nr_days) ,nr_days*(1+len(receiver_stations)))
         adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
         "NMEA_M"+receiver_stations[j] +"_"+date[i]+"0.log"
 
         try:
-            N,E,Z,t = recording_data_2018()
+            N,E,Z = recording_data_2018()
             home_computer = 1
         except FileNotFoundError:
             try:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
                 receiver_stations[j]+"_"+date[i]+"0.log"
-                N,E,Z,t = recording_data_2018()
+                N,E,Z = recording_data_2018()
                 Office_computer = 1
             except FileNotFoundError:
                 # print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
@@ -97,12 +83,11 @@ for j in range(len(receiver_stations)):
             noise_E[i,nr_stations] = np.nan
         else:
             sigma_Z = accuracy_NMEA_opt(Z-np.median(Z))
-            noise_Z[i,nr_stations] = np.nanmedian(sigma_Z)
+            noise_Z[i,j] = np.nanmedian(sigma_Z)
             sigma_N = accuracy_NMEA_opt(N-np.median(N))
-            noise_N[i,nr_stations] = np.nanmedian(sigma_N)
+            noise_N[i,j] = np.nanmedian(sigma_N)
             sigma_E = accuracy_NMEA_opt(E-np.median(E))
-            noise_E[i,nr_stations] = np.nanmedian(sigma_E)
-        print(sigma_Z)
+            noise_E[i,j] = np.nanmedian(sigma_E)
     # plot_datapoints()
 plotting_noise(noise_N," coordinate N")
 plotting_noise(noise_E," coordinate E")

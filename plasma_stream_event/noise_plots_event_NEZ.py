@@ -7,27 +7,16 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 from extra.error_calculation_NMA_standard import accuracy_NMEA_opt, filtering_outliers
 
-months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"]
+
 office_computer = 0
 home_computer = 0
+laptop_computer = 0
 
 def recording_data_2018(receiver):
     obj = ReadNMEAData()
     obj.read_textfile(adress,verbose=False)
-    datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
     N,E,Z = obj.coordinates
     return N,E,Z
-
-
-def plot_datapoints():
-    plt.plot(date,datapoints_per_day)
-    plt.plot(date,datapoints_per_day,"*")
-    plt.plot(date,dataline_per_day)
-    plt.legend(["gps fix","other point"])
-    plt.ylabel("datapoints /lines ")
-    plt.xlabel("time [days]")
-    plt.title("datapoints over a full year at "+receiver)
-    plt.show()
 
 def plotting_noise_Z():
     plt.plot(date,noise_Z[:,1], "-g", label="3-9")
@@ -84,12 +73,10 @@ def plotting_noise_E():
     plt.show()
 
 receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
-nr_days = 365
 year = "2018"
-datapoints_per_day= np.zeros(nr_days)
-dataline_per_day= np.zeros(nr_days)
+date = ["148","149","150","151","152","153","154","156","157"]
+nr_days = len(date)
 
-date = []
 
 noise_N = np.zeros((nr_days,4))
 noise_E = np.zeros((nr_days,4))
@@ -104,29 +91,33 @@ for i in range(1,366):
         date.append(str(i))
 
 noise_stored = []
-for receiver in receiver_stations:
-    datapoints_per_day = np.zeros(nr_days)
-    dataline_per_day = np.zeros(nr_days)
+for j in range(len(receiver_stations)):
     for i in range(len(date)):
         progress_bar(i,len(date))
         adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
-        "NMEA_M"+receiver +"_"+date[i]+"0.log"
+        "NMEA_M"+receiver_stations[j] +"_"+date[i]+"0.log"
         try:
-            N,E,Z = recording_data_2018(receiver)
+            N,E,Z = recording_data_2018(receiver_stations[j])
             home_computer = 1
         except FileNotFoundError:
             try:
                 adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
-                receiver+"_"+date[i]+"0.log"
-                N,E,Z = recording_data_2018(receiver)
+                receiver_stations[j]+"_"+date[i]+"0.log"
+                N,E,Z = recording_data_2018(receiver_stations[j])
                 Office_computer = 1
             except FileNotFoundError:
-                print("no "+receiver+" file here at day: " + str(i) +" year: "+year)
-                print(adress)
-                noise_N[i,:] = np.nan
-                noise_E[i,:] = np.nan
-                noise_Z[i,:] = np.nan
-                continue
+                try:
+                    adress = "/home/michael/Documents/Data/NMEA/"+year+"/"+date[i]+"/NMEA_M"\
+                    +receiver_stations[j]+"_"+date[i]+"0.log"
+                    N,E,Z = recording_data_2018(receiver_stations[j])
+                    laptop_computer = 1
+                except FileNotFoundError:
+                    print("no "+receiver_stations[j]+" file here at day: " + str(i) +" year: "+year)
+                    print(adress)
+                    noise_N[i,:] = np.nan
+                    noise_E[i,:] = np.nan
+                    noise_Z[i,:] = np.nan
+                    continue
 
         # Z,Z_filtered = filtering_outliers(Z,verbose=False)
         if len(Z) < 60:
@@ -166,10 +157,3 @@ for receiver in receiver_stations:
     plotting_noise_N()
     plotting_noise_E()
     plotting_noise_Z()
-
-"""
-0.43563175201416016 :reading text files
-0.0033118724822998047 :noise calculation
-0.0007843971252441406 :mean and storing values
-0.4397318363189697 :total time
-"""

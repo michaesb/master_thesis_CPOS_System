@@ -7,13 +7,13 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 from extra.error_calculation_NMA_standard import accuracy_NMEA_opt, filtering_outliers
 
-months_str =    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"]
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"]
 office_computer = 0
 home_computer = 0
 
 def recording_data_2018(receiver):
-    obj.read_textfile(adress,verbose=False)
     obj = ReadNMEAData()
+    obj.read_textfile(adress,verbose=False)
     datapoints_per_day[i], dataline_per_day[i] = obj.datapoints
     N,E,Z = obj.coordinates
     return N,E,Z
@@ -36,7 +36,7 @@ def plotting_noise_Z():
     plt.plot(date,noise_Z[:,0],"-r",label="21-03",)
     plt.title("Z-coordinate noise at "+receiver+" over "+year)
     plt.ylabel("sample noise [m]")
-    plt.xticks(np.linspace(0,11/12,12)*len(date),months_str)
+    plt.xticks(np.linspace(0,11/12,12)*len(date),months)
     plt.xlabel("days")
     plt.legend()
     if office_computer:

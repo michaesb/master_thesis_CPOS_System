@@ -102,6 +102,7 @@ for j in range(len(receiver_stations)):
             noise_N[i,nr_stations] = np.nanmedian(sigma_N)
             sigma_E = accuracy_NMEA_opt(E-np.median(E))
             noise_E[i,nr_stations] = np.nanmedian(sigma_E)
+        print(sigma_Z)
     # plot_datapoints()
 plotting_noise(noise_N," coordinate N")
 plotting_noise(noise_E," coordinate E")

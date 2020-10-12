@@ -15,28 +15,31 @@ def recording_data_2018():
     obj = ReadNMEAData()
     obj.read_textfile(adress,verbose=False)
     print(obj.day_year, receiver_stations[j])
+    if receiver_stations[j] == "HFS":
+        doy.append(str(obj.day_year))
     N,E,Z = obj.coordinates
     return N,E,Z
 
 def plotting_noise(noise,title_part):
     for i in range(len(receiver_stations)):
-        plt.plot([float(i) for i in date],noise[:,i])
+        plt.plot(date,noise[:,i])
     plt.title("noise over "+year+ str(title_part))
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
+    # plt.xticks([i.split(" ")[:1] for i in doy])
     plt.legend(receiver_stations)
     if office_computer:
-        plt.savefig("../../plot_master_thesis/auto_plots/Z_coordinate_noise_"+\
+        plt.savefig("../../plot_master_thesis/auto_plots/Z_coordinate_noise_event"+\
                      "all_stations_"+"_"+year)
     if home_computer:
-        plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/Z_coordinate_noise_"+\
+        plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/Z_coordinate_noise_event"+\
                      "all_stations_"+"_"+year)
     plt.show()
 
 receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
 year = "2018"
 date = ["148","149","150","151","152","153","154","156","157"]
-
+doy = []
 nr_days = len(date)
 
 noise_Z = np.zeros((nr_days,len(receiver_stations)))*np.nan
@@ -81,7 +84,6 @@ for j in range(len(receiver_stations)):
         else:
             sigma_Z = accuracy_NMEA_opt(Z-np.median(Z))
             noise_Z[i,j] = np.nanmedian(sigma_Z)
-            print(noise_Z[i,j])
             sigma_N = accuracy_NMEA_opt(N-np.median(N))
             noise_N[i,j] = np.nanmedian(sigma_N)
             sigma_E = accuracy_NMEA_opt(E-np.median(E))

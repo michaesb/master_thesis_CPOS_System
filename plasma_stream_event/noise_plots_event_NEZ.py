@@ -19,57 +19,50 @@ def recording_data_2018(receiver):
     return N,E,Z
 
 def plotting_noise_Z():
-    plt.plot(date,noise_Z[:,1], "-g", label="3-9")
-    plt.plot(date,noise_Z[:,2], "blue", label="9-15")
-    plt.plot(date,noise_Z[:,3], "black", label="15-21" )
-    plt.plot(date,noise_Z[:,0],"-r",label="21-03",)
-    plt.title("Z-coordinate noise at "+receiver+" over "+year)
+    for i in range(day_res):
+        plt.plot(date,noise_Z[:,i],"-*",label=str(24/day_res*i)+" - "+str(24/day_res*(i+1)))
+    plt.title("Z-coordinate noise at "+receiver_stations[j]+" over "+year)
     plt.ylabel("sample noise [m]")
-    plt.xticks(np.linspace(0,11/12,12)*len(date),months)
     plt.xlabel("days")
     plt.legend()
     if office_computer:
         plt.savefig("../../plot_master_thesis/auto_plots/Z_coordinate_noise_"+\
-                    receiver+"_"+year)
+                    receiver_stations[j]+"_"+year)
     if home_computer:
         plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/Z_coordinate_noise_"+\
-                    receiver+"_"+year)
+                    receiver_stations[j]+"_"+year)
     plt.show()
 
 def plotting_noise_N():
-    plt.plot(date,noise_N[:,1], "-g", label="3-9")
-    plt.plot(date,noise_N[:,2], "blue", label="9-15")
-    plt.plot(date,noise_N[:,3], "black", label="15-21" )
-    plt.plot(date,noise_N[:,0],"-r",label="21-03",)
-    plt.title("N-coordinate noise at "+receiver+" over "+year)
+    for i in range(day_res):
+        plt.plot(date,noise_N[:,i], label=str(24/day_res *i)+" - "+str(24/day_res *(i+1)))
+
+    plt.title("N-coordinate noise at "+receiver_stations[j]+" over "+year)
     plt.ylabel("sample noise [m]")
-    plt.xticks(np.linspace(0,11/12,12)*len(date),months)
     plt.xlabel("days")
     plt.legend()
     if office_computer:
         plt.savefig("../../plot_master_thesis/auto_plots/N_coordinate_noise_"+\
-                    receiver+"_"+year)
+                    receiver_stations[j]+"_"+year)
     if home_computer:
         plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/N_coordinate_noise_"+\
-                    receiver+"_"+year)
+                    receiver_stations[j]+"_"+year)
     plt.show()
 
 def plotting_noise_E():
-    plt.plot(date,noise_E[:,1], "-g", label="3-9")
-    plt.plot(date,noise_E[:,2], "blue", label="9-15")
-    plt.plot(date,noise_E[:,3], "black", label="15-21" )
-    plt.plot(date,noise_E[:,0],"-r",label="21-03",)
-    plt.title("E-coordinate noise at "+receiver+" over "+year)
+    for i in range(day_res):
+        plt.plot(date,noise_E[:,i],label=str(24/day_res*i)+" - "+str(24/day_res*(i+1)))
+
+    plt.title("E-coordinate noise at "+receiver_stations[j]+" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
-    plt.xticks(np.linspace(0,11/12,12)*len(date),months)
     plt.legend()
     if office_computer:
-        plt.savefig("../../plot_master_thesis/auto_plots/E_coordinate_noise_"+\
-                    receiver+"_"+year)
+        plt.savefig("../../plot_master_thesis/auto_plots/E_coordinate_noise_event"+\
+                    receiver_stations[j]+"_"+year)
     if home_computer:
-        plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/E_coordinate_noise_"+\
-                    receiver+"_"+year)
+        plt.savefig("../../../Skrivebord/master_thesis_plots/auto_plots/E_coordinate_noise_event"+\
+                    receiver_stations[j]+"_"+year)
     plt.show()
 
 receiver_stations = ["HFS","STE","TRM","NAK", "STA","RAN","FOL","SIM"]
@@ -77,18 +70,11 @@ year = "2018"
 date = ["148","149","150","151","152","153","154","156","157"]
 nr_days = len(date)
 
+day_res = 8
 
-noise_N = np.zeros((nr_days,4))
-noise_E = np.zeros((nr_days,4))
-noise_Z = np.zeros((nr_days,4))
-
-for i in range(1,366):
-    if len(str(i))==1:
-        date.append("00"+str(i))
-    elif len(str(i))==2:
-        date.append("0"+str(i))
-    else:
-        date.append(str(i))
+noise_N = np.zeros((nr_days,day_res))
+noise_E = np.zeros((nr_days,day_res))
+noise_Z = np.zeros((nr_days,day_res))
 
 noise_stored = []
 for j in range(len(receiver_stations)):
@@ -129,31 +115,13 @@ for j in range(len(receiver_stations)):
         sigma_N = accuracy_NMEA_opt(N-np.mean(N))
         sigma_E = accuracy_NMEA_opt(E-np.mean(E))
         sigma_Z = accuracy_NMEA_opt(Z-np.mean(Z))
-        index_3, index_9, index_15 ,index_21 = \
-        int(len(sigma_Z)/8.),int(len(sigma_Z)*3/8.),int(len(sigma_Z)*5/8.),int(len(sigma_Z)*7/8.)
-        if i==0:
-            noise_N[i,0] = np.nan
-            noise_E[i,0] = np.nan
-            noise_Z[i,0] = np.nan
-        else:
-            noise_N[i,0] =np.nanmean(np.concatenate([sigma_N[index_21:],noise_stored[0]]))
-            noise_E[i,0] =np.nanmean(np.concatenate([sigma_E[index_21:],noise_stored[1]]))
-            noise_Z[i,0] =np.nanmean(np.concatenate([sigma_Z[index_21:],noise_stored[2]]))
+        for k in range(day_res):
+            ind_0, ind_1 = int(len(sigma_Z)*k/day_res),int(len(sigma_Z)*(k+1)/day_res)
+            noise_N[i,k], noise_E[i,k], noise_Z[i,k] = \
+            np.nanmean(sigma_N[ind_0:ind_1]), \
+            np.nanmean(sigma_E[ind_0:ind_1]), \
+            np.nanmean(sigma_Z[ind_0:ind_1])
 
-        noise_N[i,1], noise_E[i,1], noise_Z[i,1] = \
-        np.nanmean(sigma_N[index_3:index_9]), np.nanmean(sigma_E[index_3:index_9]), np.nanmean(sigma_Z[index_3:index_9])
-
-        noise_N[i,2], noise_E[i,2], noise_Z[i,2] = \
-        np.nanmean(sigma_N[index_9:index_15]), np.nanmean(sigma_E[index_9:index_15]), np.nanmean(sigma_Z[index_9:index_15])
-
-        noise_N[i,3], noise_E[i,3], noise_Z[i,3] = \
-        np.nanmean(sigma_N[index_15:index_21]), np.nanmean(sigma_E[index_15:index_21]), np.nanmean(sigma_Z[index_15:index_21]),
-
-        noise_stored = [sigma_N[index_21:], sigma_E[index_21:], sigma_Z[index_21:]]
-
-    # plot_datapoints()
-
-
-    plotting_noise_N()
-    plotting_noise_E()
+    # plotting_noise_N()
+    # plotting_noise_E()
     plotting_noise_Z()

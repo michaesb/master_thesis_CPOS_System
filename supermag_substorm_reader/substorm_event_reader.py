@@ -1,5 +1,7 @@
 import numpy as np
+import pandas as pd
 import time, sys
+
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
 """
@@ -26,7 +28,7 @@ class ReadSubstormEvent():
         """
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
-        self.nr_datapoints = self.nr_lines - 69
+        self.nr_datapoints = self.nr_lines-1
         self.textfile = textfile
         if self.verbose:
             count = 0
@@ -34,61 +36,15 @@ class ReadSubstormEvent():
             str(self.nr_datapoints)+" datapoints")
             t1 = time.time()
         #opening the textfile
-        with open(textfile, 'r') as infile:
-             #extracting information from the comments
-            self._read_comments(infile)
-
-            #extracting grid information
-            self._read_grid(infile)
-            #creating the empty grid matrix
-            self._create_grid()
-            #Reading the data
-            for line in infile:
-                line = line.split()
-                if len(line)==0: #ignoring empty lines
-                    continue
-                #recording the time from the data
-                if line[0] == "<StartOfEpoch>":
-                    self.nr_datasets +=1
-                    #getting date and time
-                    self.date = [float(i) for i in infile.readline().split()]
-                    self.year = self.date[0]; self.month=self.date[1]
-                    self.day = self.date[2]
-                    if len(self.start_time)==0:
-                        self.start_time= [self.date[3],self.date[4],self.date[5]]
-                    self.end_time = [self.date[3],self.date[4],self.date[5]]
-                #reading the data
-                if line[0] == "<StartOfVariable>":
-                    measure_type = infile.readline().split()[0]
-                    if measure_type=="ROTI":
-                        self.read_ROTI_ion(infile)
-                    elif measure_type=="ROTI_Ground":
-                        self.read_ROTI_Grid(infile)
-                    else:
-                        raise TypeError("Unknown measurement type used")
+        df = pd.read_csv(str(textfile))
 
 
+        date, time_UTC, MLATitude, MLTime  =  df.to_numpy()
         if self.verbose:
             print("longitude:",self.coordinates[0])
             print("latitude:",self.coordinates[1])
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
-
-
-    def _read_comments(self,infile):
-        nr_comments_read = 0
-        for line in infile:
-            line = line.split()
-            if len(line)==0: #ignoring empty lines
-                continue
-            nr_comments_read+=1
-            if nr_comments_read ==13:
-                self.ion_height = line[2] #
-            if nr_comments_read ==14:
-                self.ROTI_deg = line[8]
-            if nr_comments_read ==15:
-                self.ROTI_Ground_deg = line[8]
-            if line[0] == "<EndOfComments>":
 
 
     def check_read_data(self):
@@ -135,13 +91,6 @@ class ReadSubstormEvent():
 
 
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    obj = ReadROTIData()
-    obj.read_textfile("example_textfile_ROTI.txt")
-    data = obj.ROTI_data
-    plt.imshow(data[:,:,0])
-    plt.colorbar()
-    plt.show()
-    plt.imshow(data[:,:,1])
-    plt.colorbar()
-    plt.show()
+    obj = ReadSubstormEvent()
+    obj.read_textfile("example_sub_event.csv")
+    print(obj.datapoints)

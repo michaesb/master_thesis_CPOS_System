@@ -39,7 +39,7 @@ class ReadSubstormEvent():
         df = pd.read_csv(str(textfile))
 
 
-        date, time_UTC, MLATitude, MLTime  =  df.to_numpy()
+        self.date, self.time_UTC, self.MLATitude, self.MLTime  =  df.to_numpy()
         if self.verbose:
             print("longitude:",self.coordinates[0])
             print("latitude:",self.coordinates[1])
@@ -65,6 +65,32 @@ class ReadSubstormEvent():
         """
         self.check_read_data()
         return self.nr_datapoints
+
+    @property
+    def dates_time(self):
+        """
+        returns the number of datapoints extracted from the file.
+        """
+        self.check_read_data()
+        return self.nr_datapoints
+
+    @property
+    def latitude(self):
+        """
+        returns the number of datapoints extracted from the file.
+        """
+        self.check_read_data()
+        return self.nr_datapoints
+
+    @property
+    def datapoints(self):
+        """
+        returns the number of datapoints extracted from the file.
+        """
+        self.check_read_data()
+        return self.nr_datapoints
+
+
 
     @property
     def time_period(self):

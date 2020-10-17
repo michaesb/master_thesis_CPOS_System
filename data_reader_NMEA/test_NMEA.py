@@ -82,7 +82,7 @@ class NMEADataReaderTest(unittest.TestCase):
         start, end = obj.time_period
         self.assertEqual(start[0]+start[1]+start[2],0)
         self.assertEqual(end[0]+end[1]+end[2],59)
-        self.assertEqual(sum(obj.track_4),40)
+        self.assertEqual(sum(obj.track_4),46)
 
 
 if __name__ == '__main__':

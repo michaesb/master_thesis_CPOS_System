@@ -41,9 +41,10 @@ class ReadSubstormEvent():
         date_time, self.MLATitude, self.MLTime = datafile.to_numpy().T
         self.date = np.zeros_like(date_time)
         self.time_UTC = np.zeros_like(date_time)
-        self.year = float(date_time[0].split("-")[0])
+        self.year = int(date_time[0].split("-")[0])
         for i, dt in enumerate(date_time):
             self.date[i], self.time_UTC[i] = dt.split(" ")
+            self.MLATitude[i], self.MLTime[i] = float(self.MLATitude[i]), float(self.MLTime[i])
         if self.verbose:
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
@@ -107,3 +108,4 @@ if __name__ == '__main__':
     print("latitude", obj.latitude)
     print("dates time", obj.dates_time)
     print("magnetic time", obj.magnetic_time)
+    print("day_of_year", obj.day_of_year)

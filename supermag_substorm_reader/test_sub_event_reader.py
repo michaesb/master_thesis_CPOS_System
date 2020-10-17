@@ -1,11 +1,11 @@
 import numpy as np
 import unittest, sys
-from data_reader_ROTI.ROTI_data_reader import ReadROTIData
+from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 """
 ROTI
 """
 
-class ROTIDataReaderTest(unittest.TestCase):
+class SubstormDataReaderTest(unittest.TestCase):
     """
     This class is a testfunction for the datareader.
     """
@@ -20,11 +20,7 @@ class ROTIDataReaderTest(unittest.TestCase):
         testing that the correct error is raised, when inporoperly used and
         given bad files. (Here we just test that there's not a missing number)
         """
-        obj = ReadROTIData()
-
-        #testing displays
-        with self.assertRaises(SyntaxError):
-            obj.display_date()
+        obj = ReadSubstormEvent()
 
         #testing properties
         with self.assertRaises(SyntaxError):
@@ -37,25 +33,20 @@ class ROTIDataReaderTest(unittest.TestCase):
             obj.latitude
         with self.assertRaises(SyntaxError):
             obj.magnetic_time
-        # with self.assertRaises(SyntaxError):
-        #     obj.ROTI_Grid_data
-        # with self.assertRaises(SyntaxError):
-        #     obj.coordinates
 
     def test_known_example(self):
         """
         Testing know values from the ROTI_test data
         """
-
+        n = 49
         obj = ReadSubstormEvent()
         obj.read_textfile("supermag_substorm_reader/example_sub_event.csv")
-        #checking number of datapoints
-        self.assertEqual(obj.datapoints,49)
+        #checking number of datapoints and sizes of arrays
+        self.assertEqual(obj.datapoints,n)
+        self.assertEqual(len(obj.day_of_year[0]),n)
         #day and year check
-        self.assertEqual(obj.day_year[0],2018)
-
-        #checking coordinates
-
+        self.assertEqual(int(sum(obj.magnetic_time)),680)
+        self.assertEqual(int(sum(obj.latitude)),3396)
 
 
 if __name__ == '__main__':

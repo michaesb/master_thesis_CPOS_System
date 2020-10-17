@@ -14,10 +14,10 @@ class ReadSubstormEvent():
         """
         #info about the file
         self.textfile = False # name for the textfile
-        self.year = -1 #which year the data is recorded
-        self.day = -1  #which day the data is recorded
         self.nr_lines = -1
         #datasets property
+        self.date = None
+        self.time_UTC = None
         #time
         self.start_time = [] # hour minute second
         self.end_time =  [] # hour minute second
@@ -31,18 +31,20 @@ class ReadSubstormEvent():
         self.nr_datapoints = self.nr_lines-1
         self.textfile = textfile
         if self.verbose:
-            count = 0
             print("reading substorm event list with " + \
             str(self.nr_datapoints)+" datapoints")
             t1 = time.time()
+
         #opening the textfile
-        df = pd.read_csv(str(textfile))
-
-
-        self.date, self.time_UTC, self.MLATitude, self.MLTime  =  df.to_numpy()
+        datafile = pd.read_csv(textfile)
+        #extracting arrays from the datasets
+        date_time, self.MLATitude, self.MLTime = datafile.to_numpy().T
+        self.date = np.zeros_like(date_time)
+        self.time_UTC = np.zeros_like(date_time)
+        self.year = float(date_time[0].split("-")[0])
+        for i, dt in enumerate(date_time):
+            self.date[i], self.time_UTC[i] = dt.split(" ")
         if self.verbose:
-            print("longitude:",self.coordinates[0])
-            print("latitude:",self.coordinates[1])
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
 
@@ -69,10 +71,9 @@ class ReadSubstormEvent():
     @property
     def dates_time(self):
         """
-        returns the number of datapoints extracted from the file.
         """
         self.check_read_data()
-        return self.nr_datapoints
+        return self.time_UTC
 
     @property
     def latitude(self):
@@ -80,43 +81,29 @@ class ReadSubstormEvent():
         returns the number of datapoints extracted from the file.
         """
         self.check_read_data()
-        return self.nr_datapoints
+        return self.MLATitude
 
     @property
-    def datapoints(self):
+    def magnetic_time(self):
         """
         returns the number of datapoints extracted from the file.
         """
         self.check_read_data()
-        return self.nr_datapoints
-
+        return self.MLTime
 
 
     @property
-    def time_period(self):
+    def day_of_year(self):
         """
-        returns the list of the times the data was retrived
-        """
-        self.check_read_data()
-        return self.start_time,self.end_time
-
-    @property
-    def time(self):
-        """
-        returns the time from the start of the data and to the end data
-        This assumes that it's continous and there are 5 minutes in between the
-        points
+        returns the day and year
         """
         self.check_read_data()
-        hours = self.end_time[0]-self.start_time[0]
-        minutes = self.end_time[1]-self.start_time[1]
-        duration = minutes+ hours*60
-        t = np.arange(self.start_time[1],self.start_time[1]+duration+5,5)
-        #added plus five so it would create the final point as well.
-        return t
-
+        return self.date, self.year
 
 if __name__ == '__main__':
     obj = ReadSubstormEvent()
-    obj.read_textfile("example_sub_event.csv")
+    obj.read_textfile("example_sub_event.csv",verbose=True)
     print(obj.datapoints)
+    print("latitude", obj.latitude)
+    print("dates time", obj.dates_time)
+    print("magnetic time", obj.magnetic_time)

@@ -40,7 +40,7 @@ class SubstormDataReaderTest(unittest.TestCase):
         """
         n = 49
         obj = ReadSubstormEvent()
-        obj.read_textfile("supermag_substorm_reader/example_sub_event.csv")
+        obj.read_csv("supermag_substorm_reader/example_sub_event.csv")
         #checking number of datapoints and sizes of arrays
         self.assertEqual(obj.datapoints,n)
         self.assertEqual(len(obj.day_of_year[0]),n)

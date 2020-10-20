@@ -22,7 +22,7 @@ class ReadSubstormEvent():
         self.start_time = [] # hour minute second
         self.end_time =  [] # hour minute second
 
-    def read_textfile(self,textfile, verbose=False):
+    def read_csv(self,textfile, verbose=False):
         """
         Reads the substorm event list from supermag
         """
@@ -57,7 +57,7 @@ class ReadSubstormEvent():
         has not been used.
         """
         if not self.textfile:
-            raise SyntaxError("need to read the data first, using read_textfile")
+            raise SyntaxError("need to read the data first, using read_csv")
             exit()
 
     #properties returns value
@@ -103,7 +103,7 @@ class ReadSubstormEvent():
 
 if __name__ == '__main__':
     obj = ReadSubstormEvent()
-    obj.read_textfile("example_sub_event.csv",verbose=True)
+    obj.read_csv("example_sub_event.csv",verbose=True)
     print(obj.datapoints)
     print("latitude", obj.latitude)
     print("dates time", obj.dates_time)

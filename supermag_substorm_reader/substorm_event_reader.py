@@ -72,6 +72,7 @@ class ReadSubstormEvent():
     @property
     def dates_time(self):
         """
+        returns an array of the times the substorm happened
         """
         self.check_read_data()
         return self.time_UTC

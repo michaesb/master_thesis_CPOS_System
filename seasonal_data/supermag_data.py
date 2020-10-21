@@ -10,6 +10,11 @@ path = "/scratch/michaesb/substorm_event_list_2018.csv"
 obj = ReadSubstormEvent()
 obj.read_csv(path)
 obj.
-def filtering_to_Norway_night(X):
+def filtering_to_Norway_night(latitude, magnetic_time,date):
+    indexing_array = np.ones(len(latitude))
+    indexing_array = np.where(58 < latitude <71,np.nan,indexing_array)
+    indexing_array = np.where(19> magnetic_time <24,np.nan,indexing_array)
+    indexing_array = np.where(magnetic_time <7,np.nan,indexing_array)
+    indexing_array = np.where(19> magnetic_time <24,np.nan,indexing_array)
     X_filtered = X
-    return X_filtered
+    return latitude, magnetic_time,date

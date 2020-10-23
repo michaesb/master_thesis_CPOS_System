@@ -75,6 +75,12 @@ class ReadSubstormEvent():
         returns an array of the times the substorm happened
         """
         self.check_read_data()
+        hour = np.zeros(self.nr_datapoints); minutes = np.zeros(self.nr_datapoints);
+        seconds = np.zeros(self.nr_datapoints);
+        for i in range(len(self.time_UTC)):
+            h, m, s = self.time_UTC[i].split(":")
+            hour[i], minutes[i], seconds[i] = float(h), float(m), float(s)
+        self.time_UTC = hour + minutes/60 + seconds/3600
         return self.time_UTC
 
     @property
@@ -106,7 +112,7 @@ if __name__ == '__main__':
     obj = ReadSubstormEvent()
     obj.read_csv("example_sub_event.csv",verbose=True)
     print(obj.datapoints)
-    print("latitude", obj.latitude)
+    # print("latitude", obj.latitude)
     print("dates time", obj.dates_time)
-    print("magnetic time", obj.magnetic_time)
-    print("day_of_year", obj.day_of_year)
+    # print("magnetic time", obj.magnetic_time)
+    # print("day_of_year", obj.day_of_year)

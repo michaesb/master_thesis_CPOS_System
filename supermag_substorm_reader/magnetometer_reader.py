@@ -28,23 +28,25 @@ class ReadSubstormEvent():
         self.nr_datapoints = self.nr_lines-1
         self.textfile = textfile
         if self.verbose:
-            print("reading substorm event list with " + \
+            print("reading magnetometer data with " + \
             str(self.nr_datapoints)+" datapoints")
             t1 = time.time()
 
         #opening the textfile
         datafile = pd.read_csv(textfile)
         #extracting arrays from the datasets
-        date_time, self.MLATitude, self.MLTime = datafile.to_numpy().T
-        self.date = np.zeros_like(date_time)
-        self.time_UTC = np.zeros_like(date_time)
-        self.year = int(date_time[0].split("-")[0])
-        for i, dt in enumerate(date_time):
-            self.date[i], self.time_UTC[i] = dt.split(" ")
-            self.MLATitude[i], self.MLTime[i] = float(self.MLATitude[i]), float(self.MLTime[i])
+        Date_UTC,Extent,IAGA,GEOLON,GEOLAT,MAGON,MAGLAT,MLT,MCOLAT,IGRF_DECL,SZA,\
+         dbn_nez,dbe_nez,dbz_nez,dbn_geo,dbe_geo,dbz_geo = datafile.to_numpy().T
+        # self.date = np.zeros_like(date_time)
+        # self.time_UTC = np.zeros_like(date_time)
+        # self.year = int(date_time[0].split("-")[0])
+        # for i, dt in enumerate(date_time):
+        #     self.date[i], self.time_UTC[i] = dt.split(" ")
+        #     self.MLATitude[i], self.MLTime[i] = float(self.MLATitude[i]), float(self.MLTime[i])
         if self.verbose:
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
+            print(datafile)
 
 
     def check_read_data(self):
@@ -107,9 +109,9 @@ class ReadSubstormEvent():
 
 if __name__ == '__main__':
     obj = ReadSubstormEvent()
-    obj.read_csv("example_sub_event.csv",verbose=True)
+    obj.read_csv("example_magnetometer.csv",verbose=True)
     print(obj.datapoints)
     # print("latitude", obj.latitude)
-    print("dates time", obj.dates_time)
+    # print("dates time", obj.dates_time)
     # print("magnetic time", obj.magnetic_time)
     # print("day_of_year", obj.day_of_year)

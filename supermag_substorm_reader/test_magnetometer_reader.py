@@ -1,11 +1,12 @@
 import numpy as np
 import unittest, sys
-from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
+from supermag_substorm_reader.magnetomer_reader import ReadSubstormEvent
+
 """
-SUBSTORM
+MAGNETOMETER
 """
 
-class SubstormDataReaderTest(unittest.TestCase):
+class MagnetomerReaderTest(unittest.TestCase):
     """
     This class is a testfunction for the datareader.
     """

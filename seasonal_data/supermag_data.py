@@ -4,17 +4,34 @@ import sys, time
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 
-def plot_latitude_time(latitude,mag_time,time_UTC):
+def plot_latitude_time(latitude,mag_time,time_UTC,dates):
+    days = date_to_days(dates)
     plt.subplot(3,1,1)
-    plt.plot(latitude, "*")
-    plt.title("latitude plotted with "+ str(len(latitude))+ " points")
+    plt.plot(days,latitude, "*")
+    plt.title("Substorm data plotted with "+ str(len(latitude))+ " points")
+    plt.ylabel("latitude")
+    plt.xticks([])
     plt.subplot(3,1,2)
-    plt.plot(mag_time, "*")
-    plt.title("magnetic time")
+    plt.plot(days,mag_time, "*")
+    plt.ylabel("time of day")
+    plt.xticks([])
     plt.subplot(3,1,3)
-    plt.plot(time_UTC, "*")
-    plt.title("Time UTC")
+    plt.plot(days,time_UTC, "*")
+    plt.ylabel("time of day")
+    plt.xlabel("day of year")
     plt.show()
+
+def date_to_days(dates):
+    """
+    a date in 2018 in to the number of day in the year by using the numpy
+    package datetime64
+    """
+    doy = np.zeros(len(dates))
+    for i in range(len(dates)):
+        doy[i] = (np.datetime64(dates[i]) - np.datetime64("2018-01-01"))\
+                 /np.timedelta64(1,"D") + 1
+    return doy
+
 
 def filtering_to_Norway_night(latitude, magnetic_time,time_UTC,dates,N,verbose=False):
     ind_arr = np.ones(len(latitude))
@@ -51,8 +68,8 @@ except FileNotFoundError:
     path = "/run/media/michaelsb/HDD Linux/data/substorm_event_list_2018.csv"
     obj.read_csv(path)
 
-evening_time =22
-morning_time =5
+evening_time = 20
+morning_time = 4
 
 N = obj.datapoints
 lat = obj.latitude
@@ -60,9 +77,7 @@ mag_time = obj.magnetic_time
 time_UTC = obj.dates_time
 date_UTC, year = obj.day_of_year
 
-Norway_time = time_UTC +1
-plot_latitude_time(lat,mag_time, time_UTC)
-lat, mag_time, time_UTC, dates = filtering_to_Norway_night(lat,mag_time,time_UTC,date_UTC,N,verbose=True)
-
-print("date",dates)
-plot_latitude_time(lat,mag_time, time_UTC)
+Norway_time = time_UTC + 1
+plot_latitude_time(lat,mag_time, Norway_time,date_UTC)
+lat, mag_time, Norway_time, dates = filtering_to_Norway_night(lat,mag_time,Norway_time,date_UTC,N,verbose=True)
+plot_latitude_time(lat,mag_time, Norway_time,dates)

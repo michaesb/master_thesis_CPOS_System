@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys, time
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
-from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
+from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 
 def plot_latitude_time(latitude,mag_time,time_UTC,dates):
     days = date_to_days(dates)
@@ -32,10 +32,11 @@ def date_to_days(dates,year=2018):
                  /np.timedelta64(1,"D") + 1
     return doy
 
+obj = ReadMagnetomerData()
 
 try:
     path = "/scratch/michaesb/20201025-17-57-supermag.csv"
-    obj.read_csv(path)
+    obj.read_csv(path, verbose = True)
 except FileNotFoundError:
     path = "/run/media/michaelsb/HDD Linux/data/20201025-17-57-supermag.csv"
-    obj.read_csv(path)
+    obj.read_csv(path, verbose = True)

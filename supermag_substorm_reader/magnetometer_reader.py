@@ -7,7 +7,7 @@ from extra.progressbar import progress_bar
 """
 Event list
 """
-class ReadSubstormEvent():
+class ReadMagnetomerData():
     def __init__(self):
         """
         initializing variables and lists
@@ -108,7 +108,7 @@ class ReadSubstormEvent():
         return self.date, self.year
 
 if __name__ == '__main__':
-    obj = ReadSubstormEvent()
+    obj = ReadMagnetomerData()
     obj.read_csv("example_magnetometer.csv",verbose=True)
     print(obj.datapoints)
     # print("latitude", obj.latitude)

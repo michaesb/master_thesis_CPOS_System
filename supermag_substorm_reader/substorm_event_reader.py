@@ -13,27 +13,27 @@ class ReadSubstormEvent():
         initializing variables and lists
         """
         #info about the file
-        self.textfile = False # name for the textfile
+        self.csv_file = False # name for the csv_file
         self.nr_lines = -1
         #datasets property
         self.date = None
         self.time_UTC = None
 
-    def read_csv(self,textfile, verbose=False):
+    def read_csv(self,csv_file, verbose=False):
         """
         Reads the substorm event list from supermag
         """
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
+        self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
         self.nr_datapoints = self.nr_lines-1
-        self.textfile = textfile
+        self.csv_file = csv_file
         if self.verbose:
             print("reading substorm event list with " + \
             str(self.nr_datapoints)+" datapoints")
             t1 = time.time()
 
-        #opening the textfile
-        datafile = pd.read_csv(textfile)
+        #opening the csv_file
+        datafile = pd.read_csv(csv_file)
         #extracting arrays from the datasets
         date_time, self.MLATitude, self.MLTime = datafile.to_numpy().T
         self.date = np.zeros_like(date_time)
@@ -53,7 +53,7 @@ class ReadSubstormEvent():
         This raises an error and exits, if the read_data function
         has not been used.
         """
-        if not self.textfile:
+        if not self.csv_file:
             raise SyntaxError("need to read the data first, using read_csv")
             exit()
 

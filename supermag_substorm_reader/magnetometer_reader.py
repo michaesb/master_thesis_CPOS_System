@@ -1,11 +1,12 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import time, sys
 
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
 """
-Event list
+MAGNETOMETER
 """
 class ReadMagnetomerData():
     def __init__(self):
@@ -13,41 +14,46 @@ class ReadMagnetomerData():
         initializing variables and lists
         """
         #info about the file
-        self.textfile = False # name for the textfile
+        self.csv_file = False # name for the csv_file
         self.nr_lines = -1
         #datasets property
         self.date = None
         self.time_UTC = None
 
-    def read_csv(self,textfile, verbose=False):
+    def read_csv(self,csv_file, verbose=False):
         """
         Reads the substorm event list from supermag
         """
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(textfile)) #getting the number of lines
+        self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
         self.nr_datapoints = self.nr_lines-1
-        self.textfile = textfile
+        self.csv_file = csv_file
         if self.verbose:
             print("reading magnetometer data with " + \
             str(self.nr_datapoints)+" datapoints")
             t1 = time.time()
 
-        #opening the textfile
-        datafile = pd.read_csv(textfile)
+        #opening the csv_file
+        self.dataframe_pd = pd.read_csv(csv_file)
+
         #extracting arrays from the datasets
-        Date_UTC,Extent,IAGA,GEOLON,GEOLAT,MAGON,MAGLAT,MLT,MCOLAT,IGRF_DECL,SZA,\
-         dbn_nez,dbe_nez,dbz_nez,dbn_geo,dbe_geo,dbz_geo = datafile.to_numpy().T
-        # self.date = np.zeros_like(date_time)
-        # self.time_UTC = np.zeros_like(date_time)
-        # self.year = int(date_time[0].split("-")[0])
-        # for i, dt in enumerate(date_time):
-        #     self.date[i], self.time_UTC[i] = dt.split(" ")
-        #     self.MLATitude[i], self.MLTime[i] = float(self.MLATitude[i]), float(self.MLTime[i])
+        #date of recording, recording time, receiver name
+        self.date_UTC, Extent, IAGA,\
+        self.geo_long,self.geo_lat,\
+        MAGON,MAGLAT,MLT,MCOLAT,\
+        IGRF_DECL,SZA,\
+        self.dbn_nez,self.dbe_nez,self.dbz_nez,\
+        self.dbn_geo,self.dbe_geo,self.dbz_geo = self.dataframe_pd.to_numpy().T
+        self.time_UTC = np.zeros_like(self.date_UTC))
+        self.date = np.zeros_like(self.date_UTC)
+        self.year = int(self.date_UTC[0].split("-")[0])
+        print(self.year)
+        for i, dt in enumerate(self.date_UTC):
+            self.date[i], self.time_UTC[i] = dt.split("T")
+
         if self.verbose:
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
-            print(datafile)
-
 
     def check_read_data(self):
         """
@@ -55,7 +61,7 @@ class ReadMagnetomerData():
         This raises an error and exits, if the read_data function
         has not been used.
         """
-        if not self.textfile:
+        if not self.csv_file:
             raise SyntaxError("need to read the data first, using read_csv")
             exit()
 
@@ -83,21 +89,20 @@ class ReadMagnetomerData():
         return self.time_UTC
 
     @property
-    def latitude(self):
+    def geo_flux_current(self):
         """
-        returns the number of datapoints extracted from the file.
+        Returns the geographic pole directions of the data of all receivers.
         """
         self.check_read_data()
-        return self.MLATitude
+        return self.dbn_geo,self.dbe_geo,self.dbz_geo
 
     @property
-    def magnetic_time(self):
+    def mag_flux_current(self):
         """
-        returns the number of datapoints extracted from the file.
+        Returns the magnetic pole directions of the data of all receivers.
         """
         self.check_read_data()
-        return self.MLTime
-
+        return self.dbn_nez,self.dbe_nez,self.dbz_nez,
 
     @property
     def day_of_year(self):
@@ -107,10 +112,40 @@ class ReadMagnetomerData():
         self.check_read_data()
         return self.date, self.year
 
+    def print_memory_usage(self):
+        """
+        prints the memory usage of the dataframe.
+        """
+        self.check_read_data()
+        print(self.dataframe_pd.memory_usage(index=False))
+
+    def receiver_specific_data(self, receiver_ID):
+        """
+        returns the data from a specific receiver
+        """
+        self.check_read_data()
+        j = 0
+        dataset_filtered = np.zeros((17,np.floor(self.nr_datapoints/13)))
+        for i, ID in enumerate(IAGA):
+            if ID== receiver_ID:
+
+                j+=1
+        return
+
+    def print_dataframe(self):
+        """
+        prints the dateframe from pandas.
+        """
+        self.check_read_data()
+        print(self.dataframe_pd)
+
+
 if __name__ == '__main__':
     obj = ReadMagnetomerData()
     obj.read_csv("example_magnetometer.csv",verbose=True)
     print(obj.datapoints)
+    obj.print_dataframe()
+    obj.print_memory_usage()
     # print("latitude", obj.latitude)
     # print("dates time", obj.dates_time)
     # print("magnetic time", obj.magnetic_time)

@@ -16,7 +16,7 @@ def extract_points():
             data = line.split(" ")[5]
             try:
                 pos_N[i,j] = float(data.split(",")[2][:2])\
-                        + float(data.split(",")[2][3:])/60
+                            +float(data.split(",")[2][3:])/60
                 break
             except ValueError:
                 continue

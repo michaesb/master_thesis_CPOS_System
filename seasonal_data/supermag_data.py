@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys, time
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
+from extra.time_date_conversion import date_to_days
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 
 def plot_latitude_time(latitude,mag_time,time_UTC,dates):
@@ -20,17 +21,6 @@ def plot_latitude_time(latitude,mag_time,time_UTC,dates):
     plt.ylabel("time of day")
     plt.xlabel("day of year")
     plt.show()
-
-def date_to_days(dates):
-    """
-    a date in 2018 in to the number of day in the year by using the numpy
-    package datetime64
-    """
-    doy = np.zeros(len(dates))
-    for i in range(len(dates)):
-        doy[i] = (np.datetime64(dates[i]) - np.datetime64("2018-01-01"))\
-                 /np.timedelta64(1,"D") + 1
-    return doy
 
 
 def filtering_to_Norway_night(latitude, magnetic_time,time_UTC,dates,N,verbose=False):

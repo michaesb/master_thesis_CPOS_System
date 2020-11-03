@@ -9,7 +9,7 @@ MAGNETOMETER
 
 class MagnetomerReaderTest(unittest.TestCase):
     """
-    This class is a testfunction for the datareader.
+    This class is a testfunction for the magnetometer datareader.
     """
     def test_canary(self):
         """
@@ -38,14 +38,17 @@ class MagnetomerReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.geo_flux_current
         with self.assertRaises(SyntaxError):
-            obj.latitude
-        with self.assertRaises(SyntaxError):
             obj.magnetic_time
+
         #testing printing
         with self.assertRaises(SyntaxError):
             obj.print_dataframe()
         with self.assertRaises(SyntaxError):
             obj.print_memory_usage()
+
+        #extra
+        with self.assertRaises(SyntaxError):
+            obj.receiver_specific_data()
 
 
     def test_known_example(self):
@@ -56,6 +59,7 @@ class MagnetomerReaderTest(unittest.TestCase):
         obj = ReadSubstormEvent()
         obj.read_csv("example_magnetometer.csv")
         #checking number of datapoints and sizes of arrays
+        print(np.floor(self.nr_datapoints/13))
         self.assertEqual(obj.datapoints,n)
         self.assertEqual(len(obj.day_of_year[0]),n)
         #day and year check

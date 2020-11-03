@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from numba import numba,njit
 import time, sys
 
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
@@ -19,6 +20,8 @@ class ReadMagnetomerData():
         #datasets property
         self.date = None
         self.time_UTC = None
+        self.time_not_converted = True
+
 
     def read_csv(self,csv_file, verbose=False):
         """
@@ -35,22 +38,26 @@ class ReadMagnetomerData():
 
         #opening the csv_file
         self.dataframe_pd = pd.read_csv(csv_file)
-
+        print("pandas work time",time.time()-t1)
         #extracting arrays from the datasets
-        #date of recording, recording time, receiver name
-        self.date_UTC, Extent, IAGA,\
+        self.dataframe_matrix = self.dataframe_pd.to_numpy().T
+
+        self.date_UTC, Extent, self.receiver_name,\
         self.geo_long,self.geo_lat,\
         MAGON,MAGLAT,MLT,MCOLAT,\
         IGRF_DECL,SZA,\
         self.dbn_nez,self.dbe_nez,self.dbz_nez,\
         self.dbn_geo,self.dbe_geo,self.dbz_geo = self.dataframe_pd.to_numpy().T
-        self.time_UTC = np.zeros_like(self.date_UTC))
+
+        self.time_UTC = np.zeros_like(self.date_UTC)
         self.date = np.zeros_like(self.date_UTC)
         self.year = int(self.date_UTC[0].split("-")[0])
-        print(self.year)
+
         for i, dt in enumerate(self.date_UTC):
             self.date[i], self.time_UTC[i] = dt.split("T")
 
+        self.time_UTC = self.dates_time
+        self.dataframe_matrix[0,:] = 1
         if self.verbose:
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
@@ -74,18 +81,29 @@ class ReadMagnetomerData():
         self.check_read_data()
         return self.nr_datapoints
 
+    @staticmethod
+    @numba.njit
+    def datapoints(self):
+        """
+        returns the number of datapoints extracted from the file.
+        """
+        hour = np.zeros(self.nr_datapoints); minutes = np.zeros(self.nr_datapoints);
+        seconds = np.zeros(self.nr_datapoints);
+        for i in range(len(self.time_UTC)):
+            h, m, s = self.time_UTC[i].split(":")
+            hour[i], minutes[i], seconds[i] = float(h), float(m), float(s)
+            self.time_UTC = hour + minutes/60 + seconds/3600
+            self.time_not_converted = False
+
+
+
+
     @property
     def dates_time(self):
         """
         returns an array of the times the substorm happened
         """
         self.check_read_data()
-        hour = np.zeros(self.nr_datapoints); minutes = np.zeros(self.nr_datapoints);
-        seconds = np.zeros(self.nr_datapoints);
-        for i in range(len(self.time_UTC)):
-            h, m, s = self.time_UTC[i].split(":")
-            hour[i], minutes[i], seconds[i] = float(h), float(m), float(s)
-        self.time_UTC = hour + minutes/60 + seconds/3600
         return self.time_UTC
 
     @property
@@ -112,25 +130,25 @@ class ReadMagnetomerData():
         self.check_read_data()
         return self.date, self.year
 
-    def print_memory_usage(self):
-        """
-        prints the memory usage of the dataframe.
-        """
-        self.check_read_data()
-        print(self.dataframe_pd.memory_usage(index=False))
-
     def receiver_specific_data(self, receiver_ID):
         """
         returns the data from a specific receiver
         """
         self.check_read_data()
         j = 0
-        dataset_filtered = np.zeros((17,np.floor(self.nr_datapoints/13)))
-        for i, ID in enumerate(IAGA):
-            if ID== receiver_ID:
+        index = np.zeros_like(self.receiver_name)
+        index = self.receiver_name == receiver_ID
 
-                j+=1
-        return
+        return self.time_UTC[index],self.geo_long[index],self.geo_lat[index],\
+               self.dbn_nez[index],self.dbe_nez[index],self.dbz_nez[index],\
+               self.dbn_geo[index],self.dbe_geo[index],self.dbz_geo[index]
+
+    def print_memory_usage(self):
+        """
+        prints the memory usage of the dataframe.
+        """
+        self.check_read_data()
+        print(self.dataframe_pd.memory_usage(index=False))
 
     def print_dataframe(self):
         """
@@ -144,9 +162,7 @@ if __name__ == '__main__':
     obj = ReadMagnetomerData()
     obj.read_csv("example_magnetometer.csv",verbose=True)
     print(obj.datapoints)
-    obj.print_dataframe()
-    obj.print_memory_usage()
-    # print("latitude", obj.latitude)
+    a,b,c,d,e,f,g,h,i = obj.receiver_specific_data("DON")
     # print("dates time", obj.dates_time)
     # print("magnetic time", obj.magnetic_time)
     # print("day_of_year", obj.day_of_year)

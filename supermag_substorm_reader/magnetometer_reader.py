@@ -57,13 +57,14 @@ class ReadMagnetomerData():
         for i, dt in enumerate(self.date_UTC):
             self.date[i], self.time_UTC[i] = dt.split("T")
 
-        print("starting")
-
+        t4 = time.time()
+        print("pre time-conversion" t4-t3)
         self.time_UTC = self.time_converted()
-        print("ending")
+        t5 = time.time()
+        print("after time-conversion", t5-t4)
         if self.verbose:
-            t2 = time.time()
-            print("time taken to read = ","%g"%(t2-t1))
+            t6 = time.time()
+            print("time taken to read = ","%g"%(t6-t1))
 
     def check_read_data(self):
         """

@@ -58,7 +58,7 @@ class ReadMagnetomerData():
             self.date[i], self.time_UTC[i] = dt.split("T")
 
         t4 = time.time()
-        print("pre time-conversion" t4-t3)
+        print("pre time-conversion", t4-t3)
         self.time_UTC = self.time_converted()
         t5 = time.time()
         print("after time-conversion", t5-t4)

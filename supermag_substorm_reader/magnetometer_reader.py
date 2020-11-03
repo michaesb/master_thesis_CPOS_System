@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from numba import numba,njit
+from numba import njit, prange
 import time, sys
 
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
@@ -20,7 +20,6 @@ class ReadMagnetomerData():
         #datasets property
         self.date = None
         self.time_UTC = None
-        self.time_not_converted = True
 
 
     def read_csv(self,csv_file, verbose=False):
@@ -38,7 +37,8 @@ class ReadMagnetomerData():
 
         #opening the csv_file
         self.dataframe_pd = pd.read_csv(csv_file)
-        print("pandas work time",time.time()-t1)
+        t2 = time.time()
+        print("pandas work time",t2-t1)
         #extracting arrays from the datasets
         self.dataframe_matrix = self.dataframe_pd.to_numpy().T
 
@@ -48,7 +48,8 @@ class ReadMagnetomerData():
         IGRF_DECL,SZA,\
         self.dbn_nez,self.dbe_nez,self.dbz_nez,\
         self.dbn_geo,self.dbe_geo,self.dbz_geo = self.dataframe_pd.to_numpy().T
-
+        t3 = time.time()
+        print("assigning to numpy array",t3-t2)
         self.time_UTC = np.zeros_like(self.date_UTC)
         self.date = np.zeros_like(self.date_UTC)
         self.year = int(self.date_UTC[0].split("-")[0])
@@ -56,8 +57,10 @@ class ReadMagnetomerData():
         for i, dt in enumerate(self.date_UTC):
             self.date[i], self.time_UTC[i] = dt.split("T")
 
-        self.time_UTC = self.dates_time
-        self.dataframe_matrix[0,:] = 1
+        print("starting")
+
+        self.time_UTC = self.time_converted()
+        print("ending")
         if self.verbose:
             t2 = time.time()
             print("time taken to read = ","%g"%(t2-t1))
@@ -81,25 +84,20 @@ class ReadMagnetomerData():
         self.check_read_data()
         return self.nr_datapoints
 
-    @staticmethod
-    @numba.njit
-    def datapoints(self):
+
+    def time_converted(self,):
         """
-        returns the number of datapoints extracted from the file.
+        changes the self.time_UTC from 60 number system to 10 number system.
         """
-        hour = np.zeros(self.nr_datapoints); minutes = np.zeros(self.nr_datapoints);
-        seconds = np.zeros(self.nr_datapoints);
-        for i in range(len(self.time_UTC)):
+        N = len(self.time_UTC)
+        time = np.zeros(N)
+        for i in prange(N):
             h, m, s = self.time_UTC[i].split(":")
-            hour[i], minutes[i], seconds[i] = float(h), float(m), float(s)
-            self.time_UTC = hour + minutes/60 + seconds/3600
-            self.time_not_converted = False
-
-
-
+            time[i] = float(h)+ float(m)/60+ float(s)/3600
+        return time
 
     @property
-    def dates_time(self):
+    def time_(self):
         """
         returns an array of the times the substorm happened
         """

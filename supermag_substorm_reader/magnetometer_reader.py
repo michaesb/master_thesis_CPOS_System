@@ -37,8 +37,9 @@ class ReadMagnetomerData():
 
         #opening the csv_file
         self.dataframe_pd = pd.read_csv(csv_file)
-        t2 = time.time()
-        print("pandas work time",t2-t1)
+        if verbose:
+            t2 = time.time()
+            print("pandas work time",t2-t1)
         #extracting arrays from the datasets
         self.dataframe_matrix = self.dataframe_pd.to_numpy().T
 
@@ -48,21 +49,21 @@ class ReadMagnetomerData():
         IGRF_DECL,SZA,\
         self.dbn_nez,self.dbe_nez,self.dbz_nez,\
         self.dbn_geo,self.dbe_geo,self.dbz_geo = self.dataframe_pd.to_numpy().T
-        t3 = time.time()
-        print("assigning to numpy array",t3-t2)
+        if verbose:
+            t3 = time.time()
+            print("assigning to numpy array",t3-t2)
         self.time_UTC = np.zeros_like(self.date_UTC)
         self.date = np.zeros_like(self.date_UTC)
         self.year = int(self.date_UTC[0].split("-")[0])
-
         for i, dt in enumerate(self.date_UTC):
             self.date[i], self.time_UTC[i] = dt.split("T")
-
-        t4 = time.time()
-        print("pre time-conversion", t4-t3)
+        if verbose:
+            t4 = time.time()
+            print("pre time-conversion", t4-t3)
         self.time_UTC = self.time_converted()
-        t5 = time.time()
-        print("after time-conversion", t5-t4)
-        if self.verbose:
+        if verbose:
+            t5 = time.time()
+            print("after time-conversion", t5-t4)
             t6 = time.time()
             print("time taken to read = ","%g"%(t6-t1))
 
@@ -137,8 +138,13 @@ class ReadMagnetomerData():
         j = 0
         index = np.zeros_like(self.receiver_name)
         index = self.receiver_name == receiver_ID
-
-        return self.time_UTC[index],self.geo_long[index],self.geo_lat[index],\
+        if 0:
+            for i in range(len(index)):
+                if index[i]:
+                    print(self.receiver_name[i], end =" ")
+                    print(self.dbn_geo[i],self.dbe_geo[i],self.dbz_geo[i], )
+        return self.date[index], \
+               self.time_UTC[index],self.geo_long[index],self.geo_lat[index],\
                self.dbn_nez[index],self.dbe_nez[index],self.dbz_nez[index],\
                self.dbn_geo[index],self.dbe_geo[index],self.dbz_geo[index]
 
@@ -161,7 +167,7 @@ if __name__ == '__main__':
     obj = ReadMagnetomerData()
     obj.read_csv("example_magnetometer.csv",verbose=True)
     print(obj.datapoints)
-    a,b,c,d,e,f,g,h,i = obj.receiver_specific_data("DON")
+    a,b,c,d,e,f,g,h,i,j = obj.receiver_specific_data("DON")
     # print("dates time", obj.dates_time)
     # print("magnetic time", obj.magnetic_time)
     # print("day_of_year", obj.day_of_year)

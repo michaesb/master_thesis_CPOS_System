@@ -6,7 +6,9 @@ from extra.time_date_conversion import date_to_days
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 
 def plot_latitude_time(latitude,mag_time,time_UTC,dates):
+    print("dates",dates)
     days = date_to_days(dates)
+    print(days)
     plt.subplot(3,1,1)
     plt.plot(days,latitude, "*")
     plt.title("Substorm data plotted with "+ str(len(latitude))+ " points")

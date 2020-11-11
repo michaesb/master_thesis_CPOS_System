@@ -7,9 +7,6 @@ from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 
 
-
-
-
 def plot_latitude_time(latitude,mag_time,time_UTC,dates):
     days = date_to_days(dates)
     plt.subplot(3,1,1)
@@ -61,28 +58,39 @@ def plot_substorm_days(dates_mag,dates_event, time_of_event, time_UTC_mag, magne
     days_magnetometer = date_to_days(dates_mag)
     filtered_mag = np.zeros(N)*np.nan
     filtered_days = np.zeros(N)*np.nan
-    count= 0
+    time_stamp_event = np.zeros(N)*np.nan
+    day = 0
+    j = 0
+    unique, counts = np.unique(days_event, return_counts=True)
+    print("unique counts",len(unique),len(counts))
+    counts
     for i in range(N):
-        """
-        if count!= days_magnetometer[i]:
-            count=days_magnetometer[i]
-            print(days_magnetometer[i],days_magnetometer[i] in days_event)
-            if days_magnetometer[i] in days_event:
-                print(days_magnetometer[i], "\n--------\n")
-        """
         if days_magnetometer[i] in days_event:
             filtered_mag[i] = magnetometer_values[i]
             filtered_days[i] = days_magnetometer[i]
+            if day !=days_magnetometer[i]:
+                j+=1
+            if counts[j]>0 :
+                day = days_magnetometer[i]
+                time_stamp_event[i] = filtered_days[i]+time_of_event[j]/24
+                # print("days",filtered_days[i], time_stamp_event[i])
+                # print("j",j,days_event[j])
+                print("before",counts[j], i)
+                counts[j]-=1
+                print("after",counts[j])
+
 
     days_magnetometer+=time_UTC_mag/24
     filtered_days+=time_UTC_mag/24
     plt.plot(days_magnetometer[:int(N/2)],magnetometer_values[:int(N/2)], "r")
     plt.plot(filtered_days[:int(N/2)],filtered_mag[:int(N/2)], "b")
+    plt.plot(time_stamp_event[:int(N/2)],magnetometer_values[:int(N/2)], "g*" )
     plt.title("North to south mag values before and after filtered")
     plt.legend(["original", "filtered"])
     plt.ylabel("B-values [nT]")
     plt.xlabel("day of year")
     plt.show()
+    print(counts)
 
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
@@ -117,7 +125,6 @@ dates_event, year = obj_event.day_of_year
 
 Norway_time = time_UTC_event + 1
 lat, time_of_event, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)
-
 plot_latitude_time(lat,time_of_event, Norway_time,dates_event)
 
 plot_substorm_days(dates_mag,dates_event, time_of_event,time_UTC_mag ,magnetic_north)

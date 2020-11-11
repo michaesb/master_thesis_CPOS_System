@@ -70,14 +70,17 @@ def plot_substorm_days(dates_mag,dates_event, time_of_event, time_UTC_mag, magne
             filtered_days[i] = days_magnetometer[i]
             if day !=days_magnetometer[i]:
                 j+=1
-            if counts[j]>0 :
+            if j==len(counts) or counts[j]>0:
                 day = days_magnetometer[i]
                 time_stamp_event[i] = filtered_days[i]+time_of_event[j]/24
                 # print("days",filtered_days[i], time_stamp_event[i])
                 # print("j",j,days_event[j])
-                print("before",counts[j], i)
-                counts[j]-=1
-                print("after",counts[j])
+                try:
+                    print("before",counts[j], i)
+                    counts[j]-=1
+                    print("after",counts[j])
+                except IndexError:
+                    print(i,j)
 
 
     days_magnetometer+=time_UTC_mag/24

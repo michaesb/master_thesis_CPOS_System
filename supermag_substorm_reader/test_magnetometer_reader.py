@@ -22,23 +22,19 @@ class MagnetomerReaderTest(unittest.TestCase):
         testing that the correct error is raised, when inporoperly used and
         given bad files. (Here we just test that there's not a missing number)
         """
-        obj = ReadSubstormEvent()
+        obj = ReadMagnetomerData()
 
         #testing properties
         with self.assertRaises(SyntaxError):
             obj.datapoints
         with self.assertRaises(SyntaxError):
+            obj.time_
+        with self.assertRaises(SyntaxError):
             obj.day_of_year
-        with self.assertRaises(SyntaxError):
-            obj.dates_time
-        with self.assertRaises(SyntaxError):
-            obj.latitude
         with self.assertRaises(SyntaxError):
             obj.mag_flux_current
         with self.assertRaises(SyntaxError):
             obj.geo_flux_current
-        with self.assertRaises(SyntaxError):
-            obj.magnetic_time
 
         #testing printing
         with self.assertRaises(SyntaxError):
@@ -48,23 +44,30 @@ class MagnetomerReaderTest(unittest.TestCase):
 
         #extra
         with self.assertRaises(SyntaxError):
-            obj.receiver_specific_data()
+            obj.receiver_specific_data("DON")
 
 
     def test_known_example(self):
         """
         Testing know values from the ROTI_test data
         """
-        n = 49
-        obj = ReadSubstormEvent()
-        obj.read_csv("example_magnetometer.csv")
+        n = 143
+        obj = ReadMagnetomerData()
+        obj.read_csv("supermag_substorm_reader/example_magnetometer.csv")
         #checking number of datapoints and sizes of arrays
-        print(np.floor(self.nr_datapoints/13))
         self.assertEqual(obj.datapoints,n)
         self.assertEqual(len(obj.day_of_year[0]),n)
+        self.assertEqual(len(obj.time_),n)
         #day and year check
-        self.assertEqual(int(sum(obj.magnetic_time)),680)
-        self.assertEqual(int(sum(obj.latitude)),3396)
+        self.assertEqual(int(sum(obj.mag_flux_current[0])),-15722)
+        self.assertEqual(int(sum(obj.geo_flux_current[0])),-17057)
+
+        #specific receivers
+        a,b,c,d,e,f,g,h,i,j =\
+        obj.receiver_specific_data("DON")
+        totalsum = len(a)+ len(b)+len(c)+ len(d) + len(e) + len(f) + len(g) + \
+                    len(h)+ len(i) + len(j)
+        self.assertEqual(totalsum, 110)
 
 
 if __name__ == '__main__':

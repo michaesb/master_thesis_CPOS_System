@@ -1,14 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from numba import njit, prange
 import time, sys
 
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
 """
-MAGNETOMETER
+OMNI
 """
-class ReadMagnetomerData():
+class ReadOMNIData():
     def __init__(self):
         """
         initializing variables and lists
@@ -129,24 +130,6 @@ class ReadMagnetomerData():
         self.check_read_data()
         return self.date, self.year
 
-    def receiver_specific_data(self, receiver_ID):
-        """
-        returns the data from a specific receiver
-        """
-        self.check_read_data()
-        j = 0
-        index = np.zeros_like(self.receiver_name)
-        index = self.receiver_name == receiver_ID
-        if 0:
-            for i in range(len(index)):
-                if index[i]:
-                    print(self.receiver_name[i], end =" ")
-                    print(self.dbn_geo[i],self.dbe_geo[i],self.dbz_geo[i], )
-        return self.date[index], \
-               self.time_UTC[index],self.geo_long[index],self.geo_lat[index],\
-               self.dbn_nez[index],self.dbe_nez[index],self.dbz_nez[index],\
-               self.dbn_geo[index],self.dbe_geo[index],self.dbz_geo[index]
-
     def print_memory_usage(self):
         """
         prints the memory usage of the dataframe.
@@ -159,13 +142,9 @@ class ReadMagnetomerData():
         prints the dateframe from pandas.
         """
         self.check_read_data()
-        print(self.dataframe_pd)
 
 
 if __name__ == '__main__':
-    obj = ReadMagnetomerData()
-    obj.read_csv("example_magnetometer.csv",verbose=True)
-    print(obj.datapoints)
-    a,b,c,d,e,f,g,h,i,j = obj.receiver_specific_data("DON")
+    obj = ReadOMNIData()
     # print("magnetic time", obj.magnetic_time)
     # print("day_of_year", obj.day_of_year)

@@ -146,5 +146,6 @@ class ReadOMNIData():
 
 if __name__ == '__main__':
     obj = ReadOMNIData()
+    obj.read_csv("example_OMNI.csv")
     # print("magnetic time", obj.magnetic_time)
     # print("day_of_year", obj.day_of_year)

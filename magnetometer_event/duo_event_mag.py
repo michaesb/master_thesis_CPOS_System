@@ -56,7 +56,6 @@ def plot_substorm_days(dates_mag,dates_event, time_of_event, time_UTC_mag, magne
     N_mag = len(dates_mag)
     N_event = len(dates_event)
     days_event = date_to_days(dates_event)
-    print(days_event,len(days_event))
     days_magnetometer = date_to_days(dates_mag)
     filtered_mag = np.zeros(N_mag)*np.nan
     filtered_days = np.zeros(N_mag)*np.nan
@@ -65,14 +64,11 @@ def plot_substorm_days(dates_mag,dates_event, time_of_event, time_UTC_mag, magne
         if days_magnetometer[i] in days_event:
             filtered_mag[i] = magnetometer_values[i]
             filtered_days[i] = days_magnetometer[i]
-
-
     days_magnetometer+=time_UTC_mag/24
     filtered_days+=time_UTC_mag/24
-
-    plt.plot(days_magnetometer[:int(N_mag/4)],magnetometer_values[:int(N_mag/4)], "r")
-    plt.plot(filtered_days[:int(N_mag/4)],filtered_mag[:int(N_mag/4)], "b")
-    plt.plot(days_event[:int(N_event/8)]+time_of_event[:int(N_event/8)],np.ones(len(dates_event))[:int(N_event/8)], "g*")
+    plt.plot(days_magnetometer,magnetometer_values, "r")
+    plt.plot(filtered_days,filtered_mag, "b")
+    plt.plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "g*")
     plt.title("North to south mag values before and after filtered")
     plt.legend(["original", "filtered"])
     plt.ylabel("B-values [nT]")

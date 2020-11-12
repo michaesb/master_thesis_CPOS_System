@@ -1,13 +1,13 @@
 import numpy as np
 import unittest, sys
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
-from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
+from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
 
 """
-MAGNETOMETER
+OMNI
 """
 
-class MagnetomerReaderTest(unittest.TestCase):
+class OMNIReaderTest(unittest.TestCase):
     """
     This class is a testfunction for the magnetometer datareader.
     """
@@ -22,7 +22,7 @@ class MagnetomerReaderTest(unittest.TestCase):
         testing that the correct error is raised, when inporoperly used and
         given bad files. (Here we just test that there's not a missing number)
         """
-        obj = ReadMagnetomerData()
+        obj = ReadOMNIData()
 
         #testing properties
         with self.assertRaises(SyntaxError):
@@ -49,11 +49,11 @@ class MagnetomerReaderTest(unittest.TestCase):
 
     def test_known_example(self):
         """
-        Testing know values from the magnetometer_test data
+        Testing know values from the OMNI_test data
         """
         n = 143
         obj = ReadMagnetomerData()
-        obj.read_csv("supermag_substorm_reader/example_magnetometer.csv")
+        obj.read_csv("data_reader_OMNI/example_OMNI.csv")
         #checking number of datapoints and sizes of arrays
         self.assertEqual(obj.datapoints,n)
         self.assertEqual(len(obj.day_of_year[0]),n)

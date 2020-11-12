@@ -28,10 +28,10 @@ class ReadOMNIData():
         """
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
-        self.nr_datapoints = self.nr_lines-1
+        self.nr_datapoints = self.nr_lines-44
         self.csv_file = csv_file
         if self.verbose:
-            print("reading magnetometer data with " + \
+            print("reading OMNI data with " + \
             str(self.nr_datapoints)+" datapoints")
             t1 = time.time()
 

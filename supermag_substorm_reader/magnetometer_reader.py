@@ -92,7 +92,7 @@ class ReadMagnetomerData():
         """
         N = len(self.time_UTC)
         time = np.zeros(N)
-        for i in prange(N):
+        for i in range(N):
             h, m, s = self.time_UTC[i].split(":")
             time[i] = float(h)+ float(m)/60+ float(s)/3600
         return time

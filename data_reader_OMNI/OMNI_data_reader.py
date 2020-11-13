@@ -28,7 +28,8 @@ class ReadOMNIData():
         """
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
-        self.nr_datapoints = self.nr_lines-44
+        comments_length = sum("#"==i[0] for i in open(csv_file))-3 #getting the number of comments
+        self.nr_datapoints = self.nr_lines-(comments_length +1 +3)
         self.csv_file = csv_file
         if self.verbose:
             print("reading OMNI data with " + \
@@ -36,36 +37,30 @@ class ReadOMNIData():
             t1 = time.time()
 
         #opening the csv_file
-        self.dataframe_pd = pd.read_csv(csv_file)
+        self.dataframe_pd = pd.read_csv(csv_file, skiprows = comments_length)
         if verbose:
             t2 = time.time()
             print("pandas work time",t2-t1)
-        #extracting arrays from the datasets
-        self.dataframe_matrix = self.dataframe_pd.to_numpy().T
 
-        self.date_UTC, Extent, self.receiver_name,\
-        self.geo_long,self.geo_lat,\
-        MAGON,MAGLAT,MLT,MCOLAT,\
-        IGRF_DECL,SZA,\
-        self.dbn_nez,self.dbe_nez,self.dbz_nez,\
-        self.dbn_geo,self.dbe_geo,self.dbz_geo = self.dataframe_pd.to_numpy().T
+        date_time,self.BZ,self.AE = self.dataframe_pd.to_numpy().T
+        #remove comments at the end.
+        date_time,self.BZ,self.AE = date_time[:-3],self.BZ[:-3],self.AE[:-3]
+        self.year = int(date_time[0].split("-")[0])
+        self.date = np.zeros_like(date_time)
+        self.time_UTC = np.zeros(self.nr_datapoints)
+        for i, dt in enumerate(date_time):
+            self.date[i],temp = dt.split("T")
+            self.time_UTC[i] = float(temp[:2])+ float(temp[3:5])/60
+            if float(self.BZ[i]) >= 99999:
+                self.BZ[i] = np.nan
+            if float(self.AE[i]) >= 99999:
+                self.AE[i] = np.nan
+
         if verbose:
             t3 = time.time()
-            print("assigning to numpy array",t3-t2)
-        self.time_UTC = np.zeros_like(self.date_UTC)
-        self.date = np.zeros_like(self.date_UTC)
-        self.year = int(self.date_UTC[0].split("-")[0])
-        for i, dt in enumerate(self.date_UTC):
-            self.date[i], self.time_UTC[i] = dt.split("T")
-        if verbose:
+            print("convert to numpy array", t3-t2)
             t4 = time.time()
-            print("pre time-conversion", t4-t3)
-        self.time_UTC = self.time_converted()
-        if verbose:
-            t5 = time.time()
-            print("after time-conversion", t5-t4)
-            t6 = time.time()
-            print("time taken to read = ","%g"%(t6-t1))
+            print("time taken to read = ","%g"%(t4-t1))
 
     def check_read_data(self):
         """
@@ -86,41 +81,30 @@ class ReadOMNIData():
         self.check_read_data()
         return self.nr_datapoints
 
-
-    def time_converted(self,):
-        """
-        changes the self.time_UTC from 60 number system to 10 number system.
-        """
-        N = len(self.time_UTC)
-        time = np.zeros(N)
-        for i in prange(N):
-            h, m, s = self.time_UTC[i].split(":")
-            time[i] = float(h)+ float(m)/60+ float(s)/3600
-        return time
-
     @property
-    def time_(self):
+    def time(self):
         """
-        returns an array of the times the substorm happened
+        returns an array of the times axis
         """
         self.check_read_data()
         return self.time_UTC
 
     @property
-    def geo_flux_current(self):
+    def AE_index(self):
         """
         Returns the geographic pole directions of the data of all receivers.
         """
         self.check_read_data()
-        return self.dbn_geo,self.dbe_geo,self.dbz_geo
+        return self.AE
 
     @property
-    def mag_flux_current(self):
+    def ACE_B_z(self):
         """
         Returns the magnetic pole directions of the data of all receivers.
         """
         self.check_read_data()
-        return self.dbn_nez,self.dbe_nez,self.dbz_nez,
+
+        return self.BZ
 
     @property
     def day_of_year(self):
@@ -142,10 +126,11 @@ class ReadOMNIData():
         prints the dateframe from pandas.
         """
         self.check_read_data()
+        print(self.dataframe_pd)
 
 
 if __name__ == '__main__':
     obj = ReadOMNIData()
-    obj.read_csv("example_OMNI.csv")
-    # print("magnetic time", obj.magnetic_time)
-    # print("day_of_year", obj.day_of_year)
+    obj.read_csv("example_OMNI.csv",verbose = True)
+    obj.print_dataframe()
+    print("day_of_year", obj.day_of_year)

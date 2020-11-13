@@ -28,7 +28,7 @@ class MagnetomerReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.datapoints
         with self.assertRaises(SyntaxError):
-            obj.time_
+            obj.time
         with self.assertRaises(SyntaxError):
             obj.day_of_year
         with self.assertRaises(SyntaxError):
@@ -57,7 +57,7 @@ class MagnetomerReaderTest(unittest.TestCase):
         #checking number of datapoints and sizes of arrays
         self.assertEqual(obj.datapoints,n)
         self.assertEqual(len(obj.day_of_year[0]),n)
-        self.assertEqual(len(obj.time_),n)
+        self.assertEqual(len(obj.time),n)
         #day and year check
         self.assertEqual(int(sum(obj.mag_flux_current[0])),-15722)
         self.assertEqual(int(sum(obj.geo_flux_current[0])),-17057)

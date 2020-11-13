@@ -39,8 +39,6 @@ class ReadMagnetomerData():
             t2 = time.time()
             print("pandas work time",t2-t1)
         #extracting arrays from the datasets
-        self.dataframe_matrix = self.dataframe_pd.to_numpy().T
-
         self.date_UTC, Extent, self.receiver_name,\
         self.geo_long,self.geo_lat,\
         MAGON,MAGLAT,MLT,MCOLAT,\
@@ -97,7 +95,7 @@ class ReadMagnetomerData():
         return time
 
     @property
-    def time_(self):
+    def time(self):
         """
         returns an array of the times the substorm happened
         """

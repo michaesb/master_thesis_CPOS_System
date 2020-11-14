@@ -51,11 +51,10 @@ class ReadOMNIData():
         for i, dt in enumerate(date_time):
             self.date[i],temp = dt.split("T")
             self.time_UTC[i] = float(temp[:2])+ float(temp[3:5])/60
-            if float(self.BZ[i]) >= 99999:
+            if float(self.BZ[i]) == 9999.99:
                 self.BZ[i] = np.nan
             if float(self.AE[i]) >= 99999:
                 self.AE[i] = np.nan
-
         if verbose:
             t3 = time.time()
             print("convert to numpy array", t3-t2)

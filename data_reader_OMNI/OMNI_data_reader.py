@@ -28,8 +28,6 @@ class ReadOMNIData():
         """
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
-        comments_length = sum("#"==i[0] for i in open(csv_file))-3 #getting the number of comments
-        self.nr_datapoints = self.nr_lines-(comments_length +1 +3)
         self.csv_file = csv_file
         if self.verbose:
             print("reading OMNI data with " + \
@@ -37,14 +35,16 @@ class ReadOMNIData():
             t1 = time.time()
 
         #opening the csv_file
-        self.dataframe_pd = pd.read_csv(csv_file, skiprows = comments_length)
+        self.dataframe_pd = pd.read_csv(csv_file,
+                                        comment = "#")
+                                        #na_values={'by': 9999.99,})
+
         if verbose:
             t2 = time.time()
             print("pandas work time",t2-t1)
-
         date_time,self.BZ,self.AE = self.dataframe_pd.to_numpy().T
+        self.nr_datapoints = len(date_time)
         #remove comments at the end.
-        date_time,self.BZ,self.AE = date_time[:-3],self.BZ[:-3],self.AE[:-3]
         self.year = int(date_time[0].split("-")[0])
         self.date = np.zeros_like(date_time)
         self.time_UTC = np.zeros(self.nr_datapoints)
@@ -53,8 +53,12 @@ class ReadOMNIData():
             self.time_UTC[i] = float(temp[:2])+ float(temp[3:5])/60
             if float(self.BZ[i]) == 9999.99:
                 self.BZ[i] = np.nan
+            else:
+                self.BZ[i] = float(self.BZ[i])
             if float(self.AE[i]) >= 99999:
                 self.AE[i] = np.nan
+            else:
+                self.AE[i] = float(self.AE[i])
         if verbose:
             t3 = time.time()
             print("convert to numpy array", t3-t2)

@@ -18,6 +18,7 @@ class ReadMagnetomerData():
         #datasets property
         self.date = None
         self.time_UTC = None
+        self.nr_datapoints = -1
 
 
     def read_csv(self,csv_file, verbose=False):
@@ -25,12 +26,12 @@ class ReadMagnetomerData():
         Reads the substorm event list from supermag
         """
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
+        self.nr_lines = sum(line[0]!="#" for line in open(csv_file)) #getting the number of lines
         self.nr_datapoints = self.nr_lines-1
         self.csv_file = csv_file
         if self.verbose:
-            print("reading magnetometer data with " + \
-            str(self.nr_datapoints)+" datapoints")
+            print("reading magnetometer data with ",
+            self.nr_datapoints," datapoints");
             t1 = time.time()
 
         #opening the csv_file

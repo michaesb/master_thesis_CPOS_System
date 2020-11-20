@@ -22,15 +22,34 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, magnet
             filtered_days[i] = days_magnetometer[i]
     days_magnetometer+=time_UTC_mag/24
     filtered_days+=time_UTC_mag/24
+    x_min, x_max = -5, 65
     plt.subplot(3,1,1)
     plt.plot(days_magnetometer,magnetometer_values, "r")
     plt.plot(filtered_days,filtered_mag, "b")
     plt.plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "g*")
     plt.title("Magnetometer,B_Z values and AE-index over 2018")
     plt.legend(["original", "filtered"])
-    plt.ylabel("B-values [nT]")
-    plt.xticks([])
+    plt.ylabel("Magnetometer [nT]")
+    # plt.xticks([])
     plt.axis([x_min, x_max, -300, 300])
+    #plotting B_z
+    plt.subplot(3,1,2)
+    plt.plot(days_hour[B_z>0], B_z_positive,"r", linewidth =0.4)
+    plt.plot(days_hour[B_z<0], B_z_negative, "g")
+    plt.plot(days_hour, np.zeros_like(days_hour), "r", linewidth=0.4)
+    plt.axis([x_min, x_max, -20, 20])
+
+    # plt.xticks([])
+    plt.ylabel("B_z-values [nT]")
+    #plotting AE index
+    plt.subplot(3,1,3)
+    plt.plot(days_hour, AE)
+    #plt.title(" over 2018")
+    plt.ylabel("AE-index [nT]")
+    plt.xlabel("t [days]")
+    plt.axis([x_min, x_max, 0, 1600])
+    # plt.xticks([0,,9,14,19,24,29,34,39,44,49,54,59])
+    plt.show()
 
 
 obj_event = ReadSubstormEvent()
@@ -70,9 +89,6 @@ geographic_north,geographic_east, geographic_z, \
 magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data("TRO")
 
 #then event reader
-evening_time = 20
-morning_time = 4
-
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
@@ -93,20 +109,4 @@ B_z_positive = B_z[B_z>0]
 B_z_negative = B_z[B_z<0]
 
 
-x_min, x_max = -5, 65
 plot_single_event(dates_mag,dates_event, time_of_event,time_UTC_mag ,magnetic_north)
-
-plt.subplot(3,1,2)
-plt.plot(days_hour[B_z>0], B_z_positive,"r", linewidth =0.4)
-plt.plot(days_hour[B_z<0], B_z_negative, "g")
-plt.plot(days_hour, np.zeros_like(days_hour), "r", linewidth=0.4)
-plt.xticks([])
-plt.ylabel("magnetic values [nT]")
-
-plt.subplot(3,1,3)
-plt.plot(days_hour, AE)
-#plt.title(" over 2018")
-plt.ylabel("magnetic values [nT]")
-plt.xlabel("t [days]")
-plt.axis([-15, 366, 0, 1600])
-plt.show()

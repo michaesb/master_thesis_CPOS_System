@@ -1,7 +1,9 @@
-
-def filtering_to_Norway_night(latitude, magnetic_time,time_UTC,dates,N,verbose=False):
+import numpy as np
+def filtering_to_Norway_night(latitude, magnetic_time,time_UTC,dates,verbose=False):
+    N = len(latitude)
+    evening_time = 20
+    morning_time = 4
     ind_arr = np.ones(len(latitude))
-
     #filtering out magnetic time that is not in the night
     ind_arr_1 = np.where(evening_time > magnetic_time,0, ind_arr)
     ind_arr_2 = np.where(morning_time < magnetic_time,0,ind_arr)

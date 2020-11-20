@@ -95,7 +95,7 @@ noise_N = np.zeros((nr_days,4))
 noise_E = np.zeros((nr_days,4))
 noise_Z = np.zeros((nr_days,4))
 
-for i in range(1,366):
+for i in range(1,nr_days+1):
     if len(str(i))==1:
         date.append("00"+str(i))
     elif len(str(i))==2:

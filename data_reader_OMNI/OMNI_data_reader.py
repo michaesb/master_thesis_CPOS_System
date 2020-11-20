@@ -28,6 +28,7 @@ class ReadOMNIData():
         """
         self.verbose = verbose
         self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
+        self.nr_datapoints = sum(line[0] != "#" for line in open(csv_file))
         self.csv_file = csv_file
         if self.verbose:
             print("reading OMNI data with " + \

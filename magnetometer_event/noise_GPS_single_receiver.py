@@ -24,19 +24,19 @@ def plotting_noise(date,noise):
     plt.title("Z-coordinate noise at "+receiver +" over "+year)
     plt.ylabel("sample noise [m]")
     plt.xlabel("days")
-    plt.xticks([4,9,14,19,24,29,34,39,44,49,54,59])
+    plt.xticks([4,9,14,19,24,29])
     # plt.xticks(np.arange(0,len(date),30),months[:int(len(date)/30)])
     plt.legend()
     plt.show()
 
 receiver ="TRM"
-nr_days = 60
+nr_days = 32
 year = "2018"
 
 def run_filter_plot_NMEA_data(nr_days,year, receiver):
     date = []
-    parts  = 4
-    noise = np.zeros((nr_days,parts))
+    noise = np.zeros((nr_days,4))
+    counter_first = 1
     for i in range(1,nr_days+1):
         if len(str(i))==1:
             date.append("00"+str(i))
@@ -72,8 +72,9 @@ def run_filter_plot_NMEA_data(nr_days,year, receiver):
         sigma = accuracy_NMEA_opt(Z-np.mean(Z))
         index_3, index_9, index_15 ,index_21 = \
         int(len(sigma)/8.),int(len(sigma)*3/8.),int(len(sigma)*5/8.),int(len(sigma)*7/8.)
-        if i==0:
+        if counter_first==1:
             noise[i,0] = np.nan
+            counter_first = 0
         else:
             noise[i,0]=np.nanmean(np.concatenate([sigma[index_21:],noise_stored]))
         noise[i,1] = np.nanmean(sigma[index_3:index_9])

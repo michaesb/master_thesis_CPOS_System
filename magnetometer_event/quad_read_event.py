@@ -22,7 +22,7 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, magnet
             filtered_days[i] = days_magnetometer[i]
     days_magnetometer+=time_UTC_mag/24
     filtered_days+=time_UTC_mag/24
-    x_min, x_max = -5, 65
+    x_min, x_max = -1, 30
     plt.subplot(3,1,1)
     plt.plot(days_magnetometer,magnetometer_values, "r")
     plt.plot(filtered_days,filtered_mag, "b")

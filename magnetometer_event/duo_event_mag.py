@@ -8,6 +8,7 @@ from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from magnetometer_event.filtering_events import filtering_to_Norway_night
 
 def plot_latitude_time(latitude,mag_time,time_UTC,dates):
+    xmin,x_max =4, 5
     days = date_to_days(dates)
     plt.subplot(3,1,1)
     plt.plot(days,latitude, "*")
@@ -17,6 +18,7 @@ def plot_latitude_time(latitude,mag_time,time_UTC,dates):
     plt.subplot(3,1,2)
     plt.plot(days,mag_time, "*")
     plt.ylabel("time of day")
+    plt.axis([x_min, x_max, -300, 300])
     plt.xticks([])
     plt.subplot(3,1,3)
     plt.plot(days,time_UTC, "*")
@@ -41,8 +43,10 @@ def plot_substorm_days(dates_mag,dates_event, time_of_event, time_UTC_mag, magne
     filtered_days+=time_UTC_mag/24
     plt.plot(days_magnetometer,magnetometer_values, "r")
     plt.plot(filtered_days,filtered_mag, "b")
-    plt.plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "g*")
+    plt.plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "*g", markersize = 10)
     plt.title("North to south mag values before and after filtered")
+    x_min,x_max =7, 15
+    plt.axis([x_min, x_max, -50, 50])
     plt.legend(["original", "filtered"])
     plt.ylabel("B-values [nT]")
     plt.xlabel("day of year")

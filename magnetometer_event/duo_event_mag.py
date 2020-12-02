@@ -75,8 +75,6 @@ geographic_north,geographic_east, geographic_z, \
 magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data("DON")
 
 #then event reader
-evening_time = 20
-morning_time = 4
 
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time

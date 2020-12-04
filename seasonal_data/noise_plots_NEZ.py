@@ -145,9 +145,9 @@ for receiver in receiver_stations:
             noise_E[i,0] = np.nan
             noise_Z[i,0] = np.nan
         else:
-            noise_N[i,0] =np.nanmean(np.concatenate([sigma_N[index_21:],noise_stored[0]]))
-            noise_E[i,0] =np.nanmean(np.concatenate([sigma_E[index_21:],noise_stored[1]]))
-            noise_Z[i,0] =np.nanmean(np.concatenate([sigma_Z[index_21:],noise_stored[2]]))
+            noise_N[i,0] =np.nanmean(np.concatenate([noise_stored[0],sigma_N[:index_3]]))
+            noise_E[i,0] =np.nanmean(np.concatenate([noise_stored[1],sigma_E[:index_3]]))
+            noise_Z[i,0] =np.nanmean(np.concatenate([noise_stored[2],sigma_Z[:index_3]]))
 
         noise_N[i,1], noise_E[i,1], noise_Z[i,1] = \
         np.nanmean(sigma_N[index_3:index_9]), np.nanmean(sigma_E[index_3:index_9]), np.nanmean(sigma_Z[index_3:index_9])

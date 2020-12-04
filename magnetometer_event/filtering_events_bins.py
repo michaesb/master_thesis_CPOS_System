@@ -38,15 +38,23 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
                     else:
                         bins[j] = np.nan
                         time_day_bins[j] = np.nan
-
+                    """
                     print("----- \nindex",j, "date of event trigger ",date,)
                     print("minimal value",bin_value,"time of event",time_of_event[j])
                     print("for loop k ",k)
                     print("-----")
+                    """
                     j+=1
 
+    bins_sorted = np.sort(bins)
+    print(bins_sorted)
+    borders = [bins_sorted[int((N_event-1)/3)],bins_sorted[int((N_event-1)*2/3)]]
     plt.hist(bins, bins = 30)
-    plt.title("2018, Tromso,\n Max magnetometer value of a substorm event")
+    plt.axvline(x=borders[0],color ="r")
+    plt.axvline(x=borders[1],color ="r")
+    plt.title("2018, Tromso,\n Max magnetometer value of a substorm event. \n"+\
+              "Red lines are the lines for the borders which is " +str(borders[0])\
+              +" and " +str(borders[1])+ " nT")
     plt.xlabel("minimum of the north component magnetometer [nT]")
     plt.ylabel("number of occurances")
     plt.show()
@@ -60,21 +68,6 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
     plt.xlabel("time of day [UT+1]")
     plt.show()
 
-    """
-    days_magnetometer+=time_UTC_mag/24
-    filtered_days+=time_UTC_mag/24
-    plt.plot(days_magnetometer,magnetometer_values, "r")
-    plt.plot(filtered_days,filtered_mag, "b")
-    plt.plot(days_event+time_of_event/24,np.zeros(N_event), "*g", markersize = 10)
-    plt.title("North to south mag values before and after filtered")
-    x_min,x_max =7, 15
-    # plt.axis([x_min, x_max, -50, 50])
-    plt.legend(["original", "filtered"])
-    plt.ylabel("B-values [nT]")
-    plt.xlabel("day of year")
-    plt.grid("on")
-    plt.show()
-    """
 
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()

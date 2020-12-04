@@ -7,8 +7,10 @@ from magnetometer_event.filtering_events import filtering_to_Norway_night
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
+from noise_gps_function import run_filter_plot_NMEA_data
 
-def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer_values):
+def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, \
+                      magnetometer_values,date,noise,noise_21_3,noise_3_9):
     N_mag = len(dates_mag)
     N_event = len(dates_event)
     days_event = date_to_days(dates_event)
@@ -22,35 +24,47 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, magnet
             filtered_days[i] = days_magnetometer[i]
     days_magnetometer+=time_UTC_mag/24
     filtered_days+=time_UTC_mag/24
-    x_min, x_max = -1, 30
-    plt.subplot(3,1,1)
-    plt.plot(days_magnetometer,magnetometer_values, "r")
-    plt.plot(filtered_days,filtered_mag, "b")
-    plt.plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "g*")
-    plt.title("Magnetometer,B_Z values and AE-index over 2018")
-    plt.legend(["original", "filtered"])
-    plt.ylabel("Magnetometer [nT]")
-    plt.grid("on")
-    plt.xticks([])
-    plt.axis([x_min, x_max, -300, 300])
+    x_min, x_max = -1, 60
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"]
+    fig,ax = plt.subplots(4,1, sharex = True)
+    ax[0].plot(days_magnetometer,magnetometer_values, "r")
+    ax[0].plot(filtered_days,filtered_mag, "b")
+    ax[0].plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "g*")
+    ax[0].set_title("Magnetometer,B_Z values and AE-index over 2018")
+    ax[0].legend(["original", "filtered"])
+    ax[0].set_ylabel("Magnetometer [nT]")
+    ax[0].grid("on")
+    ax[0].set_xticks(range(4,59,5))
+    # ax[0].set_xticks([])
+    ax[0].axis([x_min, x_max, -300, 300])
     #plotting B_z
-    plt.subplot(3,1,2)
-    plt.plot(days_hour[B_z>0], B_z_positive,"r", linewidth =0.4)
-    plt.plot(days_hour[B_z<0], B_z_negative, "g")
-    plt.plot(days_hour, np.zeros_like(days_hour), "r", linewidth=0.4)
-    plt.axis([x_min, x_max, -20, 20])
-    plt.grid("on")
-    plt.xticks([])
-    plt.ylabel("B_z-values [nT]")
+    ax[1].plot(days_hour[B_z>0], B_z_positive,"r", linewidth =0.4)
+    ax[1].plot(days_hour[B_z<0], B_z_negative, "g")
+    ax[1].plot(days_hour, np.zeros_like(days_hour), "r", linewidth=0.4)
+    ax[1].axis([x_min, x_max, -20, 20])
+    ax[1].grid("on")
+    # ax[1].set_xticks([])
+    ax[1].set_xticks(range(4,59,5))
+    ax[1].set_ylabel("B_z-values [nT]")
     #plotting AE index
-    plt.subplot(3,1,3)
-    plt.plot(days_hour, AE)
-    #plt.title(" over 2018")
-    plt.ylabel("AE-index [nT]")
-    plt.xlabel("t [days]")
-    plt.axis([x_min, x_max, 0, 1600])
-    # plt.xticks([0,,9,14,19,24,29,34,39,44,49,54,59])
-    plt.grid("on")
+    ax[2].plot(days_hour, AE)
+    ax[2].set_ylabel("AE-index [nT]")
+    ax[2].axis([x_min, x_max, 0, 1600])
+    ax[2].set_xticks(range(4,59,5))
+    # ax[2].set_xticks([])
+    ax[2].grid("on")
+    ax[3].plot(date,noise_21_3[:,0], label=str(21)+"-"+str(23))
+    ax[3].plot(date,noise_21_3[:,1], label=str(23)+"-"+str(1))
+    ax[3].plot(date,noise_21_3[:,2], label=str(1)+"-"+str(3))
+    for k in range(3):
+        ax[3].plot(date,noise_3_9[:,k], label=str(3+2*k)+"-"+str(5+2*k))
+    # ax[3].plot(date,noise[:,2], "blue", label="09-15")
+    # ax[3].plot(date,noise[:,3], "black", label="15-21" )
+    ax[3].set_ylabel("sample noise [m]")
+    ax[3].set_xlabel("days")
+    ax[3].grid("on")
+    ax[3].set_xticks(range(4,x_max-1,5))
+    ax[3].legend()
     plt.show()
 
 
@@ -60,6 +74,19 @@ obj_OMNI = ReadOMNIData()
 
 
 try:
+    desktop_path = "/run/media/michaelsb/HDD Linux/data/"
+    path_event = desktop_path+"substorm_event_list_2018.csv"
+    path_mag = desktop_path+"20201025-17-57-supermag.csv"
+    path_OMNI = desktop_path+"OMNI_HRO_1MIN_179769.csv"
+    print("substorm event reader")
+    obj_event.read_csv(path_event,verbose = False)
+    print("magnetometer reader")
+    obj_mag.read_csv(path_mag, verbose = False)
+    print("OMNI reader")
+    obj_OMNI.read_csv(path_OMNI, verbose = False)
+
+
+except FileNotFoundError:
     laptop_path = "/scratch/michaesb/"
     path_event = laptop_path+"substorm_event_list_2018.csv"
     path_mag = laptop_path+"20201025-17-57-supermag.csv"
@@ -69,19 +96,7 @@ try:
     obj_mag.read_csv(path_mag, verbose = False)
     print("magnetometer reader")
     obj_OMNI.read_csv(path_OMNI, verbose = False)
-    print("substorm event reader")
-
-except FileNotFoundError:
-    desktop_path = "/run/media/michaelsb/HDD Linux/data/"
-    path_event = desktop_path+"substorm_event_list_2018.csv"
-    path_mag = desktop_path+"20201025-17-57-supermag.csv"
-    path_OMNI = desktop_path+"OMNI_HRO_1MIN_179769.csv"
-    obj_event.read_csv(path_event,verbose = False)
-    print("substorm event reader")
-    obj_mag.read_csv(path_mag, verbose = False)
-    print("magnetometer reader")
-    obj_OMNI.read_csv(path_OMNI, verbose = False)
-    print("substorm event reader")
+    print("OMNI reader")
 
 
 #magnetometer reader
@@ -107,8 +122,17 @@ dates, uneeded_info = obj_OMNI.day_of_year
 days = date_to_days(dates)
 days_hour = days + t_OMNI/24.
 
+
+receiver ="TRM"
+nr_days = 60
+year = "2018"
+
+date,noise,noise_21_3,noise_3_9= run_filter_plot_NMEA_data(nr_days,receiver)
+
+
 B_z_positive = B_z[B_z>0]
 B_z_negative = B_z[B_z<0]
 
 
-plot_single_event(dates_mag,dates_event, time_of_event,time_UTC_mag ,magnetic_north)
+plot_single_event(dates_mag,dates_event, time_of_event,time_UTC_mag\
+                 ,magnetic_north, date, noise, noise_21_3,noise_3_9)

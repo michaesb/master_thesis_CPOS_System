@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-# from scipy.signal import savgol_filter
 import sys, time
 sys.path.insert(0, "..")
 from tqdm import tqdm
@@ -8,28 +6,14 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 from extra.error_calculation_NMA_standard import accuracy_NMEA_opt, filtering_outliers
 
-def plotting_noise(date,noise):
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"]
-    plt.plot(date,noise[:,1], "green", label="3-9")
-    plt.plot(date,noise[:,2], "blue", label="9-15")
-    plt.plot(date,noise[:,3], "black", label="15-21" )
-    plt.plot(date,noise[:,0], "red",label="21-03",)
-    plt.title("Z-coordinate noise at "+receiver +" over "+year)
-    plt.ylabel("sample noise [m]")
-    plt.xlabel("days")
-    plt.xticks([4,9,14,19,24,29])
-    # plt.xticks(np.arange(0,len(date),30),months[:int(len(date)/30)])
-    plt.legend()
-    plt.show()
-
-receiver ="TRM"
-nr_days = 60
-year = "2018"
-
-def run_filter_plot_NMEA_data(nr_days,year, receiver):
+def run_filter_plot_NMEA_data(nr_days, receiver):
     date = []
     noise = np.zeros((nr_days,4))
-    counter_first = 1
+    pieces_per_interval = 3
+    noise_3_9 = np.zeros((nr_days,pieces_per_interval))*np.nan
+    noise_21_3 = np.zeros((nr_days,pieces_per_interval))*np.nan
+    counter_first = [1,1]
+    year = "2018"
     for i in range(1,nr_days+1):
         if len(str(i))==1:
             date.append("00"+str(i))
@@ -69,15 +53,31 @@ def run_filter_plot_NMEA_data(nr_days,year, receiver):
         sigma = accuracy_NMEA_opt(Z-np.mean(Z))
         index_3, index_9, index_15 ,index_21 = \
         int(len(sigma)/8.),int(len(sigma)*3/8.),int(len(sigma)*5/8.),int(len(sigma)*7/8.)
-        if counter_first==1:
+        if counter_first[0]==1:
             noise[i,0] = np.nan
-            counter_first = 0
+            counter_first[0] = 0
         else:
-            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3]))
+            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3],]))
         noise[i,1] = np.nanmean(sigma[index_3:index_9])
         noise[i,2] = np.nanmean(sigma[index_9:index_15])
         noise[i,3] = np.nanmean(sigma[index_15:index_21])
-        noise_stored = sigma[index_21:]
 
-    plotting_noise(date, noise)
-run_filter_plot_NMEA_data(nr_days,year,receiver)
+        if counter_first[1]==1:
+            counter_first[1]=0
+            noise_stored = sigma[index_21:]
+            continue
+        for k in range(pieces_per_interval):
+            index_k_21,index_k1_3 = int(-len(sigma)*(1- (21+k*2)/24.)), \
+                                        int(-len(sigma)*(1- (23+k*2)/24.)),
+            index_k2_3, index_k_9 = int(len(sigma)*(3+k*2)/24.), \
+                                    int(len(sigma)*(5+k*2)/24.)
+            if k<pieces_per_interval/2:
+                noise_21_3[i, k] = np.nanmean(noise_stored[:int(len(noise_stored)*2/3)])
+            elif k==pieces_per_interval/2:
+                noise_21_3[i,k]=np.nanmean(np.concatenate(\
+                                [noise_stored[int(len(noise_stored)*2/3):],sigma[:index_k1_3]]))
+            else:
+                noise_21_3[i,k] = np.nanmean(sigma[index_k_21:index_k1_3])
+            noise_3_9[i,k] = np.nanmean(sigma[index_k2_3:index_k_9])
+        noise_stored = sigma[index_21:]
+    return date,noise, noise_21_3, noise_3_9

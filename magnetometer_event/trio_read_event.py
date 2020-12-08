@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import sys, time
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
 from extra.time_date_conversion import date_to_days
@@ -44,7 +45,7 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, magnet
     plt.ylabel("B_z-values [nT]")
     #plotting AE index
     plt.subplot(3,1,3)
-    plt.plot(days_hour, AE)
+    plt.plot(days_hour[1:], AE)
     #plt.title(" over 2018")
     plt.ylabel("AE-index [nT]")
     plt.xlabel("t [days]")
@@ -64,44 +65,58 @@ try:
     path_event = laptop_path+"substorm_event_list_2018.csv"
     path_mag = laptop_path+"20201025-17-57-supermag.csv"
     path_OMNI = laptop_path+"OMNI_HRO_1MIN_179769.csv"
-    obj_event.read_csv(path_event,verbose = False)
-    print("substorm event reader")
-    obj_mag.read_csv(path_mag, verbose = False)
-    print("magnetometer reader")
-    obj_OMNI.read_csv(path_OMNI, verbose = False)
-    print("substorm event reader")
-
+    path_AE = laptop_path+ "20201025-17-57-supermag_AE.csv"
+    AE_dataframe = pd.read_csv(path_AE,names=["Date_UTC","SML","AE"], )
+                               #na_values = {"AE":0})
 except FileNotFoundError:
-    desktop_path = "/run/media/michaelsb/HDD Linux/data/"
-    path_event = desktop_path+"substorm_event_list_2018.csv"
-    path_mag = desktop_path+"20201025-17-57-supermag.csv"
-    path_OMNI = desktop_path+"OMNI_HRO_1MIN_179769.csv"
-    obj_event.read_csv(path_event,verbose = False)
-    print("substorm event reader")
-    obj_mag.read_csv(path_mag, verbose = False)
-    print("magnetometer reader")
-    obj_OMNI.read_csv(path_OMNI, verbose = False)
-    print("substorm event reader")
+    pass
 
+#     print("substorm event reader")
+#     obj_event.read_csv(path_event,verbose = False)
+#     print("magnetometer reader")
+#     obj_mag.read_csv(path_mag, verbose = False)
+#     print("substorm event reader")
+#     obj_OMNI.read_csv(path_OMNI, verbose = False)
+# #
+# except FileNotFoundError:
+#     desktop_path = "/run/media/michaelsb/HDD Linux/data/"
+#     path_event = desktop_path+"substorm_event_list_2018.csv"
+#     path_mag = desktop_path+"20201025-17-57-supermag.csv"
+#     path_OMNI = desktop_path+"OMNI_HRO_1MIN_179769.csv"
+#     path_AE = desktop_path+ "20201025-17-57-supermag_AE.csv"
+#     print("substorm event reader")
+#     obj_event.read_csv(path_event,verbose = False)
+#     print("magnetometer reader")
+#     obj_mag.read_csv(path_mag, verbose = False)
+#     print("substorm event reader")
+#     obj_OMNI.read_csv(path_OMNI, verbose = False)
+#
+#
+# #magnetometer reader
+# dates_mag, time_UTC_mag,\
+# location_long,location_lat,\
+# geographic_north,geographic_east, geographic_z, \
+# magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data("TRO")
+#
+# #then event reader
+# lat = obj_event.latitude
+# mag_time = obj_event.magnetic_time
+# time_UTC_event = obj_event.dates_time
+# dates_event, year = obj_event.day_of_year
+#
+# Norway_time = time_UTC_event + 1
+# lat, time_of_event, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)
+#
+# #then OMNI_data
+# B_z = obj_OMNI.ACE_B_z
 
-#magnetometer reader
-dates_mag, time_UTC_mag,\
-location_long,location_lat,\
-geographic_north,geographic_east, geographic_z, \
-magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data("TRO")
-
-#then event reader
-lat = obj_event.latitude
-mag_time = obj_event.magnetic_time
-time_UTC_event = obj_event.dates_time
-dates_event, year = obj_event.day_of_year
-
-Norway_time = time_UTC_event + 1
-lat, time_of_event, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)
-
-#then OMNI_data
-B_z = obj_OMNI.ACE_B_z
-AE = obj_OMNI.AE_index
+AE = np.array(AE_dataframe["AE"].tolist()[1:])
+SML = np.array(AE_dataframe["SML"][1:].tolist()[1:])
+print(AE)
+print(SML)
+plt.plot(SML)
+plt.plot(AE)
+plt.show()
 t_OMNI = obj_OMNI.time
 dates, uneeded_info = obj_OMNI.day_of_year
 days = date_to_days(dates)

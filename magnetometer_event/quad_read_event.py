@@ -30,7 +30,7 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, \
     ax[0].plot(days_magnetometer,magnetometer_values, "r")
     ax[0].plot(filtered_days,filtered_mag, "b")
     ax[0].plot(days_event+time_of_event/24,np.zeros(len(dates_event)), "g*")
-    ax[0].set_title("Magnetometer,B_Z values and AE-index over 2018")
+    ax[0].set_title("Magnetometer,B_Z values, AE-index and noise from GPS over 2018")
     ax[0].legend(["original", "filtered"])
     ax[0].set_ylabel("Magnetometer [nT]")
     ax[0].grid("on")
@@ -38,8 +38,8 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, \
     # ax[0].set_xticks([])
     ax[0].axis([x_min, x_max, -300, 300])
     #plotting B_z
-    ax[1].plot(days_hour[B_z>0], B_z_positive,"r", linewidth =0.4)
-    ax[1].plot(days_hour[B_z<0], B_z_negative, "g")
+    ax[1].plot(days_hour[B_z>0], B_z_positive,"r", )
+    ax[1].plot(days_hour[B_z<0], B_z_negative, "g",)
     ax[1].plot(days_hour, np.zeros_like(days_hour), "r", linewidth=0.4)
     ax[1].axis([x_min, x_max, -20, 20])
     ax[1].grid("on")
@@ -57,7 +57,7 @@ def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, \
     ax[3].plot(date,noise_21_3[:,1], label=str(23)+"-"+str(1))
     ax[3].plot(date,noise_21_3[:,2], label=str(1)+"-"+str(3))
     for k in range(3):
-        ax[3].plot(date,noise_3_9[:,k], label=str(3+2*k)+"-"+str(5+2*k))
+        ax[3].plot(date,noise_3_9[:,k], label=str(3+2*k)+"-"+str(3+2*(k+1)))
     # ax[3].plot(date,noise[:,2], "blue", label="09-15")
     # ax[3].plot(date,noise[:,3], "black", label="15-21" )
     ax[3].set_ylabel("sample noise [m]")

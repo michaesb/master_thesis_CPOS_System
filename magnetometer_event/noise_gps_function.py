@@ -57,10 +57,10 @@ def run_filter_plot_NMEA_data(nr_days, receiver):
             noise[i,0] = np.nan
             counter_first[0] = 0
         else:
-            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3],]))
-        noise[i,1] = np.nanmean(sigma[index_3:index_9])
-        noise[i,2] = np.nanmean(sigma[index_9:index_15])
-        noise[i,3] = np.nanmean(sigma[index_15:index_21])
+            noise[i,0]=np.nanmedian(np.concatenate([noise_stored,sigma[:index_3],]))
+        noise[i,1] = np.nanmedian(sigma[index_3:index_9])
+        noise[i,2] = np.nanmedian(sigma[index_9:index_15])
+        noise[i,3] = np.nanmedian(sigma[index_15:index_21])
 
         if counter_first[1]==1:
             counter_first[1]=0
@@ -68,16 +68,21 @@ def run_filter_plot_NMEA_data(nr_days, receiver):
             continue
         for k in range(pieces_per_interval):
             index_k_21,index_k1_3 = int(-len(sigma)*(1- (21+k*2)/24.)), \
-                                        int(-len(sigma)*(1- (23+k*2)/24.)),
-            index_k2_3, index_k_9 = int(len(sigma)*(3+k*2)/24.), \
-                                    int(len(sigma)*(5+k*2)/24.)
+                                    int(-len(sigma)*(1- (21+(k+1)*2)/24.)),
+            index_k2_3, index_k_9 = int(+len(sigma)*(3+k*2)/24.), \
+                                    int(+len(sigma)*(3+(k+1)*2)/24.)
             if k<pieces_per_interval/2:
-                noise_21_3[i, k] = np.nanmean(noise_stored[:int(len(noise_stored)*2/3)])
-            elif k==pieces_per_interval/2:
-                noise_21_3[i,k]=np.nanmean(np.concatenate(\
-                                [noise_stored[int(len(noise_stored)*2/3):],sigma[:index_k1_3]]))
+                noise_21_3[i, k] = np.nanmedian(noise_stored[\
+                int(len(noise_stored)*2*k/3):int(len(noise_stored)*2*(k+1)/3)])
+
+            elif k==pieces_per_interval/2 and pieces_per_interval==3:
+                noise_21_3[i,k]=np.nanmedian(np.concatenate(\
+                [noise_stored[int(len(noise_stored)*2*k/3):],sigma[:index_k1_3]]))
             else:
-                noise_21_3[i,k] = np.nanmean(sigma[index_k_21:index_k1_3])
-            noise_3_9[i,k] = np.nanmean(sigma[index_k2_3:index_k_9])
+                noise_21_3[i,k] = np.nanmedian(sigma[index_k_21:index_k1_3])
+            noise_3_9[i,k] = np.nanmedian(sigma[index_k2_3:index_k_9])
+            # tqdm.write(str(2*k/3)+ ", 2*k/3")
+            # tqdm.write(str(noise_21_3[i,:])+"21_3")
+            # tqdm.write(str(noise_3_9[i,:])+"3_9")
         noise_stored = sigma[index_21:]
     return date,noise, noise_21_3, noise_3_9

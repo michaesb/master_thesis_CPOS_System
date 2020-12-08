@@ -38,12 +38,6 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
                     else:
                         bins[j] = np.nan
                         time_day_bins[j] = np.nan
-                    """
-                    print("----- \nindex",j, "date of event trigger ",date,)
-                    print("minimal value",bin_value,"time of event",time_of_event[j])
-                    print("for loop k ",k)
-                    print("-----")
-                    """
                     j+=1
 
     bins_sorted = np.sort(bins)
@@ -63,9 +57,12 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
     plt.xlabel("day of year")
     plt.ylabel("number of occurances")
     plt.show()
-    plt.hist(time_of_event, bins = 80)
+    plotting_bins_array = np.concatenate([time_of_event[time_of_event>16]-20,time_of_event[time_of_event<16]+4])
+    plt.hist(plotting_bins_array,color = "b", bins = 80)
     plt.title("Distrubution of what time the substorm occurs")
     plt.xlabel("time of day [UT+1]")
+    plt.xticks(range(9),labels=[str(20),str(21),str(22),str(23),str(24),\
+                                str(1),str(2),str(3),str(4)])
     plt.show()
 
 
@@ -86,10 +83,10 @@ except FileNotFoundError:
     desktop_path = "/run/media/michaelsb/HDD Linux/data/"
     path_event = desktop_path+"/substorm_event_list_2018.csv"
     path_mag = desktop_path+"/20201025-17-57-supermag.csv"
-    obj_event.read_csv(path_event,verbose = False)
     print("substorm event reader")
-    obj_mag.read_csv(path_mag, verbose = False)
+    obj_event.read_csv(path_event,verbose = False)
     print("magnetometer reader")
+    obj_mag.read_csv(path_mag, verbose = False)
 
 
 #magnetometer reader

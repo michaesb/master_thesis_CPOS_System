@@ -45,10 +45,10 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
                     print("-----")
                     """
                     j+=1
-
+    bins = bins[np.logical_not(np.isnan(bins))]
     bins_sorted = np.sort(bins)
     print(bins_sorted)
-    borders = [bins_sorted[int((N_event-1)/3)],bins_sorted[int((N_event-1)*2/3)]]
+    borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
     plt.hist(bins, bins = 30)
     plt.axvline(x=borders[0],color ="r")
     plt.axvline(x=borders[1],color ="r")

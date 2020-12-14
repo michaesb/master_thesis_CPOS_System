@@ -40,7 +40,8 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
                         time_day_bins[j] = np.nan
                     j+=1
     bins = bins[np.logical_not(np.isnan(bins))]
-    bins_sorted = np.sort(bins)
+    indexing_sorted_bins = np.argsort(bins)
+    bins_sorted = bins[indexing_sorted_bins]
     print(bins_sorted)
     borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
     plt.hist(bins, bins = 30)
@@ -73,7 +74,6 @@ try:
     laptop_path = "/scratch/michaesb/"
     path_event = laptop_path+"substorm_event_list_2018.csv"
     path_mag = laptop_path+"20201025-17-57-supermag.csv"
-
     obj_event.read_csv(path_event,verbose = False)
     print("substorm event reader")
     obj_mag.read_csv(path_mag, verbose = False)

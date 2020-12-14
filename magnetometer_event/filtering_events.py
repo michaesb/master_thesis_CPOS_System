@@ -14,7 +14,7 @@ def filtering_to_Norway_night(latitude, magnetic_time,time_UTC,dates,verbose=Fal
     ind_arr_3 = np.where(evening_time > time_UTC, 0,ind_arr)
     ind_arr_4 = np.where(morning_time < time_UTC, 0, ind_arr)
     ind_arr = np.where(ind_arr_3 +ind_arr_4 != 0, 1, np.nan)
-    print(np.nansum(ind_arr))
+    # print(np.nansum(ind_arr))
     # filtering latitude that is not in Norway
     ind_arr = np.where(58 > latitude ,np.nan,ind_arr)
     ind_arr = np.where(latitude > 71,np.nan,ind_arr)

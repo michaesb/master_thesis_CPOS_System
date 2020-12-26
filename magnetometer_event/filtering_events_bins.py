@@ -8,46 +8,7 @@ from magnetometer_event.filtering_events import filtering_to_Norway_night
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
-
-def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer_values):
-    N_mag = len(dates_mag)
-    N_event = len(dates_event)
-    days_event = date_to_days(dates_event)
-    days_magnetometer = date_to_days(dates_mag)
-    time_stamp_event = np.zeros(N_mag)*np.nan
-    bins = np.zeros(N_event)
-    time_day_bins = np.zeros(N_event)
-    hour_area = 2
-    events_collection = np.zeros((N_event,int(hour_area*60)))*np.nan
-    print(np.shape(events_collection))
-    j=0
-    date = 0
-    for i in range(N_mag):
-        if days_magnetometer[i] in days_event:
-            if date != days_magnetometer[i]:
-                date = days_magnetometer[i]
-                for k in range(Counter(days_event)[days_magnetometer[i]]):
-                    index_min, index_max = i+int((time_of_event[j] - (hour_area/2))*60)\
-                                          ,i+int((time_of_event[j] + (hour_area/2))*60)
-                    if index_max-index_min != hour_area*60:
-                        index_min+=index_max-index_min-hour_area*60
-
-                    bin_value = np.min(magnetometer_values[index_min:index_max])
-                    if bin_value != bins[j-1]:
-                        bins[j] = bin_value
-                        events_collection[j,:] = magnetometer_values[index_min:index_max]
-                        time_day_bins[j] = days_magnetometer[i]+time_of_event[j]/24
-                    else:
-                        bins[j] = np.nan
-                        time_day_bins[j] = np.nan
-                    j+=1
-    bins = bins[np.logical_not(np.isnan(bins))]
-    indexing_sorted_bins = np.argsort(bins)
-    bins_sorted = bins[indexing_sorted_bins]
-    events_collection_sorted = events_collection[indexing_sorted_bins,:]
-    print(bins_sorted)
-    return bins_sorted,time_day_bins, time_of_event, events_collection_sorted
-
+from magnetometer_event.creating_bins import create_bins
 
 def plot_histograms(bins_sorted,time_day_bins, time_of_event):
     borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]

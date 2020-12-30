@@ -17,9 +17,8 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
     time_stamp_event = np.zeros(N_mag)*np.nan
     bins = np.zeros(N_event)
     time_day_bins = np.zeros(N_event)
-    hour_area = 2
+    hour_area = 4
     events_collection = np.zeros((N_event,int(hour_area*60)))*np.nan
-    print(np.shape(events_collection))
     j=0
     date = 0
     for i in range(N_mag):
@@ -33,32 +32,37 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
                         index_min+=index_max-index_min-hour_area*60
 
                     bin_value = np.min(magnetometer_values[index_min:index_max])
+                    # index_bin_value = np.where(bin_value==magnetometer_values[index_min:index_max])[0][0]
                     if bin_value != bins[j-1]:
                         bins[j] = bin_value
-                        events_collection[j,:] = magnetometer_values[index_min:index_max]
+                        # index_min, index_max = index_min+index_bin_value -int(hour_area/2*60),\
+                        #                        index_max+index_bin_value -int(hour_area/2*60)
+                        events_collection[j, :] = magnetometer_values[index_min:index_max]
                         time_day_bins[j] = days_magnetometer[i]+time_of_event[j]/24
                     else:
                         bins[j] = np.nan
                         time_day_bins[j] = np.nan
                     j+=1
+
+    events_collection = events_collection[np.logical_not(np.isnan(bins)), :]
     bins = bins[np.logical_not(np.isnan(bins))]
+
     indexing_sorted_bins = np.argsort(bins)
     bins_sorted = bins[indexing_sorted_bins]
     events_collection_sorted = events_collection[indexing_sorted_bins,:]
-    print(bins_sorted)
     return bins_sorted,time_day_bins, time_of_event, events_collection_sorted
 
 
-def plot_histograms(bins_sorted,time_day_bins, time_of_event):
+def plot_histograms(bins_sorted, time_day_bins, time_of_event):
     borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
-    print(bins_sorted)
-    print("length of bins", len(bins_sorted))
-    print("size of each bin",len(bins_sorted)/3)
+
+    index_third, index_two_thirds = int(len(bins_sorted)/3),\
+                                    int(len(bins_sorted)*2/3)
 
     plt.hist(bins_sorted, bins = 30)
-    plt.axvline(x=borders[0],color ="r")
-    plt.axvline(x=borders[1],color ="r")
-    plt.title("2018, Tromso,\n Max magnetometer value of a substorm event. \n"+\
+    plt.axvline(x=borders[0], color ="r")
+    plt.axvline(x=borders[1], color ="r")
+    plt.title("2018, "+station+",\n Max magnetometer value of a substorm event. \n"+\
               "Red lines are the lines for the borders which is " +str(borders[0])\
               +" and " +str(borders[1])+ " nT")
     plt.xlabel("minimum of the north component magnetometer [nT]")
@@ -77,48 +81,51 @@ def plot_histograms(bins_sorted,time_day_bins, time_of_event):
                                 str(1),str(2),str(3),str(4)])
     plt.show()
 
-def plot_all_events(events_collection):
+def plot_all_events(events_collection,bins_sorted):
+    borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
+
     index_third, index_two_thirds = int(len(events_collection)/3),\
                                     int(len(events_collection)*2/3)
+
     for i in range(len(events_collection)):
         plt.plot(events_collection[i,:], linewidth = 0.5)
     average_event = np.nanmedian(events_collection, axis = 0)
     plt.plot(average_event, linewidth = 3, color = "black", label="median value")
-    plt.title("All recorded substorms by the magnetometer in Tromso in 2018")
+    plt.title("All recorded substorms by the magnetometer in "+station+" in 2018")
     plt.xlabel("minutes")
-    plt.ylabel("B-value [nT]")
+    plt.ylabel("North component B-value [nT]")
     plt.legend()
     plt.show()
+
     for i in range(index_third):
         plt.plot(events_collection[i,:], linewidth = 0.5)
     average_event = np.nanmedian(events_collection[:index_third], axis = 0)
     plt.plot(average_event, linewidth = 3, color = "black", label="median value")
-    plt.title("First bin of recorded substorms by the magnetometer in Tromso in 2018")
+    plt.title("Third bin of recorded substorms by the magnetometer in "+station+" in 2018")
+    plt.ylabel("North component B-value [nT] (substorms above "+str(borders[1])+" nT)")
     plt.xlabel("minutes")
-    plt.ylabel("B-value [nT] (Smaller than -258.9 nT)")
     plt.legend()
     plt.show()
-    for i in range(index_third,index_two_thirds ):
+
+    for i in range(index_third,index_two_thirds):
         plt.plot(events_collection[i,:], linewidth = 0.5)
     average_event = np.nanmedian(events_collection[index_third:index_two_thirds], axis = 0)
     plt.plot(average_event, linewidth = 3, color = "black", label="median value")
-    plt.title("Second bin of substorms by the magnetometer in Tromso in 2018")
+    plt.title("Second bin of substorms by the magnetometer in "+station+" in 2018")
     plt.xlabel("minutes")
-    plt.ylabel("B-value [nT] (between -258.9 nT and -441.9 nT)")
+    plt.ylabel("North component B-value [nT] (between "+str(borders[0])+"nT and "+str(borders[1])+" nT)")
     plt.legend()
     plt.show()
+
     for i in range(index_two_thirds, len(events_collection)):
         plt.plot(events_collection[i,:], linewidth = 0.5)
     average_event = np.nanmedian(events_collection[index_two_thirds:], axis = 0)
     plt.plot(average_event, linewidth = 3, color = "black", label="median value")
-    plt.title("Third bin of substorms by the magnetometer in Tromso in 2018")
+    plt.title("First bin of substorms by the magnetometer in "+station+" in 2018")
     plt.xlabel("minutes")
-    plt.ylabel("B-value [nT] (substorms above -441.9 nT)")
+    plt.ylabel("North component B-value [nT] (smaller than "+str(borders[0])+" nT)")
     plt.legend()
     plt.show()
-
-
-
 
 
 obj_event = ReadSubstormEvent()
@@ -139,16 +146,25 @@ except FileNotFoundError:
     path_mag = desktop_path+"/20201025-17-57-supermag.csv"
     print("substorm event reader")
     obj_event.read_csv(path_event,verbose = False)
+    print("substorm done")
     print("magnetometer reader")
     obj_mag.read_csv(path_mag, verbose = False)
+    print("magnetometer done")
 
 
 #magnetometer reader
+station = "NOR"
 dates_mag, time_UTC_mag,\
 location_long,location_lat,\
 geographic_north,geographic_east, geographic_z, \
-magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data("TRO")
-
+magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data(station)
+stations_dictionary_GEO_coord = {"KIL":[69.02, 20.79],"TRM":[69.66, 18.94],\
+                                 "ABK":[68.35, 18.82],"AND":[69.30, 16.03],\
+                                 "DOB":[62.07,  9.11],"DON":[66.11, 12.50],\
+                                 "JCK":[66.40, 16.98],"KAR":[59.21,  5.24],\
+                                 "MAS":[69.46, 23.70],"NOR":[71.09, 25.79],\
+                                 "RVK":[64.94, 10.99],"SOL":[61.08,  4.84],\
+                                 "SOR":[70.54, 22.22]}
 #then event reader
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
@@ -158,9 +174,9 @@ dates_event, year = obj_event.day_of_year
 Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)
 
-bins_sorted,time_day_bins, time_of_event,events_collection = \
+bins_sorted,time_day_bins, time_of_event,events_collection_sorted = \
 create_bins(dates_mag,dates_event, Norway_time,time_UTC_mag ,magnetic_north)
 
 plot_histograms(bins_sorted,time_day_bins, time_of_event)
 
-plot_all_events(events_collection)
+plot_all_events(events_collection_sorted,bins_sorted)

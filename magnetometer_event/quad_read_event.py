@@ -7,7 +7,7 @@ from magnetometer_event.filtering_events import filtering_to_Norway_night
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
-from noise_gps_function import run_filter_plot_NMEA_data
+from noise_gps_function import run_filter_NMEA_data
 
 def plot_single_event(dates_mag,dates_event, time_of_event, time_UTC_mag, \
                       magnetometer_values,date,noise,noise_21_3,noise_3_9):
@@ -127,7 +127,7 @@ receiver ="TRM"
 nr_days = 60
 year = "2018"
 
-date,noise,noise_21_3,noise_3_9= run_filter_plot_NMEA_data(nr_days,receiver)
+date,noise,noise_21_3,noise_3_9= run_filter_NMEA_data(nr_days,receiver)
 
 
 B_z_positive = B_z[B_z>0]

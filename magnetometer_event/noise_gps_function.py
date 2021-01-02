@@ -6,25 +6,27 @@ from extra.progressbar import progress_bar
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
 from extra.error_calculation_NMA_standard import accuracy_NMEA_opt, filtering_outliers
 
-def run_filter_plot_NMEA_data(nr_days, receiver):
+def create_date(begin, end):
     date = []
-    noise = np.zeros((nr_days,4))
-    pieces_per_interval = 3
-    noise_3_9 = np.zeros((nr_days,pieces_per_interval))*np.nan
-    noise_21_3 = np.zeros((nr_days,pieces_per_interval))*np.nan
-    counter_first = [1,1]
-    year = "2018"
-    for i in range(1,nr_days+1):
+    for i in range(begin,end+1):
         if len(str(i))==1:
             date.append("00"+str(i))
         elif len(str(i))==2:
             date.append("0"+str(i))
         else:
             date.append(str(i))
+    return date
 
+
+def run_filter_NMEA_data(nr_days, receiver):
+    noise = np.zeros((nr_days,4))
+    pieces_per_interval = 3
+    noise_3_9 = np.zeros((nr_days,pieces_per_interval))*np.nan
+    noise_21_3 = np.zeros((nr_days,pieces_per_interval))*np.nan
+    counter_first = [1,1]
+    year = "2018"
+    date = create_date(1,nr_days)
     for i in tqdm(range(len(date)),desc= "RTIM data"):
-    # for i in range(len(date)):
-        # progress_bar(i,len(date))
         adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
         "NMEA_M"+receiver +"_"+date[i]+"0.log"
         obj = ReadNMEAData()
@@ -86,3 +88,41 @@ def run_filter_plot_NMEA_data(nr_days, receiver):
             # tqdm.write(str(noise_3_9[i,:])+"3_9")
         noise_stored = sigma[index_21:]
     return date,noise, noise_21_3, noise_3_9
+
+
+
+def run_NMEA_data(nr_days, receiver):
+        nr_datapoints = 50080
+        noise = np.zeros((nr_days,nr_datapoints))*np.nan
+        year = "2018"
+        date = create_date(1,nr_days)
+        for i in tqdm(range(len(date)),desc= "RTIM data"):
+            adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
+            "NMEA_M"+receiver +"_"+date[i]+"0.log"
+            obj = ReadNMEAData()
+            try:
+                obj.read_textfile(adress,verbose=False)
+                N,E,Z = obj.coordinates
+                home_computer = 1
+            except FileNotFoundError:
+                try:
+                    adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
+                    receiver+"_"+date[i]+"0.log"
+                    obj = ReadNMEAData()
+                    obj.read_textfile(adress,verbose=False)
+                    N,E,Z = obj.coordinates
+                    Office_computer = 1
+                except FileNotFoundError:
+                    tqdm.write("no "+receiver+" file here at day: " + str(i) +" year: "+year)
+                    tqdm.write(adress)
+                    noise[i,:] = np.nan
+                    continue
+
+            if len(Z) < 60:
+                noise[i,:] = np.nan
+                continue
+            tqdm.write(str((len(accuracy_NMEA_opt(Z-np.mean(Z)))+120)/(60*60)))
+            noise  = accuracy_NMEA_opt(Z-np.mean(Z))
+
+        return date,noise
+run_NMEA_data(60,"TRM")

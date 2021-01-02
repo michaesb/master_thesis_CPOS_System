@@ -9,6 +9,7 @@ from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
 from magnetometer_event.creating_bins import create_bins
+from noise_gps_function import run_filter_plot_NMEA_data
 
 def plot_histograms(bins_sorted, time_day_bins, time_of_event):
     borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
@@ -110,17 +111,17 @@ except FileNotFoundError:
 
 
 #magnetometer reader
-station = "NOR"
+station = "TRO"
 dates_mag, time_UTC_mag,\
 location_long,location_lat,\
 geographic_north,geographic_east, geographic_z, \
 magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data(station)
-stations_dictionary_GEO_coord = {"KIL":[69.02, 20.79],"TRM":[69.66, 18.94],\
-                                 "ABK":[68.35, 18.82],"AND":[69.30, 16.03],\
-                                 "DOB":[62.07,  9.11],"DON":[66.11, 12.50],\
-                                 "JCK":[66.40, 16.98],"KAR":[59.21,  5.24],\
-                                 "MAS":[69.46, 23.70],"NOR":[71.09, 25.79],\
-                                 "RVK":[64.94, 10.99],"SOL":[61.08,  4.84],\
+stations_dictionary_GEO_coord = {"KIL":[69.02, 20.79], "TRM":[69.66, 18.94],\
+                                 "ABK":[68.35, 18.82], "AND":[69.30, 16.03],\
+                                 "DOB":[62.07,  9.11], "DON":[66.11, 12.50],\
+                                 "JCK":[66.40, 16.98], "KAR":[59.21,  5.24],\
+                                 "MAS":[69.46, 23.70], "NOR":[71.09, 25.79],\
+                                 "RVK":[64.94, 10.99], "SOL":[61.08,  4.84],\
                                  "SOR":[70.54, 22.22]}
 #then event reader
 lat = obj_event.latitude

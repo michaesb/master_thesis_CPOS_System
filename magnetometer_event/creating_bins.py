@@ -15,7 +15,6 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
     time_day_bins = np.zeros(N_event)
     hour_area = 2
     events_collection = np.zeros((N_event,int(hour_area*60)))*np.nan
-    print(np.shape(events_collection))
     j=0
     date = 0
     for i in range(N_mag):

@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import time, sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
@@ -10,7 +11,6 @@ class ReadNMEAData():
         """
         initializing variables and lists
         """
-
         #info about the file
         self.textfile = False # name for the textfile
         self.date = "False"
@@ -91,7 +91,7 @@ class ReadNMEAData():
                 if int(data_line[6]) == 4 or int(data_line[6])==1 :
                     self.track_filter_4[count_line] = 1
                 else:
-                    self.track_filter_4[count_line] =0
+                    self.track_filter_4[count_line] = 0
                 if count_line ==0:
                     self.start_time = float(time_temp[0:1]),\
                                       float(time_temp[3:4]),\
@@ -119,8 +119,9 @@ class ReadNMEAData():
                            self._talker_identifier)
 
                 if float(data_line[6]) == 4 or not filter_4:
-                    # print(data_line[6], )
-                    # print(count_line, data_line)
+                    hour, minute, second = time_temp.split(":")
+                    self._time_4[count_line] = float(hour) + float(minute)/60 +\
+                                               float(second)/3600
                     #filling position arrays
                     degrees_lat, arcminutes_lat = float(data_line[2][:2]), float(data_line[2][2:])
                     degrees_long, arcminutes_long = float(data_line[4][:3]), float(data_line[4][3:])
@@ -187,6 +188,7 @@ class ReadNMEAData():
         initialize the arrays as the number of points is established
         """
         #postion arrays
+        self._time_4 = np.zeros(self.nr_lines, dtype=float)*np.nan
         self.north_position_temp = np.zeros(self.nr_lines, dtype =float)
         self.east_position_temp = np.zeros(self.nr_lines, dtype =float)
         self.west_position_temp  = np.zeros(self.nr_lines, dtype =float)
@@ -232,7 +234,7 @@ class ReadNMEAData():
         self.geo_seperation = self.geo_seperation_temp[:self.nr_datapoints]
         self.age_of_data = self.age_of_data_temp[:self.nr_datapoints]
         self.diff_station_ID = self.diff_station_ID_temp[:self.nr_datapoints]
-
+        self._time_4 = self._time_4[np.logical_not(np.isnan(self._time_4))]
     #properties returns value
     @property
     def datapoints(self):
@@ -284,6 +286,14 @@ class ReadNMEAData():
         t = np.linspace(self.start_time[1],self.start_time[1]+duration,\
                         self.nr_datapoints)
         return t
+
+    @property
+    def time_4(self):
+        """
+
+        """
+
+        return self._time_4
 
     @property
     def day_year(self):
@@ -435,20 +445,21 @@ if __name__ == '__main__':
     print(obj.nr_satellite,"sat")
     print(obj.horizontal_dil_of_pos, "dil of pos")
     print(sum(obj.track_4),"tracking 4")
+    print(obj.time_4)
     obj.display_GPS_indicator()
     N, E, Z = obj.coordinates
     ave_N, ave_E, ave_Z = np.sum(N)/obj.nr_datapoints,\
     np.sum(E)/obj.nr_datapoints ,np.sum(Z)/obj.nr_datapoints
     satellites = obj.nr_satellite
-    plt.plot(N-ave_N)
+    plt.plot(obj.time_4,N-ave_N)
     plt.title(str(N[0]))
     plt.show()
-    plt.plot(E-ave_E)
+    plt.plot(obj.time_4,E-ave_E)
     plt.title(str(E[0]))
     plt.show()
-    plt.plot(Z-ave_Z)
+    plt.plot(obj.time_4,Z-ave_Z)
     plt.title(str(Z[0]))
     plt.show()
-    plt.plot(satellites)
+    plt.plot(obj.time_4,satellites)
     plt.title("satellites")
     plt.show()

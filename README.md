@@ -1,7 +1,8 @@
-# master thesis CPOS System
+# Master thesis CPOS System
 A repository for the work done during Michael Bitneys master thesis in Space physics
 This contains multiple datareaders, processing and plotting tools use to further
 investigate substorms impact on GPS.
+Mainly tested in Linux, but should in theory work with Windows.
 
 ## Folders
 
@@ -11,6 +12,16 @@ The data is located elsewhere on the computer, as the dataset are quite large
 and some is received from kartverket and can't be shared by me.
 
 ### Data readers
+
+Each datareader has a class structure, so can be used in objectoriented way in
+other scripts. Each datareader has a test with the help of Unitest. They can be
+run indiviually or you can run all by typing
+´´´
+pytest -v
+´´´
+in the master_thesis_CPOS_system folder. This will work without having the data
+available as it is tested on a small file of the data in the folder.
+All test should be good, as of 1. january 2021.
 
 #### NMEA, RTIM, ROTI
 
@@ -56,4 +67,14 @@ A look into the substorm event list and try to locate the events for the magneto
 
 
 ### extra
-Various scripts like progressbar and such that doesn't fit in any particular folder
+Various scripts like progressbar, noise calulation and such that doesn't fit in any particular folder.
+
+## Dependencies
+
+Here we make use of various packages som are, but not limited to:
+
+* Scipy
+
+* Pandas
+
+* Unittest

@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import sys, time
 from collections import Counter
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
@@ -9,8 +10,8 @@ from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
 from magnetometer_event.creating_bins import create_bins
-from noise_gps_function import run_filter_plot_NMEA_data
-
+from noise_gps_function import run_NMEA_data
+# matplotlib.use("GTKagg",force=True)
 def plot_histograms(bins_sorted, time_day_bins, time_of_event):
     borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
 

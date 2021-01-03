@@ -92,8 +92,9 @@ def run_filter_NMEA_data(nr_days, receiver):
 
 
 def run_NMEA_data(nr_days, receiver):
-        nr_datapoints = 50080
+        nr_datapoints = 50500
         noise = np.zeros((nr_days,nr_datapoints))*np.nan
+        time_axis = np.zeros((nr_days,nr_datapoints))*np.nan
         year = "2018"
         date = create_date(1,nr_days)
         for i in tqdm(range(len(date)),desc= "RTIM data"):
@@ -117,12 +118,14 @@ def run_NMEA_data(nr_days, receiver):
                     tqdm.write(adress)
                     noise[i,:] = np.nan
                     continue
-
             if len(Z) < 60:
                 noise[i,:] = np.nan
+                time_axis[i,:] = np.nan
                 continue
             tqdm.write(str((len(accuracy_NMEA_opt(Z-np.mean(Z)))+120)/(60*60)))
-            noise  = accuracy_NMEA_opt(Z-np.mean(Z))
-
-        return date,noise
-run_NMEA_data(60,"TRM")
+            noise_temp = accuracy_NMEA_opt(Z-np.mean(Z))
+            print(len(noise_temp))
+            noise[i,:len(noise_temp)]  = noise_temp
+            time_axis[i,:len(obj.time_4)] = obj.time_4
+        return date,time_axis,noise
+# run_NMEA_data(60,"TRM")

@@ -2,7 +2,7 @@
 A repository for the work done during Michael Bitneys master thesis in Space physics
 This contains multiple datareaders, processing and plotting tools use to further
 investigate substorms impact on GPS.
-Mainly tested in Linux, but should in theory work with Windows.
+Mainly tested in Linux, but should in theory work with Windows, except programs in runscripts that requires xterm.
 
 ## Folders
 

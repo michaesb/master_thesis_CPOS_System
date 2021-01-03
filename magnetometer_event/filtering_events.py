@@ -1,5 +1,6 @@
 import numpy as np
 import time
+
 def filtering_to_Norway_night(latitude, magnetic_time,time_UTC,dates,verbose=False):
     N = len(latitude)
     evening_time = 20

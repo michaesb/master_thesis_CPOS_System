@@ -1,8 +1,5 @@
 # Master thesis CPOS System
-A repository for the work done during Michael Bitneys master thesis in Space physics
-This contains multiple datareaders, processing and plotting tools use to further
-investigate substorms impact on GPS.
-Mainly tested in Linux, but should in theory work with Windows, except programs in runscripts that requires xterm.
+A repository for the work done during Michael Bitneys master thesis in Space physics. This contains multiple datareaders, processing and plotting tools use to further investigate substorms impact on GPS. Mainly tested in Linux, but should in theory work with Windows, except programs in runscripts that requires xterm.
 
 ## Folders
 
@@ -71,10 +68,9 @@ Various scripts like progressbar, noise calulation and such that doesn't fit in 
 
 ## Dependencies
 
-Here we make use of various packages som are, but not limited to:
+Here we make use of various packages som are, and all are listed
+in the pipfile. You can get the dependencies using pipenv by using:
 
-* Scipy
-
-* Pandas
-
-* Unittest
+```
+pipenv sync
+```

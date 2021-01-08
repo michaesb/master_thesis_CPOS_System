@@ -122,10 +122,9 @@ def run_NMEA_data(nr_days, receiver):
                 noise[i,:] = np.nan
                 time_axis[i,:] = np.nan
                 continue
-            tqdm.write(str((len(accuracy_NMEA_opt(Z-np.mean(Z)))+120)/(60*60)))
+            # tqdm.write(str((len(accuracy_NMEA_opt(Z-np.mean(Z)))+120)/(60*60)))
             noise_temp = accuracy_NMEA_opt(Z-np.mean(Z))
-            print(len(noise_temp))
             noise[i,:len(noise_temp)]  = noise_temp
             time_axis[i,:len(obj.time_4)] = obj.time_4
-        return date,time_axis,noise
+        return time_axis,noise
 # run_NMEA_data(60,"TRM")

@@ -60,7 +60,6 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
     iii_gps =0
     date = 0
     for i in range(N_mag):
-
         if days_magnetometer[i] in days_event:
             if date != days_magnetometer[i]:
                 date = days_magnetometer[i]
@@ -83,5 +82,5 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
     indexing_sorted_bins = np.argsort(bins)
     bins_sorted = bins[indexing_sorted_bins]
     events_collection_sorted = events_collection[indexing_sorted_bins,:]
-    noise_gps_sorted = 1
+    noise_gps_sorted = gps_noise
     return bins_sorted,time_day_bins, time_of_event, events_collection_sorted, noise_gps_sorted

@@ -45,7 +45,7 @@ def create_bins(dates_mag,dates_event, time_of_event, \
 
 
 def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
-                time_UTC_mag, magnetometer_values, gps_noise):
+                time_UTC_mag, magnetometer_values, gps_noise, time_gps):
     N_mag = len(dates_mag)
     N_event = len(dates_event)
     days_event = date_to_days(dates_event)
@@ -66,15 +66,17 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                 for k in range(Counter(days_event)[days_magnetometer[i]]):
                     index_min, index_max = i+int((time_of_event[ii_bins] - (hour_area/2))*60)\
                                           ,i+int((time_of_event[ii_bins] + (hour_area/2))*60)
+                    index_min_gps, index_max_gps = iii_gps+int((time_of_event[ii_bins] - (hour_area/2))*3600)\
+                                                  ,iii_gps+int((time_of_event[ii_bins] + (hour_area/2))*3600)
                     if index_max-index_min != hour_area*60:
                         index_min+=index_max-index_min-hour_area*60
 
                     bin_value = np.min(magnetometer_values[index_min:index_max])
                     if bin_value != bins[ii_bins-1]:
                         bins[ii_bins] = bin_value
-                        events_collection[ii_bins,:] = magnetometer_values[index_min:index_max]
                         time_day_bins[ii_bins] = days_magnetometer[i]+time_of_event[ii_bins]/24
-
+                        events_collection[ii_bins,:] = magnetometer_values[index_min:index_max]
+                        event_gps_collection[ii_bins,:] = noise_gps[index_min_gps:index_max_gps]
                     ii_bins+=1
         iii_gps += 60
     events_collection = events_collection[np.logical_not(np.isnan(bins)),:]

@@ -171,7 +171,7 @@ except FileNotFoundError:
     print("magnetometer done")
 
 
-#magnetometer reader
+########################### magnetometer reader  ##########################
 try:
     station = sys.argv[1]
 except IndexError:
@@ -187,7 +187,8 @@ stations_dictionary_GEO_coord = {"KIL":[69.02, 20.79], "TRM":[69.66, 18.94],\
                                  "MAS":[69.46, 23.70], "NOR":[71.09, 25.79],\
                                  "RVK":[64.94, 10.99], "SOL":[61.08,  4.84],\
                                  "SOR":[70.54, 22.22]}
-#then event reader
+
+########################## then event reader  #############################
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
@@ -196,14 +197,18 @@ dates_event, year = obj_event.day_of_year
 Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)
 
-#then gps noise
+########################## then gps noise  ##################################
 # time_axis,gps_noise =run_NMEA_data(365,"TRM")
-time_axis,gps_noise =np.linspace(0,365,365),np.random.random((365,50000))
+time_axis_gps,gps_noise =np.linspace(0,365,365),np.random.random((365,500))
 bins_sorted,time_day_bins, time_of_event,events_collection_sorted,noise_gps_sorted = \
-create_bins_with_noise_sort(dates_mag,dates_event, Norway_time,time_UTC_mag ,magnetic_north, gps_noise)
 
-plot_histograms(bins_sorted,time_day_bins, time_of_event)
+########################## creating bins ###################################
+create_bins_with_noise_sort(dates_mag,dates_event, Norway_time,time_UTC_mag ,magnetic_north, gps_noise, time_axis_gps)
 
-plot_all_mag_events(events_collection_sorted,bins_sorted)
+###########################plotting different data ##########################
+
+# plot_histograms(bins_sorted,time_day_bins, time_of_event)
+
+# plot_all_mag_events(events_collection_sorted,bins_sorted)
 
 plot_all_gps_events(noise_gps_sorted,bins_sorted)

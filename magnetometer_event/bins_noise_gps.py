@@ -11,7 +11,7 @@ from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
 from magnetometer_event.creating_bins import create_bins_with_noise_sort
 from noise_gps_function import run_NMEA_data
-# matplotlib.use("GTKagg",force=True)
+
 
 def plot_histograms(bins_sorted, time_day_bins, time_of_event):
     borders = [bins_sorted[int((len(bins_sorted)-1)/3)],\
@@ -198,11 +198,18 @@ Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)
 
 ########################## then gps noise  ##################################
-# time_axis,gps_noise =run_NMEA_data(365,"TRM")
-time_axis_gps,gps_noise =np.linspace(0,365,365),np.random.random((365,500))
-bins_sorted,time_day_bins, time_of_event,events_collection_sorted,noise_gps_sorted = \
+def create_fake_noise():
+    n = 50500
+    time_axis_gps = np.zeros((365,n))*np.nan
+    for i in range(365):
+        time_axis_gps[i,:] = np.linspace(0,24,n)
+    gps_noise = np.random.random((365,n))
+    return time_axis_gps,gps_noise
 
+# time_axis_gps,gps_noise =run_NMEA_data(365,"TRM")
+time_axis_gps,gps_noise =create_fake_noise()
 ########################## creating bins ###################################
+bins_sorted,time_day_bins, time_of_event,events_collection_sorted,noise_gps_sorted = \
 create_bins_with_noise_sort(dates_mag,dates_event, Norway_time,time_UTC_mag ,magnetic_north, gps_noise, time_axis_gps)
 
 ###########################plotting different data ##########################

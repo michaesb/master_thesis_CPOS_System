@@ -23,7 +23,7 @@ def plotting_noise(date,noise):
     plt.show()
 
 receiver ="TRM"
-nr_days = 60
+nr_days = 365
 year = "2018"
 
 def run_filter_plot_NMEA_data(nr_days,year, receiver):
@@ -73,7 +73,7 @@ def run_filter_plot_NMEA_data(nr_days,year, receiver):
             noise[i,0] = np.nan
             counter_first = 0
         else:
-            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3]))
+            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3]]))
         noise[i,1] = np.nanmean(sigma[index_3:index_9])
         noise[i,2] = np.nanmean(sigma[index_9:index_15])
         noise[i,3] = np.nanmean(sigma[index_15:index_21])

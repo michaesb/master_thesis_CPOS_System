@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import sys, time
 sys.path.insert(0, "..")
 from tqdm import tqdm
@@ -127,4 +128,5 @@ def run_NMEA_data(nr_days, receiver):
             noise[i,:len(noise_temp)]  = noise_temp
             time_axis[i,:len(obj.time_4)] = obj.time_4
         return time_axis,noise
-# run_NMEA_data(60,"TRM")
+if __name__ == '__main__':
+    t,gps =run_NMEA_data(100,"TRM")

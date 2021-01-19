@@ -43,8 +43,9 @@ def plot_all_events(events_collection,bins_sorted):
 
     index_third, index_two_thirds = int(len(events_collection)/3),\
                                     int(len(events_collection)*2/3)
-    hour_area = 3
-    time = np.linspace(-(hour_area/2 -1),(hour_area/2+1),7)*60
+    hour_area = 4
+    nr_of_xticks = 9
+    time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks)
     for i in range(len(events_collection)):
         plt.plot(events_collection[i,:], linewidth = 0.5)
     average_event = np.nanmedian(events_collection, axis = 0)
@@ -52,7 +53,9 @@ def plot_all_events(events_collection,bins_sorted):
     plt.title("All recorded substorms by the magnetometer in "+station+" in 2018")
     plt.xlabel("minutes")
     plt.ylabel("North component B-value [nT]")
-    plt.xticks(np.linspace(0,len(events_collection)-60-hour_area*10,7),time)
+    plt.xticks(np.linspace(0,len(events_collection)*(1-1/16),nr_of_xticks),time)
+    plt.ylim(-700,np.max(events_collection))
+
     plt.legend()
     plt.show()
 
@@ -63,8 +66,9 @@ def plot_all_events(events_collection,bins_sorted):
     plt.title("Third bin of substorms by the magnetometer in "+station+" in 2018")
     plt.xlabel("minutes")
     plt.ylabel("North component B-value [nT] (smaller than "+str(borders[1])+" nT)")
-    plt.xticks(np.linspace(0,len(events_collection)-60-hour_area*10,7),time)
+    plt.xticks(np.linspace(0,len(events_collection)*(1-1/16),nr_of_xticks),time)
     plt.legend()
+    plt.ylim(-700,np.max(events_collection))
     plt.show()
 
     for i in range(index_third,index_two_thirds):
@@ -74,7 +78,8 @@ def plot_all_events(events_collection,bins_sorted):
     plt.title("Second bin of substorms by the magnetometer in "+station+" in 2018")
     plt.xlabel("minutes")
     plt.ylabel("North component B-value [nT] (between "+str(borders[0])+"nT and "+str(borders[1])+" nT)")
-    plt.xticks(np.linspace(0,len(events_collection)-60-hour_area*10,7),time)
+    plt.xticks(np.linspace(0,len(events_collection)*(1-1/16),nr_of_xticks),time)
+    plt.ylim(-700,np.max(events_collection))
     plt.legend()
     plt.show()
 
@@ -85,7 +90,8 @@ def plot_all_events(events_collection,bins_sorted):
     plt.title("First bin of recorded substorms by the magnetometer in "+station+" in 2018")
     plt.ylabel("North component B-value [nT] (bigger than "+str(borders[0])+" nT)")
     plt.xlabel("minutes")
-    plt.xticks(np.linspace(0,len(events_collection)-60-hour_area*10,7),time)
+    plt.xticks(np.linspace(0,len(events_collection)*(1-1/16),nr_of_xticks),time)
+    plt.ylim(-700,np.max(events_collection))
     plt.legend()
     plt.show()
 

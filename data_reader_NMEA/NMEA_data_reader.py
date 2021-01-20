@@ -122,6 +122,7 @@ class ReadNMEAData():
                     hour, minute, second = time_temp.split(":")
                     self._time_4[count_line] = float(hour) + float(minute)/60 +\
                                                float(second)/3600
+
                     #filling position arrays
                     degrees_lat, arcminutes_lat = float(data_line[2][:2]), float(data_line[2][2:])
                     degrees_long, arcminutes_long = float(data_line[4][:3]), float(data_line[4][3:])
@@ -290,9 +291,10 @@ class ReadNMEAData():
     @property
     def time_4(self):
         """
-
+        returns the time axis taken from the data and is not generated.
+        Will have similiar holes as the actual data and not stretched
         """
-
+        self.check_read_data()
         return self._time_4
 
     @property
@@ -435,6 +437,7 @@ class ReadNMEAData():
         print("---------------------------------------")
 
 if __name__ == '__main__':
+    """
     obj = ReadNMEAData()
     obj.read_textfile("example_textfile_NMEA.txt", verbose=True)
     print(obj.datapoints,"nr_datapoints")
@@ -462,4 +465,14 @@ if __name__ == '__main__':
     plt.show()
     plt.plot(obj.time_4,satellites)
     plt.title("satellites")
+    plt.show()
+    """
+    obj = ReadNMEAData()
+    obj.read_textfile("/run/media/michaelsb/HDD Linux/data/NMEA/2018/080/NMEA_MTRM_0800.log", verbose=True)
+    print(obj.datapoints,"nr_datapoints")
+    print(obj.day_year, "day_year")
+    print(obj.time_period, "time")
+    obj.display_GPS_indicator()
+    N, E, Z = obj.coordinates
+    plt.plot(obj.time_4,"*")
     plt.show()

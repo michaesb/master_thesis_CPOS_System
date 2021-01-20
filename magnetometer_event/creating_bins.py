@@ -70,7 +70,6 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                     if index_max-index_min != hour_area*60:
                         index_min+=index_max-index_min-hour_area*60
 
-
                     gps_min_time = time_of_event[ii_bins] -(hour_area/2)
                     gps_max_time = time_of_event[ii_bins] +(hour_area/2)
                     bin_value = np.min(magnetometer_values[index_min:index_max])

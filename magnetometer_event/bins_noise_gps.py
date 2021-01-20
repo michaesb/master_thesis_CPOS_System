@@ -153,7 +153,8 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.title("All recorded substorms by the gps receivers in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
-    plt.xticks(np.linspace(0, 2.2*len(events_gps_collection), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
+    plt.ylim(5e-5,1)
     plt.legend()
     plt.show()
 
@@ -165,8 +166,10 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.title("Third bin of substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA ")
-    plt.xticks(np.linspace(0, 2.2*len(events_gps_collection), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
+    plt.ylim(5e-5,1)
+
     plt.show()
 
     for i in range(index_third, index_two_thirds):
@@ -176,10 +179,10 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.yscale("log")
     plt.title("Second bin of substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
-    plt.ylabel(
-        "noise values from the NMEA")
-    plt.xticks(np.linspace(0, 2.2*len(events_gps_collection), nr_of_xticks), time)
+    plt.ylabel("noise values from the NMEA")
+    plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
+    plt.ylim(5e-5,1)
     plt.show()
 
     for i in range(index_third):
@@ -190,8 +193,9 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.title("First bin of recorded substorms by the gps receiver in " + station + " in 2018")
     plt.ylabel("noise values from the NMEA")
     plt.xlabel("minutes")
-    plt.xticks(np.linspace(0, 2.2*len(events_gps_collection), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
+    plt.ylim(5e-5,1)
     plt.show()
 
 

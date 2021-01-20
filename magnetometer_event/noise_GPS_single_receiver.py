@@ -41,7 +41,7 @@ def run_filter_plot_NMEA_data(nr_days,year, receiver):
     for i in tqdm(range(len(date)),desc= "RTIM data"):
     # for i in range(len(date)):
         # progress_bar(i,len(date))
-        adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
+        adress = "/run/media/michaelsb/data_ssd/data/NMEA/"+year+"/"+date[i]+"/"+\
         "NMEA_M"+receiver +"_"+date[i]+"0.log"
         obj = ReadNMEAData()
         try:
@@ -73,7 +73,7 @@ def run_filter_plot_NMEA_data(nr_days,year, receiver):
             noise[i,0] = np.nan
             counter_first = 0
         else:
-            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3]))
+            noise[i,0]=np.nanmean(np.concatenate([noise_stored,sigma[:index_3]]))
         noise[i,1] = np.nanmean(sigma[index_3:index_9])
         noise[i,2] = np.nanmean(sigma[index_9:index_15])
         noise[i,3] = np.nanmean(sigma[index_15:index_21])

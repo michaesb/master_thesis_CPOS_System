@@ -99,7 +99,7 @@ def run_NMEA_data(nr_days, receiver):
         year = "2018"
         date = create_date(1,nr_days)
         for i in tqdm(range(len(date)),desc= "RTIM data"):
-            adress = "/run/media/michaelsb/HDD Linux/data/NMEA/"+year+"/"+date[i]+"/"+\
+            adress = "/run/media/michaelsb/data_ssd/data/NMEA/"+year+"/"+date[i]+"/"+\
             "NMEA_M"+receiver +"_"+date[i]+"0.log"
             obj = ReadNMEAData()
             try:

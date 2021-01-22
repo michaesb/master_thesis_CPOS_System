@@ -213,7 +213,7 @@ try:
     print("magnetometer reader done")
 
 except FileNotFoundError:
-    desktop_path = "/run/media/michaelsb/HDD Linux/data/"
+    desktop_path = "/run/media/michaelsb/data_ssd/data"
     path_event = desktop_path + "/substorm_event_list_2018.csv"
     path_mag = desktop_path + "/20201025-17-57-supermag.csv"
     print("substorm event reader")
@@ -250,7 +250,7 @@ stations_dictionary_GEO_coord = {
     "SOR": [70.54, 22.22],
 }
 
-########################## then event reader  #############################
+########################## event reader  #############################
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
@@ -261,7 +261,7 @@ lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(
     lat, mag_time, Norway_time, dates_event
 )
 
-########################## then gps noise  ##################################
+########################## gps noise  ##################################
 
 
 def create_fake_noise():
@@ -273,10 +273,17 @@ def create_fake_noise():
         gps_noise[i, : n + i] = np.random.random(n + i)
     return time_axis_gps, gps_noise
 
+def load_gps_noise():
+    file_path = "../../data_storage_NMEA/NMEA_data_TRM.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        noise = np.load(file)
+    return time, noise
 
 t1 = time.time()
-time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
+# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
+time_axis_gps,gps_noise = load_gps_noise()
 print("time", time.time() - t1)
 ########################## creating bins ###################################
 
@@ -285,7 +292,6 @@ bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorte
 ###########################plotting different data ##########################
 
 # plot_histograms(bins_sorted,time_day_bins, time_of_event)
-#
 # plot_all_mag_events(events_collection_sorted,bins_sorted)
 
 plot_all_gps_events(noise_gps_sorted, bins_sorted)

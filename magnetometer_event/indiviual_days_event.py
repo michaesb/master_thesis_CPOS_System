@@ -67,30 +67,36 @@ def plot_all_all_events(events_gps_collection,events_collection, bins_sorted):
     plt.legend()
     plt.show()
 
-def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag, bins_sorted):
+def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,\
+                                                      bins_sorted,time_of_event):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
     hour_area = 4
-    nr_of_xticks =9
     station = "TRM"
-    time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
-    print(gps_noise.shape)
-    plt.subplot(2,1,1)
-    plt.plot(gps_time.flatten(),gps_noise.flatten())
-    plt.yscale("log")
-    plt.title("substorms in Tromsø in 2018")
-    plt.ylabel("noise values from the NMEA")
-    plt.ylim(5e-5,1e-1)
-    plt.subplot(2,1,2)
-    plt.plot(time_UTC_mag,magnetic_north)
-    plt.title("All recorded substorms by the magnetometer in " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("North component B-value [nT]")
-    plt.ylim(-900,200)
-    plt.legend()
-    plt.show()
+    for i in range(len(gps_time[:,0])):
+        gps_time[i,:] = gps_time[i,:]/24+i
+    print(time_UTC_mag[-1])
+    print(gps_time.flatten()[-1])
+    fig,ax = plt.subplots(2,1, sharex = True)
+    # np.nanmedian()
+    # ax[0].plot(gps_time.flatten()[::],gps_noise.flatten()[::])
+    ax[0].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],'.')
+    print(time_of_event)
+    print(gps_time.flatten()[::100])
+    ax[0].set_yscale("log")
+    # ax[0].set_ylim(5e-5,1e-1)
+    ax[0].set_title("substorms in Tromsø in 2018")
+    ax[0].set_ylabel("noise values from the NMEA")
+    ax[0].grid("on")
 
+    ax[1].plot(time_UTC_mag,magnetic_north)
+    ax[1].plot(time_of_event,np.zeros(len(time_of_event)), "r*", linewidth =0.5)
+    ax[1].set_xlabel("days")
+    ax[1].set_ylabel("North component B-value [nT]")
+    ax[1].set_ylim(-900,200)
+    ax[1].grid("on")
+    plt.show()
 
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
@@ -173,5 +179,13 @@ bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorte
 
 ###########################plotting different data ##########################
 days_magnetometer = date_to_days(dates_mag)
-time_mag = days_magnetometer +time_UTC_mag
-plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag, bins_sorted)
+days_event = date_to_days(dates_event)
+
+time_of_event = days_event+mag_time/24
+time_mag = days_magnetometer + time_UTC_mag/24.
+time_axis_gps = time_axis_gps
+# for i in range(len(gps_noise[:,0])):
+#     plt.plot(gps_noise[i,:],'.')
+#     plt.title("day:"+str(i+1))
+#     plt.show()
+plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag, bins_sorted,time_of_event)

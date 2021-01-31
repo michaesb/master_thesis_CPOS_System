@@ -110,7 +110,7 @@ try:
     print("magnetometer reader")
 
 except FileNotFoundError:
-    desktop_path = "/run/media/michaelsb/HDD Linux/data/"
+    desktop_path = "/run/media/michaelsb/data_ssd/data/"
     path_event = desktop_path+"/substorm_event_list_2018.csv"
     path_mag = desktop_path+"/20201025-17-57-supermag.csv"
     print("substorm event reader")
@@ -149,6 +149,6 @@ lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time
 
 bins_sorted,time_day_bins, time_of_event,events_collection_sorted = \
 create_bins(dates_mag,dates_event, Norway_time,time_UTC_mag ,magnetic_north)
-# plot_histograms(bins_sorted,time_day_bins, time_of_event)
+plot_histograms(bins_sorted,time_day_bins, time_of_event)
 
 plot_all_events(events_collection_sorted,bins_sorted)

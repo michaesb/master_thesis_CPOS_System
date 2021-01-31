@@ -78,7 +78,7 @@ def plot_all_mag_events(events_collection, bins_sorted):
     index_third, index_two_thirds = int(len(events_collection) / 3), int(
         len(events_collection) * 2 / 3
     )
-    hour_area = 3
+    hour_area = 4
     time = np.linspace(-(hour_area / 2 - 1), (hour_area / 2 + 1), 7) * 60
     for i in range(len(events_collection)):
         plt.plot(events_collection[i, :], linewidth=0.5)
@@ -142,33 +142,34 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     index_third, index_two_thirds = int(len(events_gps_collection) / 3), int(
         len(events_gps_collection) * 2 / 3)
     hour_area = 4
-    nr_of_xticks =9
+    nr_of_xticks =11
     station = "TRM"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
     for i in range(len(events_gps_collection)):
         plt.plot(events_gps_collection[i, ::60], linewidth=0.5)
+    # plt.plot(events_gps_collection[i, ::60],"." ,linewidth=0.5)
     average_event = np.nanmedian(events_gps_collection, axis=0)
-    plt.plot(average_event[::60], linewidth=3, color="black", label="median value")
-    plt.yscale("log")
+    # plt.plot(average_event[::60], linewidth=3, color="black", label="median value")
+    # plt.yscale("log")
     plt.title("All recorded substorms by the gps receivers in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
-    plt.ylim(5e-5,1)
-    plt.legend()
+    # plt.ylim(5e-5,1)
+    # plt.legend()
     plt.show()
 
     for i in range(index_two_thirds, len(events_gps_collection)):
         plt.plot(events_gps_collection[i, ::60], linewidth=0.5)
     average_event = np.nanmedian(events_gps_collection[:index_third], axis = 0)
     plt.plot(average_event[::60], linewidth = 3, color = "black", label="median value")
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.title("Third bin of substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA ")
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
-    plt.ylim(5e-5,1)
+    # plt.ylim(5e-5,1)
 
     plt.show()
 
@@ -176,26 +177,26 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
         plt.plot(events_gps_collection[i, ::60], linewidth=0.5)
     average_event = np.nanmedian(events_gps_collection[index_third:index_two_thirds], axis = 0)
     plt.plot(average_event[::60], linewidth = 3, color = "black", label="median value")
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.title("Second bin of substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
-    plt.ylim(5e-5,1)
+    # plt.ylim(5e-5,1)
     plt.show()
 
     for i in range(index_third):
         plt.plot(events_gps_collection[i, ::60], linewidth=0.5)
     average_event = np.nanmedian(events_gps_collection[index_two_thirds:], axis = 0)
     plt.plot(average_event[::60], linewidth = 3, color = "black", label="median value")
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.title("First bin of recorded substorms by the gps receiver in " + station + " in 2018")
     plt.ylabel("noise values from the NMEA")
     plt.xlabel("minutes")
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
-    plt.ylim(5e-5,1)
+    # plt.ylim(5e-5,1)
     plt.show()
 
 
@@ -270,7 +271,8 @@ def create_fake_noise():
     gps_noise = np.zeros((365, n + 365)) * np.nan
     for i in range(365):
         time_axis_gps[i, : n + i] = np.linspace(0, 24, n + i)
-        gps_noise[i, : n + i] = np.random.random(n + i)
+        gps_noise[i, : n + i] = np.ones(n+i)*(i+1)
+        print(gps_noise[i,:])
     return time_axis_gps, gps_noise
 
 def load_gps_noise():
@@ -286,11 +288,11 @@ t1 = time.time()
 time_axis_gps,gps_noise = load_gps_noise()
 print("time", time.time() - t1)
 ########################## creating bins ###################################
-
 bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorted \
 = create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,time_UTC_mag,magnetic_north,gps_noise,time_axis_gps)
-###########################plotting different data ##########################
 
+#########################plotting data#########################
+print(noise_gps_sorted)
 # plot_histograms(bins_sorted,time_day_bins, time_of_event)
 # plot_all_mag_events(events_collection_sorted,bins_sorted)
 

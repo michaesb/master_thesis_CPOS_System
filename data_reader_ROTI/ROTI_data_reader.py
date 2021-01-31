@@ -64,7 +64,7 @@ class ReadROTIData():
                     self.nr_datasets +=1
                     #getting date and time
                     self.date = [float(i) for i in infile.readline().split()]
-                    self.year = self.date[0]; self.month=self.date[1]
+                    self.year = self.date[0]; self.month=self.date[1];
                     self.day = self.date[2]
                     if len(self.start_time)==0:
                         self.start_time= [self.date[3],self.date[4],self.date[5]]
@@ -76,6 +76,12 @@ class ReadROTIData():
                         self.read_ROTI_ion(infile)
                     elif measure_type=="ROTI_Ground":
                         self.read_ROTI_Grid(infile)
+                    elif measure_type=="CROTI_Ground":
+                        #todo
+                        pass
+                    elif measure_type=="CROTI":
+                        #todo
+                        pass
                     else:
                         raise TypeError("Unknown measurement type used")
 
@@ -104,6 +110,7 @@ class ReadROTIData():
                 self.data_grid_ion[counter,i,self.nr_ROTI_ion_sets]=float(line[i])
                 self.nr_datapoints += 1
             counter+=1
+
     def read_ROTI_Grid(self,infile):
         self.unit =infile.readline().split()[0]
         counter = 0
@@ -123,19 +130,35 @@ class ReadROTIData():
 
     def _read_comments(self,infile):
         nr_comments_read = 0
-        for line in infile:
-            line = line.split()
-            if len(line)==0: #ignoring empty lines
-                continue
-            nr_comments_read+=1
-            if nr_comments_read ==13:
-                self.ion_height = line[2] #
-            if nr_comments_read ==14:
-                self.ROTI_deg = line[8]
-            if nr_comments_read ==15:
-                self.ROTI_Ground_deg = line[8]
-            if line[0] == "<EndOfComments>":
-                 break
+        if self.textfile[40:44] == "2015":
+            for line in infile:
+                line = line.split()
+                if len(line)==0: #ignoring empty lines
+                    continue
+                nr_comments_read+=1
+                if nr_comments_read ==13:
+                    self.ion_height = line[2] #
+                if nr_comments_read ==14:
+                    self.ROTI_deg = line[8]
+                if nr_comments_read ==15:
+                    self.ROTI_Ground_deg = line[8]
+                if line[0] == "<EndOfComments>":
+                     break
+        else:
+            for line in infile:
+                line = line.split()
+                if len(line)==0: #ignoring empty lines
+                    continue
+                nr_comments_read+=1
+                if nr_comments_read ==29:
+                    self.ion_height = line[2] #
+                if nr_comments_read ==30:
+                    self.ROTI_deg = line[8]
+                if nr_comments_read ==31:
+                    self.ROTI_Ground_deg = line[8]
+                if line[0] == "<EndOfComments>":
+                     break
+
 
     def _read_grid(self,infile):
         begin_read = 0

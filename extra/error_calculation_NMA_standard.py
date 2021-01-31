@@ -42,7 +42,7 @@ def accuracy_NMEA_opt(z):
     Calculates the noise over a time period t.
     This requires numba.
     Optimized with numba which increased runtime greatly.
-    (Mutliple cores and improved with fortran/C for loops)
+    (Mutliple cores and improved with improved for loops)
     """
     N = len(z); size = int(N-60)
     sigma = np.zeros(size)

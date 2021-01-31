@@ -10,6 +10,8 @@ numpy = "*"
 tqdm = "*"
 pandas = "*"
 pyqt5 = "*"
+pytest = "*"
+scipy = "*"
 
 [dev-packages]
 

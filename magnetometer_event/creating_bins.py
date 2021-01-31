@@ -13,7 +13,7 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
     time_stamp_event = np.zeros(N_mag)*np.nan
     bins = np.zeros(N_event)
     time_day_bins = np.zeros(N_event)
-    hour_area = 4
+    hour_area = 3
     events_collection = np.zeros((N_event,int(hour_area*60)))*np.nan
     j=0
     date = 0
@@ -61,6 +61,8 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
     iii_gps = 0
     date = 0
     nr_storms = 0
+    day_of_event = []
+    time_of_event_t = []
     for i in range(N_mag):
         if days_magnetometer[i] in days_event:
             if date != days_magnetometer[i]:
@@ -81,57 +83,69 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                         # magnetotmeter values
                         events_collection[ii_bins,:] = magnetometer_values[index_min:index_max]
                         ###################### gps ######################
-                        print("day:",days_magnetometer[i])
+                        day_of_event.append(days_magnetometer[i])
+                        time_of_event_t.append(time_of_event[ii_bins])
+                        print("--------")
+                        print("day:",days_magnetometer[i]-1)
                         print("time of event",time_of_event[ii_bins])
-                        if np.nansum(gps_noise[int(days_magnetometer[i]),:]) ==0:
+                        # print("min",gps_min_time, time_gps[int(days_magnetometer[i]),index_min_gps] )
+                        # print("max",gps_max_time, time_gps[int(days_magnetometer[i]),index_max_gps] )
+                        if np.nansum(gps_noise[int(days_magnetometer[i])-1,:]) ==0:
                             print("empty day")
                             pass
                         elif gps_max_time>24 and gps_min_time <24:
                             print("Special condition nr 1")
-                            if days_magnetometer[i] == 234.0 or days_magnetometer[i] == 235.0:
+                            if days_magnetometer[i] == 234.0 or\
+                               days_magnetometer[i] == 237.0 or days_magnetometer[i] == 55:
                                 pass
                             else:
                                 nr_storms+=1
-                                index_min_gps = np.where(gps_min_time < np.round(time_gps[int(days_magnetometer[i]),:],2))
+                                print(time_gps[int(days_magnetometer[i])-1,:])
+                                index_min_gps = np.where(gps_min_time < np.round(time_gps[int(days_magnetometer[i]-1),:],2))
                                 index_min_gps = int(index_min_gps[0][0])
-                                index_max_gps = np.where(gps_max_time-24>np.round(time_gps[int(days_magnetometer[i])+1,:],2))
-                                index_max_gps = int(index_max_gps[0][-1])
-                                index_min_limit = len(gps_noise[int(days_magnetometer[i]),index_min_gps:])
-
+                                index_max_gps = np.where(gps_max_time-24>np.round(time_gps[int(days_magnetometer[i]-1)+1,:],2))
+                                try:
+                                    index_max_gps = int(index_max_gps[0][-1])
+                                except:
+                                    plt.plot(time_gps[int(days_magnetometer[i]),:],gps_noise[int(days_magnetometer[i]),:])
+                                    plt.show()
+                                index_min_limit = len(gps_noise[int(days_magnetometer[i]-1),index_min_gps:])
                                 #filling the event_gps_collection with the first array
-                                event_gps_collection[ii_bins,0:index_min_limit] = gps_noise[int(days_magnetometer[i]),index_min_gps:]
+                                event_gps_collection[ii_bins,0:index_min_limit] = gps_noise[int(days_magnetometer[i]-1),index_min_gps:]
                                 #filling the event_gps_collection with the second array
                                 event_gps_collection[ii_bins,index_min_limit:index_min_limit+index_max_gps] =\
-                                gps_noise[int(days_magnetometer[i])+1,0:index_max_gps]
+                                gps_noise[int(days_magnetometer[i]-1)+1,0:index_max_gps]
                         elif gps_min_time <0:
                             print("Special condition nr 2")
+                            if days_magnetometer[i] == 238.0:
+                                print("passing over day 237")
+                                continue
                             nr_storms += 1
-                            index_min_gps = np.where(24+gps_min_time < np.round(time_gps[int(days_magnetometer[i]-1),:],2))
+                            index_min_gps = np.where(24+gps_min_time < np.round(time_gps[int(days_magnetometer[i]-2),:],2))
                             index_min_gps = int(index_min_gps[0][0])
-                            index_max_gps = np.where(gps_max_time < np.round(time_gps[int(days_magnetometer[i]),:],2))
+                            index_max_gps = np.where(gps_max_time < np.round(time_gps[int(days_magnetometer[i]-1),:],2))
                             index_max_gps = int(index_max_gps[0][0])
-                            index_min_limit = len(gps_noise[int(days_magnetometer[i]-1),index_min_gps:])
+                            index_min_limit = len(gps_noise[int(days_magnetometer[i]-2),index_min_gps:])
                             #filling the event_gps_collection with the first array
-                            event_gps_collection[ii_bins,0:index_min_limit] = gps_noise[int(days_magnetometer[i]-1),index_min_gps:]
+                            event_gps_collection[ii_bins,0:index_min_limit] = gps_noise[int(days_magnetometer[i]-2),index_min_gps:]
 
                             event_gps_collection[ii_bins,index_min_limit:index_min_limit+index_max_gps] =\
-                            gps_noise[int(days_magnetometer[i]),0:index_max_gps]
+                            gps_noise[int(days_magnetometer[i]-1),0:index_max_gps]
                         else:
-                            if days_magnetometer[i] == 79.0:
-                                print("skipping day 79")
-                                pass
-                            elif days_magnetometer[i] == 80.0:
-                                print("skipping day 80")
-                                pass
-                            else:
-                                print("regular condition")
-                                nr_storms+=1
-                                index_min_gps = np.where(gps_min_time < np.round(time_gps[int(days_magnetometer[i]),:],2))
-                                index_min_gps = int(index_min_gps[0][0])
-                                index_max_gps = np.where(gps_max_time > np.round(time_gps[int(days_magnetometer[i]),:],2))
-                                index_max_gps = int(index_max_gps[0][-1])
-                                event_gps_collection[ii_bins,:(index_max_gps-index_min_gps)] = \
-                                gps_noise[int(days_magnetometer[i]),index_min_gps:index_max_gps]
+                            print("regular condition")
+                            nr_storms+=1
+                            index_min_gps = np.where(gps_min_time < np.round(time_gps[int(days_magnetometer[i]-1),:],2))
+                            index_min_gps = int(index_min_gps[0][0])
+                            index_max_gps = np.where(gps_max_time > np.round(time_gps[int(days_magnetometer[i]-1),:],2))
+                            index_max_gps = int(index_max_gps[0][-1])
+                            event_gps_collection[ii_bins,:(index_max_gps-index_min_gps)] = \
+                            gps_noise[int(days_magnetometer[i]-1),index_min_gps:index_max_gps]
+                        print("min",gps_min_time, time_gps[int(days_magnetometer[i]-1),index_min_gps])
+                        print("max",gps_max_time,time_gps[int(days_magnetometer[i]-1),index_max_gps])
+                        plt.plot(event_gps_collection[ii_bins,:])
+                        plt.title("day:"+str(days_magnetometer[i]))
+                        plt.yscale("log")
+                        plt.show()
                     ii_bins+=1
     events_collection = events_collection[np.logical_not(np.isnan(bins)),:]
     bins = bins[np.logical_not(np.isnan(bins))]

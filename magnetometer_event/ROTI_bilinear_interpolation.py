@@ -17,8 +17,21 @@ def check_coordinates_system(x_axis,y_axis):
         print("dimension errors")
         exit()
 
+def bilinear_interpolation(x,y,x_,y_,val):
 
+    a = 1 /((x_[1] - x_[0]) * (y_[1] - y_[0]))
+    xx = np.array([[x_[1]-x],[x-x_[0]]],dtype='float32')
+    f = np.array(val).reshape(2,2)
+    yy = np.array([[y_[1]-y],[y-y_[0]]],dtype='float32')
+    b = np.matmul(f,yy)
 
+    return a * np.matmul(xx.T, b)
+
+bilinear_interpolation(x=54.4786674627,
+                       y=17.0470721369,
+                       x_=[54.458333,54.5],
+                       y_=[17.041667,17.083333],
+                       val=[31.993,31.911,31.945,31.866])
 
 def extract_day_data(month,date,station_coordinates):
     date = adress_folder[40:44] +adress_folder[45:47]+adress_folder[48:50]
@@ -49,13 +62,16 @@ def extract_day_data(month,date,station_coordinates):
         time_of_grid = ROTI_data.time
         check_coordinates_system(x_axis,y_axis) #A test of the axis in the ROTI data
         latitude_station, longitude_station = station_coordinates
-        index_x, index_y = x_axis[0]+latitude_station,y_axis[0]+longitude_station
-        print(x_axis,latitude_station)
-        print(y_axis, longitude_station)
-        print("index_x",index_x)
-        print("index_y",index_y)
+        index_x, index_y = longitude_station-x_axis[0],latitude_station-y_axis[0]
+        index_x_0, index_x_1 = np.ceil(index_x), np.floor(index_x)
+        index_y_0, index_y_1 = np.ceil(index_y), np.floor(index_y)
+        print(x_axis,longitude_station)
+        print("index_x",index_x_0,index_x_1)
+        print(y_axis,latitude_station)
+        print("index_y",index_y_0,index_y_1)
         print(station_coordinates)
-
+        Q =
+        exit()
 
 if __name__ == '__main__':
     try:

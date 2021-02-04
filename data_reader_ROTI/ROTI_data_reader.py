@@ -2,6 +2,7 @@ import numpy as np
 import time, sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
+import matplotlib.pyplot as plt
 """
 ROTI
 """
@@ -51,7 +52,7 @@ class ReadROTIData():
             self._read_comments(infile)
 
             #extracting grid information
-            self._read_grid(infile)
+            self._read_grid_specs(infile)
             #creating the empty grid matrix
             self._create_grid()
             #Reading the data
@@ -144,7 +145,7 @@ class ReadROTIData():
                     self.ROTI_Ground_deg = line[8]
                 if line[0] == "<EndOfComments>":
                      break
-        else:
+        elif self.textfile[40:44] == "2018":
             for line in infile:
                 line = line.split()
                 if len(line)==0: #ignoring empty lines
@@ -158,9 +159,11 @@ class ReadROTIData():
                     self.ROTI_Ground_deg = line[8]
                 if line[0] == "<EndOfComments>":
                      break
+        else:
+            raise FileNotFoundError("year:" +str(self.textfile[40:44])+"not readable yet")
 
 
-    def _read_grid(self,infile):
+    def _read_grid_specs(self,infile):
         begin_read = 0
         for line in infile:
             line = line.split()

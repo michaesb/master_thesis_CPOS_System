@@ -142,10 +142,10 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                             gps_noise[int(days_magnetometer[i]-1),index_min_gps:index_max_gps]
                         print("min",gps_min_time, time_gps[int(days_magnetometer[i]-1),index_min_gps])
                         print("max",gps_max_time,time_gps[int(days_magnetometer[i]-1),index_max_gps])
-                        plt.plot(event_gps_collection[ii_bins,:])
-                        plt.title("day:"+str(days_magnetometer[i]))
-                        plt.yscale("log")
-                        plt.show()
+                        # plt.plot(event_gps_collection[ii_bins,:])
+                        # plt.title("day:"+str(days_magnetometer[i]))
+                        # plt.yscale("log")
+                        # plt.show()
                     ii_bins+=1
     events_collection = events_collection[np.logical_not(np.isnan(bins)),:]
     bins = bins[np.logical_not(np.isnan(bins))]

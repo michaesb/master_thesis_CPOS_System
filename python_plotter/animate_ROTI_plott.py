@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 sys.path.insert(0, "..")
 from data_reader_ROTI.ROTI_data_reader import ReadROTIData
-from scipy.ndimage.interpolation import rotate
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.animation import FuncAnimation
 
@@ -64,7 +63,7 @@ for i in adresses:
     path = folder_path + "/"
     data = ROTI_data.ROTI_Grid_data
     time_of_grid = ROTI_data.time
-    x_axis,y_axis = ROTI_data.coordinates[0],ROTI_data.coordinates[1]
+    x_axis,y_axis = ROTI_data.coordinates
 
 
     x_labels = np.arange(-10,x_axis[1]+10,10,dtype=int)

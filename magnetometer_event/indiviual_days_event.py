@@ -13,6 +13,7 @@ from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
 from magnetometer_event.creating_bins import create_bins_with_noise_sort
 from noise_gps_function import run_NMEA_data
+from ROTI_bilinear_interpolation import full_year_ROTI_bilinear_interpolation
 
 def plot_all_all_events(events_gps_collection,events_collection, bins_sorted):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
@@ -68,7 +69,7 @@ def plot_all_all_events(events_gps_collection,events_collection, bins_sorted):
     plt.show()
 
 def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,\
-                                                      bins_sorted,time_of_event):
+                                                      bins_sorted,time_of_event,time_ROTI,ROTI_points):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
@@ -161,17 +162,20 @@ def create_fake_noise():
     return time_axis_gps, gps_noise
 
 def load_gps_noise():
-    file_path = "../../data_storage_NMEA/NMEA_data_TRM.txt"
+    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
     with open(file_path,"rb") as file:
         time = np.load(file)
         noise = np.load(file)
     return time, noise
 
-t1 = time.time()
+######################### ROTI data #####################################
+
 # time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
 time_axis_gps,gps_noise = load_gps_noise()
-print("loading gps data", time.time() - t1)
+
+
+
 ########################## creating bins ###################################
 
 bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorted \
@@ -183,9 +187,6 @@ days_event = date_to_days(dates_event)
 
 time_of_event = days_event+mag_time/24
 time_mag = days_magnetometer + time_UTC_mag/24.
-time_axis_gps = time_axis_gps
-# for i in range(len(gps_noise[:,0])):
-#     plt.plot(gps_noise[i,:],'.')
-#     plt.title("day:"+str(i+1))
-#     plt.show()
-plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag, bins_sorted,time_of_event)
+
+plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
+bins_sorted,time_of_event,time_ROTI,ROTI_points)

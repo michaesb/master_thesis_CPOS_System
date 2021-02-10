@@ -272,7 +272,7 @@ def create_fake_noise():
     return time_axis_gps, gps_noise
 
 def load_gps_noise():
-    file_path = "../../data_storage_NMEA/NMEA_data_TRM.txt"
+    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
     with open(file_path,"rb") as file:
         time = np.load(file)
         noise = np.load(file)

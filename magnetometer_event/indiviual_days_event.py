@@ -69,7 +69,7 @@ def plot_all_all_events(events_gps_collection,events_collection, bins_sorted):
     plt.show()
 
 def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,\
-                                                      bins_sorted,time_of_event,time_ROTI,ROTI_points):
+                                                      bins_sorted,time_of_event,time_ROTI,ROTI_biints):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
@@ -79,7 +79,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
         gps_time[i,:] = gps_time[i,:]/24+i
     print(time_UTC_mag[-1])
     print(gps_time.flatten()[-1])
-    fig,ax = plt.subplots(2,1, sharex = True)
+    fig,ax = plt.subplots(3,1, sharex = True)
     # np.nanmedian()
     # ax[0].plot(gps_time.flatten()[::],gps_noise.flatten()[::])
     ax[0].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],'.')
@@ -93,10 +93,13 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
 
     ax[1].plot(time_UTC_mag,magnetic_north)
     ax[1].plot(time_of_event,np.zeros(len(time_of_event)), "r*", linewidth =0.5)
-    ax[1].set_xlabel("days")
     ax[1].set_ylabel("North component B-value [nT]")
     ax[1].set_ylim(-900,200)
     ax[1].grid("on")
+    ax[2].plot(time_ROTI,ROTI_biints)
+    ax[2].set_ylabel("ROTI [TEC/min]")
+    ax[2].grid("on")
+    ax[2].set_xlabel("days")
     plt.show()
 
 obj_event = ReadSubstormEvent()
@@ -168,13 +171,20 @@ def load_gps_noise():
         noise = np.load(file)
     return time, noise
 
-######################### ROTI data #####################################
-
 # time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
 time_axis_gps,gps_noise = load_gps_noise()
 
+######################### ROTI data #####################################
 
+def load_ROTI_data():
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        ROTI_biint = np.load(file)
+    return time, ROTI_biint
+
+time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 
 ########################## creating bins ###################################
 
@@ -189,4 +199,4 @@ time_of_event = days_event+mag_time/24
 time_mag = days_magnetometer + time_UTC_mag/24.
 
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
-bins_sorted,time_of_event,time_ROTI,ROTI_points)
+bins_sorted,time_of_event,time_ROTI_TRO,ROTI_biint_TRO)

@@ -23,11 +23,11 @@ def load_NMEA_data():
 
 def ROTI_save_data():
     TRO = [69.66, 18.94]
-    time,ROTI_biint = full_year_ROTI_bilinear_interpolation(TRO)
+    time,ROTI_biint = full_year_ROTI_bilinear_interpolation(TRO, unit_days=True)
     file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
     with open(file_path,"wb") as file:
         np.save(file,time)
-        np.save(file,gps_noise)
+        np.save(file,ROTI_biint)
 
 def load_ROTI_data():
     file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"

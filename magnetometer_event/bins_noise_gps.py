@@ -201,12 +201,15 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
 def plot_all_ROTI_events(events_collection_ROTI, bins_sorted):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
+
     index_third, index_two_thirds = int(len(events_collection_ROTI) / 3), int(
         len(events_collection_ROTI) * 2 / 3)
+    print(index_third,index_two_thirds)
     hour_area = 4
     nr_of_xticks =9
     location = [69.66,18.94]
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
+
     for i in range(len(events_collection_ROTI)):
         plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
     average_event = np.nanmedian(events_collection_ROTI, axis=0)
@@ -214,46 +217,48 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted):
     plt.title("All recorded substorms showed by ROTI at location " + str(location) + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_ROTI)/5, nr_of_xticks), time)
     plt.legend()
+    plt.ylim(0,5)
     plt.show()
 
     for i in range(index_two_thirds, len(events_collection_ROTI)):
-        plt.plot(events_collection_ROTI[i, ::60], linewidth=0.5)
-    average_event = np.nanmedian(events_collection_ROTI[:index_third], axis = 0)
+        plt.plot(events_collection_ROTI[i, :], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI[:index_third,:], axis = 0)
     plt.plot(average_event, linewidth=3, color="black", label="median value")
     plt.title("Third bin of substorms showed by ROTI at location " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_ROTI)/5, nr_of_xticks), time)
     plt.legend()
+    plt.ylim(0,5)
     plt.show()
 
-
     for i in range(index_third, index_two_thirds):
-        plt.plot(events_collection_ROTI[i, ::60], linewidth=0.5)
-    average_event = np.nanmedian(events_collection_ROTI[index_third:index_two_thirds], axis = 0)
+        plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI[index_third:index_two_thirds,:], axis = 0)
     plt.plot(average_event, linewidth=3, color="black", label="median value" )
     plt.title("Second bin of substorms showed by ROTI at location " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_ROTI)/5, nr_of_xticks), time)
+    plt.ylim(0,5)
     plt.legend()
     plt.show()
 
 
     for i in range(index_third):
-        plt.plot(events_collection_ROTI[i, ::60], linewidth=0.5)
-    average_event = np.nanmedian(events_collection_ROTI[index_two_thirds:], axis = 0)
+        plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI[index_two_thirds:,:], axis = 0)
     plt.title("First bin of recorded substorms by the gps receiver in " + station + " in 2018")
     plt.plot(average_event, linewidth=3, color="black", label="median value")
     plt.title("All recorded substorms showed by ROTI at location " + str(location) + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_ROTI)/5, nr_of_xticks), time)
     plt.legend()
+    plt.ylim(0,5)
     plt.show()
-
 
 
 obj_event = ReadSubstormEvent()
@@ -359,7 +364,7 @@ events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
 = create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
                               time_UTC_mag,magnetic_north,
                               gps_noise,time_axis_gps,
-                                time_ROTI_TRO, ROTI_biint_TRO)
+                              time_ROTI_TRO, ROTI_biint_TRO)
 
 #########################plotting data#########################
 # plot_histograms(bins_sorted,time_day_bins, time_of_event)

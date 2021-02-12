@@ -147,7 +147,6 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
     for i in range(len(events_gps_collection)):
         plt.plot(events_gps_collection[i, ::60], linewidth=0.5)
-    # plt.plot(events_gps_collection[i, ::60],"." ,linewidth=0.5)
     average_event = np.nanmedian(events_gps_collection, axis=0)
     plt.plot(average_event[::60], linewidth=3, color="black", label="median value")
     plt.title("All recorded substorms by the gps receivers in " + station + " in 2018")
@@ -156,6 +155,7 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.ylim(5e-5,1)
     plt.legend()
+    plt.yscale("log")
     plt.show()
 
     for i in range(index_two_thirds, len(events_gps_collection)):
@@ -168,7 +168,7 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
     plt.ylim(5e-5,1)
-
+    plt.yscale("log")
     plt.show()
 
     for i in range(index_third, index_two_thirds):
@@ -181,6 +181,7 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.xticks(np.linspace(0, 3.3*len(events_gps_collection), nr_of_xticks), time)
     plt.legend()
     plt.ylim(5e-5,1)
+    plt.yscale("log")
     plt.show()
 
     for i in range(index_third):
@@ -194,6 +195,65 @@ def plot_all_gps_events(events_gps_collection, bins_sorted):
     plt.legend()
     plt.ylim(5e-5,1)
     plt.show()
+
+
+
+def plot_all_ROTI_events(events_collection_ROTI, bins_sorted):
+    borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
+        bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
+    index_third, index_two_thirds = int(len(events_collection_ROTI) / 3), int(
+        len(events_collection_ROTI) * 2 / 3)
+    hour_area = 4
+    nr_of_xticks =9
+    location = [69.66,18.94]
+    time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
+    for i in range(len(events_collection_ROTI)):
+        plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI, axis=0)
+    plt.plot(average_event, linewidth=3, color="black", label="median value")
+    plt.title("All recorded substorms showed by ROTI at location " + str(location) + " in 2018")
+    plt.xlabel("minutes")
+    plt.ylabel("ROTI values [TEC/min]")
+    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.legend()
+    plt.show()
+
+    for i in range(index_two_thirds, len(events_collection_ROTI)):
+        plt.plot(events_collection_ROTI[i, ::60], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI[:index_third], axis = 0)
+    plt.plot(average_event, linewidth=3, color="black", label="median value")
+    plt.title("Third bin of substorms showed by ROTI at location " + station + " in 2018")
+    plt.xlabel("minutes")
+    plt.ylabel("ROTI values [TEC/min]")
+    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.legend()
+    plt.show()
+
+
+    for i in range(index_third, index_two_thirds):
+        plt.plot(events_collection_ROTI[i, ::60], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI[index_third:index_two_thirds], axis = 0)
+    plt.plot(average_event, linewidth=3, color="black", label="median value" )
+    plt.title("Second bin of substorms showed by ROTI at location " + station + " in 2018")
+    plt.xlabel("minutes")
+    plt.ylabel("ROTI values [TEC/min]")
+    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.legend()
+    plt.show()
+
+
+    for i in range(index_third):
+        plt.plot(events_collection_ROTI[i, ::60], linewidth=0.5)
+    average_event = np.nanmedian(events_collection_ROTI[index_two_thirds:], axis = 0)
+    plt.title("First bin of recorded substorms by the gps receiver in " + station + " in 2018")
+    plt.plot(average_event, linewidth=3, color="black", label="median value")
+    plt.title("All recorded substorms showed by ROTI at location " + str(location) + " in 2018")
+    plt.xlabel("minutes")
+    plt.ylabel("ROTI values [TEC/min]")
+    plt.xticks(np.linspace(0, 3.3*len(events_collection_ROTI), nr_of_xticks), time)
+    plt.legend()
+    plt.show()
+
 
 
 obj_event = ReadSubstormEvent()
@@ -278,18 +338,31 @@ def load_gps_noise():
         noise = np.load(file)
     return time, noise
 
-t1 = time.time()
 # time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
 time_axis_gps,gps_noise = load_gps_noise()
-print("time", time.time() - t1)
+
+########################## ROTI  ##################################
+
+def load_ROTI_data():
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        ROTI_biint = np.load(file)
+    return time, ROTI_biint
+
+time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
+
 ########################## creating bins ###################################
-bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorted \
-= create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,time_UTC_mag,magnetic_north,gps_noise,time_axis_gps)
+bins_sorted,time_day_bins,time_of_event,\
+events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
+= create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
+                              time_UTC_mag,magnetic_north,
+                              gps_noise,time_axis_gps,
+                                time_ROTI_TRO, ROTI_biint_TRO)
 
 #########################plotting data#########################
-print(noise_gps_sorted)
 # plot_histograms(bins_sorted,time_day_bins, time_of_event)
 # plot_all_mag_events(events_collection_sorted,bins_sorted)
-
-plot_all_gps_events(noise_gps_sorted, bins_sorted)
+plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
+# plot_all_gps_events(noise_gps_sorted, bins_sorted)

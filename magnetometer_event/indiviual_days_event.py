@@ -82,24 +82,24 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     fig,ax = plt.subplots(3,1, sharex = True)
     # np.nanmedian()
     # ax[0].plot(gps_time.flatten()[::],gps_noise.flatten()[::])
-    ax[0].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],'.')
-    print(time_of_event)
-    print(gps_time.flatten()[::100])
-    ax[0].set_yscale("log")
-    # ax[0].set_ylim(5e-5,1e-1)
-    ax[0].set_title("substorms in Tromsø in 2018")
-    ax[0].set_ylabel("noise values from the NMEA")
+    ax[0].plot(time_UTC_mag,magnetic_north)
+    ax[0].plot(time_of_event,np.zeros(len(time_of_event)), "r*", linewidth =0.5)
+    ax[0].set_ylabel("North component B-value [nT]")
+    ax[0].set_title("magnetometer values with substorm trigger, \n ROTI values and \n noise from gps at Tromsø in 2018")
+    ax[0].set_ylim(-900,200)
     ax[0].grid("on")
 
-    ax[1].plot(time_UTC_mag,magnetic_north)
-    ax[1].plot(time_of_event,np.zeros(len(time_of_event)), "r*", linewidth =0.5)
-    ax[1].set_ylabel("North component B-value [nT]")
-    ax[1].set_ylim(-900,200)
+    ax[1].plot(time_ROTI,ROTI_biints)
+    ax[1].set_ylabel("ROTI [TEC/min]")
     ax[1].grid("on")
-    ax[2].plot(time_ROTI,ROTI_biints)
-    ax[2].set_ylabel("ROTI [TEC/min]")
+    ax[1].set_xlabel("days")
+
+
+    ax[2].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],'.')
+    ax[2].set_yscale("log")
+    # ax[0].set_ylim(5e-5,1e-1)
+    ax[2].set_ylabel("noise values from the NMEA")
     ax[2].grid("on")
-    ax[2].set_xlabel("days")
     plt.show()
 
 obj_event = ReadSubstormEvent()
@@ -137,7 +137,7 @@ dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
 geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
 = obj_mag.receiver_specific_data(station)
 
-stations_dictionary_GEO_coord = {"KIL": [69.02, 20.79],"TRM": [69.66, 18.94],
+stations_dictionary_GEO_coord = {"KIL": [69.02, 20.79],"TRM": [69.66, 18.94], #0  -0.01
 "ABK": [68.35, 18.82],"AND": [69.30, 16.03],"DOB": [62.07, 9.11],
 "DON": [66.11, 12.50],"JCK": [66.40, 16.98],"KAR": [59.21, 5.24],
 "MAS": [69.46, 23.70],"NOR": [71.09, 25.79],"RVK": [64.94, 10.99],
@@ -189,14 +189,18 @@ time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 ########################## creating bins ###################################
 
 bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorted \
-= create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,time_UTC_mag,magnetic_north,gps_noise,time_axis_gps)
+= create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
+                              time_UTC_mag,magnetic_north,
+                              gps_noise,time_axis_gps,
+                              time_ROTI_TRO, ROTI_biint_TRO)
 
-###########################plotting different data ##########################
+################### Conversion or adjustment of different arrays ###############
 days_magnetometer = date_to_days(dates_mag)
 days_event = date_to_days(dates_event)
 
-time_of_event = days_event+mag_time/24
+time_of_event = days_event + mag_time/24
 time_mag = days_magnetometer + time_UTC_mag/24.
 
+###########################plotting different data ##########################
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
 bins_sorted,time_of_event,time_ROTI_TRO,ROTI_biint_TRO)

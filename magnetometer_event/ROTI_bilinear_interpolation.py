@@ -133,10 +133,12 @@ def full_year_ROTI_bilinear_interpolation(coordinates, unit_days=False):
 
 def plot_full_year_ROTI_bilinear_interpolation(coordinates):
     time,ROTI_val = full_year_ROTI_bilinear_interpolation(coordinates)
+    
     for i in range(int(len(time)/(12*24))):
         plt.plot(time[12*24*i:12*24*(i+1)],ROTI_val[12*24*i:12*24*(i+1)])
-    plt.title(f"ROTI data at Tromso magnetometer station \n coordinates: {coordinates[:]}\
-    Full year 2018")
+
+    plt.title(f"ROTI data at Tromso magnetometer station \n coordinates:\
+    {coordinates[:]} Full year 2018")
     plt.xlabel("time of day [hour]")
     plt.ylabel("ROTI value [TEC/min]")
     plt.show()

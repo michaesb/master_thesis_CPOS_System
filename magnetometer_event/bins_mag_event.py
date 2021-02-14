@@ -44,7 +44,7 @@ def plot_all_events(events_collection,bins_sorted):
     index_third, index_two_thirds = int(len(events_collection)/3),\
                                     int(len(events_collection)*2/3)
     hour_area = 4
-    nr_of_xticks =hour_area*2+1
+    nr_of_xticks = hour_area*2+1
     time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks)
     for i in range(len(events_collection)):
         plt.plot(events_collection[i,:], linewidth = 0.5)

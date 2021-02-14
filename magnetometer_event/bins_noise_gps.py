@@ -368,6 +368,6 @@ events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
 
 #########################plotting data#########################
 # plot_histograms(bins_sorted,time_day_bins, time_of_event)
-# plot_all_mag_events(events_collection_sorted,bins_sorted)
-plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
+plot_all_mag_events(events_collection_sorted,bins_sorted)
+# plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
 # plot_all_gps_events(noise_gps_sorted, bins_sorted)

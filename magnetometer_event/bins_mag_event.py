@@ -153,6 +153,6 @@ lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time
 
 bins_sorted,time_day_bins, time_of_event,events_collection_sorted = \
 create_bins(dates_mag,dates_event, Norway_time,time_UTC_mag ,magnetic_north)
-# plot_histograms(bins_sorted,time_day_bins, time_of_event)
+plot_histograms(bins_sorted,time_day_bins, time_of_event)
 
-plot_all_events(events_collection_sorted,bins_sorted)
+# plot_all_events(events_collection_sorted,bins_sorted)

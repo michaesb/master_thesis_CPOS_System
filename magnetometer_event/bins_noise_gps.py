@@ -339,8 +339,8 @@ def load_gps_noise():
     return time, noise
 
 # time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
-time_axis_gps, gps_noise = create_fake_noise()
-# time_axis_gps,gps_noise = load_gps_noise()
+# time_axis_gps, gps_noise = create_fake_noise()
+time_axis_gps,gps_noise = load_gps_noise()
 
 ########################## ROTI  ##################################
 
@@ -364,9 +364,5 @@ events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
 #########################plotting data#########################
 # plot_histograms(bins_sorted,time_day_bins, time_of_event)
 plot_all_mag_events(events_collection_sorted,bins_sorted)
-<<<<<<< HEAD
-# plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
-=======
 plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
->>>>>>> 0558b93762bca8cb36a0be99fe45aa0447df9e35
-# plot_all_gps_events(noise_gps_sorted, bins_sorted)
+plot_all_gps_events(noise_gps_sorted, bins_sorted)

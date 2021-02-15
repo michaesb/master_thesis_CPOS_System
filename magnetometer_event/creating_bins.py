@@ -13,7 +13,7 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
     time_stamp_event = np.zeros(N_mag)*np.nan
     bins = np.zeros(N_event)
     time_day_bins = np.zeros(N_event)
-    hour_area = 3
+    hour_area = 4
     events_collection = np.zeros((N_event,int(hour_area*60)))*np.nan
     j=0
     date = 0
@@ -22,6 +22,7 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
             if date != days_magnetometer[i]:
                 date = days_magnetometer[i]
                 for k in range(Counter(days_event)[days_magnetometer[i]]):
+
                     index_min, index_max = i+int((time_of_event[j] - (hour_area/2))*60)\
                                           ,i+int((time_of_event[j] + (hour_area/2))*60)
                     if index_max-index_min != hour_area*60:
@@ -29,6 +30,7 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
 
                     bin_value = np.min(magnetometer_values[index_min:index_max])
                     if bin_value != bins[j-1]:
+
                         bins[j] = bin_value
                         events_collection[j,:] = magnetometer_values[index_min:index_max]
                         time_day_bins[j] = days_magnetometer[i]+time_of_event[j]/24
@@ -82,8 +84,8 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                     max_time = time_of_event[ii_bins] + (hour_area/2)
 
                     #finding indexes for the magnetometer
-                    index_min_mag, index_max_mag = i+int(min_time)*60\
-                                                  ,i+int(max_time)*60
+                    index_min_mag, index_max_mag = i+int(min_time*60)\
+                                                  ,i+int(max_time*60)
 
 
                     if index_max_mag-index_min_mag != hour_area*60:
@@ -99,6 +101,7 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
 
                     bin_value = np.min(magnetometer_values[index_min_mag:index_max_mag])
                     if bin_value != bins[ii_bins-1]:
+
                         bins[ii_bins] = bin_value
                         #time of day value
                         time_day_bins[ii_bins] = days_magnetometer[i]+time_of_event[ii_bins]/24

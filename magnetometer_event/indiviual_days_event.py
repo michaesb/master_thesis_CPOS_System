@@ -69,7 +69,7 @@ def plot_all_all_events(events_gps_collection,events_collection, bins_sorted):
     plt.show()
 
 def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,\
-                                                      bins_sorted,time_of_event,time_ROTI,ROTI_biints):
+                                                      bins_sorted,time_of_event,time_ROTI,ROTI_points):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
@@ -79,7 +79,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
         gps_time[i,:] = gps_time[i,:]/24+i
     print(time_UTC_mag[-1])
     print(gps_time.flatten()[-1])
-    fig,ax = plt.subplots(3,1, sharex = True)
+    fig,ax = plt.subplots(2,1, sharex = True)
     # np.nanmedian()
     # ax[0].plot(gps_time.flatten()[::],gps_noise.flatten()[::])
     ax[0].plot(time_UTC_mag,magnetic_north)
@@ -100,6 +100,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     # ax[0].set_ylim(5e-5,1e-1)
     ax[2].set_ylabel("noise values from the NMEA")
     ax[2].grid("on")
+
     plt.show()
 
 obj_event = ReadSubstormEvent()
@@ -171,20 +172,13 @@ def load_gps_noise():
         noise = np.load(file)
     return time, noise
 
+######################### ROTI data #####################################
+
 # time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
 time_axis_gps,gps_noise = load_gps_noise()
 
-######################### ROTI data #####################################
 
-def load_ROTI_data():
-    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
-    with open(file_path,"rb") as file:
-        time = np.load(file)
-        ROTI_biint = np.load(file)
-    return time, ROTI_biint
-
-time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 
 ########################## creating bins ###################################
 
@@ -203,4 +197,4 @@ time_mag = days_magnetometer + time_UTC_mag/24.
 
 ###########################plotting different data ##########################
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
-bins_sorted,time_of_event,time_ROTI_TRO,ROTI_biint_TRO)
+bins_sorted,time_of_event,time_ROTI,ROTI_points)

@@ -77,7 +77,26 @@ def extract_day_data(month,date,station_coordinates):
             data[index_y_floor-1,index_x_ceil+1,ii]=100
             data[index_y_ceil+1,index_x_floor-1,ii]=100
             data[index_y_ceil+1,index_x_ceil+1,ii]=100
-
+            # x_axis,y_axis = ROTI_data.coordinates
+            # fig, ax = plt.subplots()
+            # x_labels = np.arange(x_axis[0],x_axis[1]+10,10,dtype=int)
+            # y_labels = np.arange(y_axis[1],y_axis[0]+5,-5,dtype=int)
+            # nr_yticks = len(y_labels)
+            # nr_xticks = len(x_labels)
+            # plt.imshow(data[:,:,i],cmap="magma")
+            # plt.title(f"date: {date[0:4]} {date[4:6]} {date[6:8]}")
+            # plt.xlabel("longitude")
+            #
+            # plt.xticks(range(0,int(x_axis[1]-x_axis[0]),5),\
+            #            np.arange(int(x_axis[0]),int(x_axis[1]),5).tolist())#,x_labels.tolist())
+            # plt.ylabel("latitude")
+            # plt.yticks(range(0,int(y_axis[1]-y_axis[0]),2),\
+            #            np.arange(int(y_axis[1]),int(y_axis[0]),-2).tolist())#,y_labels.tolist())
+            # plt.colorbar()
+            # plt.grid()
+            # plt.show()
+            # print(Q_values)
+            # exit()
             ROTI_Ground_mag_station[i,ii] = bilinear_interpolation(x=index_x, y=index_y,
                                                     x_=[index_x_floor,index_x_ceil],
                                                     y_=[index_y_floor,index_y_ceil],
@@ -90,7 +109,7 @@ def dates_of_year_2018():
     day_in_a_month = [31,28,31,30,31,30,31,31,30,31,30,31]
     for i in range(len(day_in_a_month)):
         for ii in range(1,day_in_a_month[i]+1):
-            if len(str(i+1))==1:
+            if len(str(i))==1:
                 if len(str(ii))==1:
                     month = f"0{i+1}"
                     date = f"0{ii}"
@@ -115,25 +134,20 @@ def dates_of_year_2018():
                     dates.append(date)
     return dates, months
 
-def full_year_ROTI_bilinear_interpolation(coordinates, unit_days=False):
+def full_year_ROTI_bilinear_interpolation(coordinates):
     dates, months = dates_of_year_2018()
     full_year_dataaset_ROTI = np.zeros(12*24*len(dates))*np.nan
     full_year_dataaset_time = np.zeros(12*24*len(dates))*np.nan
-
     for i in tqdm(range(len(dates)),desc = "ROTI bilinear_interpolation full year"):
         tqdm.write(f"{months[i]}/{dates[i]}")
         time,ROTI_coordinates_data = extract_day_data(months[i],dates[i],coordinates)
         full_year_dataaset_ROTI[12*24*i:12*24*(i+1)] = ROTI_coordinates_data.flatten()
-        if unit_days == True:
-            full_year_dataaset_time[12*24*i:12*24*(i+1)] = time.flatten()/24+i+1
-        else:
-            full_year_dataaset_time[12*24*i:12*24*(i+1)] = time.flatten()
-
+        full_year_dataaset_time[12*24*i:12*24*(i+1)] = time.flatten()
     return full_year_dataaset_time, full_year_dataaset_ROTI
 
 def plot_full_year_ROTI_bilinear_interpolation(coordinates):
     time,ROTI_val = full_year_ROTI_bilinear_interpolation(coordinates)
-    
+
     for i in range(int(len(time)/(12*24))):
         plt.plot(time[12*24*i:12*24*(i+1)],ROTI_val[12*24*i:12*24*(i+1)])
 

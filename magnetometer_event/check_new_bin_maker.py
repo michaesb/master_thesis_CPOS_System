@@ -11,7 +11,7 @@ from magnetometer_event.filtering_events import filtering_to_Norway_night
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
-from magnetometer_event.creating_bins import create_bins_with_noise_sort
+from magnetometer_event.creating_bins import create_bins_gps_ROTI_mag
 from noise_gps_function import run_NMEA_data
 
 
@@ -74,7 +74,6 @@ def plot_all_mag_events(events_collection, bins_sorted):
 
         index_third, index_two_thirds = int(len(events_collection)/3),\
                                         int(len(events_collection)*2/3)
-        hour_area = 4
         nr_of_xticks = hour_area*2+1
         median_event = np.nanmedian(events_collection, axis = 0)
         nfive_percentile = np.nanpercentile(events_collection, 95, axis =0)
@@ -148,8 +147,7 @@ def plot_all_gps_events(events_collection_gps, bins_sorted):
 
     index_third, index_two_thirds = int(len(events_collection_gps) / 3), int(
         len(events_collection_gps) * 2 / 3)
-    hour_area = 4
-    nr_of_xticks = 11
+    nr_of_xticks = hour_area*2 + 1
     station = "TRM"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
     for i in range(len(events_collection_gps)):
@@ -228,8 +226,7 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted):
 
     index_third, index_two_thirds = int(len(events_collection_ROTI) / 3), int(
         len(events_collection_ROTI) * 2 / 3)
-    hour_area = 4
-    nr_of_xticks = 9
+    nr_of_xticks = hour_area*2 +1
     location = [69.66,18.94]
 
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks, dtype=int)
@@ -249,7 +246,6 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted):
     plt.ylabel("ROTI values [TEC/min]")
 
     plt.xticks(np.linspace(0, 0.19*len(events_collection_ROTI), nr_of_xticks), time)
-
     plt.legend()
     plt.ylim(0,10)
     plt.show()
@@ -402,10 +398,13 @@ def load_ROTI_data():
 
 time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 
+
 ########################## creating bins ###################################
+hour_area = 4
+
 bins_sorted,time_day_bins,time_of_event,\
 events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
-= create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
+= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time,
                               time_UTC_mag,magnetic_north,
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
@@ -414,4 +413,4 @@ events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
 plot_histograms(bins_sorted,time_day_bins, time_of_event)
 plot_all_mag_events(events_collection_sorted,bins_sorted)
 plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
-plot_all_gps_events(noise_gps_sorted, bins_sorted)
+# plot_all_gps_events(noise_gps_sorted, bins_sorted)

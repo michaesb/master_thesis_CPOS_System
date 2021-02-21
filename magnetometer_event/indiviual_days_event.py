@@ -11,82 +11,29 @@ from magnetometer_event.filtering_events import filtering_to_Norway_night
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
-from magnetometer_event.creating_bins import create_bins_with_noise_sort
+from magnetometer_event.creating_bins import create_bins_with_noise_sort, create_bins_gps_ROTI_mag
 from noise_gps_function import run_NMEA_data
 from ROTI_bilinear_interpolation import full_year_ROTI_bilinear_interpolation
 
-def plot_all_all_events(events_gps_collection,events_collection, bins_sorted):
-    borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
-        bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
-
-    index_third, index_two_thirds = int(len(events_gps_collection) / 3), int(
-        len(events_gps_collection) * 2 / 3)
-    hour_area = 4
-    nr_of_xticks =9
-    station = "TRM"
-    time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
-
-    for i in range(len(events_gps_collection)):
-        plt.subplot(2,1,1)
-        plt.plot(events_gps_collection[i, ::60], linewidth=0.5, color = "black")
-        plt.yscale("log")
-        plt.title("substorms in Tromsø in 2018")
-        plt.ylabel("noise values from the NMEA")
-        plt.ylim(5e-5,1e-1)
-        plt.xticks([])
-        plt.subplot(2,1,2)
-        plt.plot(events_collection[i, :], linewidth=0.5,color = "black")
-        plt.title("All recorded substorms by the magnetometer in " + station + " in 2018")
-        plt.xlabel("minutes")
-        plt.ylabel("North component B-value [nT]")
-        plt.xticks(np.linspace(0, len(events_collection)*0.99, nr_of_xticks), time)
-        plt.ylim(-900,200)
-        plt.legend()
-        plt.show()
-
-    plt.subplot(2,1,1)
-    for i in range(len(events_gps_collection)):
-        plt.plot(events_gps_collection[i, ::60], linewidth=0.5)
-    average_event = np.nanmedian(events_gps_collection, axis=0)
-    plt.plot(average_event[::60], linewidth=3, color="black", label="median value")
-    plt.yscale("log")
-    plt.title("All recorded substorms in Tromsø in 2018")
-    plt.ylabel("noise values from the NMEA")
-    plt.ylim(5e-5,1e-1)
-    plt.xticks([])
-
-    plt.subplot(2,1,2)
-    for i in range(len(events_collection)):
-        plt.plot(events_collection[i, :], linewidth=0.5)
-    average_event = np.nanmedian(events_collection, axis=0)
-    plt.plot(average_event, linewidth=3, color="black", label="median value")
-    plt.title("All recorded substorms by the magnetometer in " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("North component B-value [nT]")
-    plt.xticks(np.linspace(0, len(events_collection)*0.99, nr_of_xticks), time)
-    plt.ylim(-700,200)
-    plt.legend()
-    plt.show()
 
 def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,\
-                                                      bins_sorted,time_of_event,time_ROTI,ROTI_biints):
-    borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
-        bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
+                                time_of_event,time_ROTI,ROTI_biints):
+    borders = -250,-450
 
     hour_area = 4
     station = "TRM"
     for i in range(len(gps_time[:,0])):
         gps_time[i,:] = gps_time[i,:]/24+i
-    print(time_UTC_mag[-1])
-    print(gps_time.flatten()[-1])
     fig,ax = plt.subplots(3,1, sharex = True)
     # np.nanmedian()
     # ax[0].plot(gps_time.flatten()[::],gps_noise.flatten()[::])
     ax[0].plot(time_UTC_mag,magnetic_north)
     ax[0].plot(time_of_event,np.zeros(len(time_of_event)), "r*", linewidth =0.5)
+    ax[0].plot(time_UTC_mag, np.ones(len(magnetic_north))*borders[0],alpha=0.4)
+    ax[0].plot(time_UTC_mag, np.ones(len(magnetic_north))*borders[1],alpha=0.4)
     ax[0].set_ylabel("North component B-value [nT]")
     ax[0].set_title("magnetometer values with substorm trigger, \n ROTI values and \n noise from gps at Tromsø in 2018")
-    ax[0].set_ylim(-900,200)
+    ax[0].set_ylim(-1000,400)
     ax[0].grid("on")
 
     ax[1].plot(time_ROTI,ROTI_biints)
@@ -188,11 +135,17 @@ time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 
 ########################## creating bins ###################################
 
-bins_sorted,time_day_bins,time_of_event,events_collection_sorted,noise_gps_sorted \
-= create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
-                              time_UTC_mag,magnetic_north,
-                              gps_noise,time_axis_gps,
-                              time_ROTI_TRO, ROTI_biint_TRO)
+# bins_sorted,time_day_bins,time_of_event,events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
+# = create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
+#                               time_UTC_mag,magnetic_north,
+#                               gps_noise,time_axis_gps,
+#                               time_ROTI_TRO, ROTI_biint_TRO)
+# = create_bins_gps_ROTI_mag(dates_mag,dates_event,Norway_time,
+# time_UTC_mag,magnetic_north,
+# gps_noise,time_axis_gps,
+# time_ROTI_TRO, ROTI_biint_TRO)
+
+
 
 ################### Conversion or adjustment of different arrays ###############
 days_magnetometer = date_to_days(dates_mag)
@@ -203,4 +156,4 @@ time_mag = days_magnetometer + time_UTC_mag/24.
 
 ###########################plotting different data ##########################
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
-bins_sorted,time_of_event,time_ROTI_TRO,ROTI_biint_TRO)
+time_of_event,time_ROTI_TRO,ROTI_biint_TRO)

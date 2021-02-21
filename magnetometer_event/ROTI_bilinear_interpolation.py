@@ -133,7 +133,8 @@ def full_year_ROTI_bilinear_interpolation(coordinates, unit_days=False):
 
 def plot_full_year_ROTI_bilinear_interpolation(coordinates):
     time,ROTI_val = full_year_ROTI_bilinear_interpolation(coordinates)
-    
+    plt.plot(time)
+    plt.show()    
     for i in range(int(len(time)/(12*24))):
         plt.plot(time[12*24*i:12*24*(i+1)],ROTI_val[12*24*i:12*24*(i+1)])
 

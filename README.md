@@ -39,7 +39,6 @@ and a reader for reading a substorm event list.
 
 ### Filters and processing
 
-
 #### seasonal data
 
 A place where we look at the changes for a year in NMEA data. Shows a clear

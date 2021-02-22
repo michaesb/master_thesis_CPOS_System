@@ -53,37 +53,46 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
 
+save_ram_memory = True
+station = "TRO"
+
 try:
     laptop_path = "/scratch/michaesb/"
     path_event = laptop_path + "substorm_event_list_2018.csv"
     path_mag = laptop_path + "20201025-17-57-supermag.csv"
     obj_event.read_csv(path_event, verbose=False)
-    print("substorm done")
-    print("magnetometer reader")
-    obj_mag.read_csv(path_mag, verbose=False)
-    print("magnetometer reader done")
+    if save_ram_memory:
+        file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
+        with open(file_path,"rb") as file:
+            time_UTC_mag  = np.load(file, allow_pickle=True)
+            dates_mag = np.load(file, allow_pickle=True)
+            magnetic_north = np.load(file, allow_pickle=True)
+    else:
+        obj_mag.read_csv(path_mag, verbose=False)
+        station = "TRO"
+        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
+        = obj_mag.receiver_specific_data(station)
 
 except FileNotFoundError:
     desktop_path = "/run/media/michaelsb/data_ssd/data"
     path_event = desktop_path + "/substorm_event_list_2018.csv"
     path_mag = desktop_path + "/20201025-17-57-supermag.csv"
-    print("substorm event reader")
     obj_event.read_csv(path_event, verbose=False)
-    print("substorm done")
-    print("magnetometer reader")
-    obj_mag.read_csv(path_mag, verbose=False)
-    print("magnetometer done")
-
+    if save_ram_memory:
+        file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
+        with open(file_path,"rb") as file:
+            time_UTC_mag  = np.load(file, allow_pickle=True)
+            dates_mag = np.load(file, allow_pickle=True)
+            magnetic_north = np.load(file, allow_pickle=True)
+    else:
+        obj_mag.read_csv(path_mag, verbose=False)
+        station = "TRO"
+        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
+        = obj_mag.receiver_specific_data(station)
 
 ########################### magnetometer reader  ##########################
-try:
-    station = sys.argv[1]
-except IndexError:
-    station = "TRO"
-
-dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
-geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
-= obj_mag.receiver_specific_data(station)
 
 stations_dictionary_GEO_coord = {"KIL": [69.02, 20.79],"TRM": [69.66, 18.94], #0  -0.01
 "ABK": [68.35, 18.82],"AND": [69.30, 16.03],"DOB": [62.07, 9.11],
@@ -119,12 +128,21 @@ def load_gps_noise():
         noise = np.load(file)
     return time, noise
 
-######################### ROTI data #####################################
+time_axis_gps,gps_noise = load_gps_noise()
 
 # time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
-time_axis_gps,gps_noise = load_gps_noise()
+######################### ROTI data #####################################
 
+
+def load_ROTI_data():
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        ROTI_biint = np.load(file)
+    return time, ROTI_biint
+
+time_ROTI, ROTI_biint_TRO = load_ROTI_data()
 
 
 ########################## creating bins ###################################
@@ -150,4 +168,4 @@ time_mag = days_magnetometer + time_UTC_mag/24.
 
 ###########################plotting different data ##########################
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
-bins_sorted,time_of_event,time_ROTI,ROTI_points)
+time_of_event,time_ROTI,ROTI_biint_TRO)

@@ -103,45 +103,47 @@ def plot_all_events(events_collection,bins_sorted):
 
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
+station = "TRO"
+save_ram_memory = True
 
 try:
     laptop_path = "/scratch/michaesb/"
     path_event = laptop_path+"substorm_event_list_2018.csv"
     path_mag = laptop_path+"20201025-17-57-supermag.csv"
     obj_event.read_csv(path_event,verbose = False)
-    print("substorm event reader")
-    obj_mag.read_csv(path_mag, verbose = False)
-    print("magnetometer reader")
+    if save_ram_memory:
+        file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
+        with open(file_path,"rb") as file:
+            time_UTC_mag  = np.load(file, allow_pickle=True)
+            dates_mag = np.load(file, allow_pickle=True)
+            magnetic_north = np.load(file, allow_pickle=True)
+    else:
+        obj_mag.read_csv(path_mag, verbose=False)
+        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
+        = obj_mag.receiver_specific_data(station)
 
 except FileNotFoundError:
     desktop_path = "/run/media/michaelsb/data_ssd/data/"
     path_event = desktop_path+"/substorm_event_list_2018.csv"
     path_mag = desktop_path+"/20201025-17-57-supermag.csv"
-    print("substorm event reader")
     obj_event.read_csv(path_event,verbose = False)
-    print("substorm done")
-    print("magnetometer reader")
-    obj_mag.read_csv(path_mag, verbose = False)
-    print("magnetometer done")
+    if save_ram_memory:
+        file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
+        with open(file_path,"rb") as file:
+            time_UTC_mag  = np.load(file, allow_pickle=True)
+            dates_mag = np.load(file, allow_pickle=True)
+            magnetic_north = np.load(file, allow_pickle=True)
+    else:
+        obj_mag.read_csv(path_mag, verbose=False)
+        station = "TRO"
+        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
+        = obj_mag.receiver_specific_data(station)
 
 
 #magnetometer reader
-try:
-    station = sys.argv[1]
-except IndexError:
-    station = "TRO"
 
-dates_mag, time_UTC_mag,\
-location_long,location_lat,\
-geographic_north,geographic_east, geographic_z, \
-magnetic_north,magnetic_east, magnetic_z = obj_mag.receiver_specific_data(station)
-stations_dictionary_GEO_coord = {"KIL":[69.02, 20.79],"TRO":[69.66, 18.94],\
-                                 "ABK":[68.35, 18.82],"AND":[69.30, 16.03],\
-                                 "DOB":[62.07,  9.11],"DON":[66.11, 12.50],\
-                                 "JCK":[66.40, 16.98],"KAR":[59.21,  5.24],\
-                                 "MAS":[69.46, 23.70],"NOR":[71.09, 25.79],\
-                                 "RVK":[64.94, 10.99],"SOL":[61.08,  4.84],\
-                                 "SOR":[70.54, 22.22]}
 #then event reader
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time

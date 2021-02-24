@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import time, sys
+import time as time_module
+import sys
 sys.path.insert(1, "../") # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
 """
@@ -86,7 +87,7 @@ class ReadMagnetomerData():
 
     def time_converted(self,):
         """
-        changes the self.time_UTC from 60 number system to 10 number system.
+        Changes the self.time_UTC from 60 number system to a 10 number system.
         """
         N = len(self.time_UTC)
         time = np.zeros(N)
@@ -135,15 +136,73 @@ class ReadMagnetomerData():
         j = 0
         index = np.zeros_like(self.receiver_name)
         index = self.receiver_name == receiver_ID
-        if 0:
-            for i in range(len(index)):
-                if index[i]:
-                    print(self.receiver_name[i], end =" ")
-                    print(self.dbn_geo[i],self.dbe_geo[i],self.dbz_geo[i], )
+        if receiver_ID == "TRO": #pathing because of missing data in the TRO receiver
+            print(self.date[index])
+            print(self.time_UTC[index], "\n",self.geo_long[index], "\n",self.geo_lat[index],)
+            print(self.dbn_nez[index], "\n",self.dbe_nez[index], "\n",self.dbz_nez[index],)
+            return self.patch_TRO_data(self.date[index],
+                                        self.time_UTC[index],self.geo_long[index],self.geo_lat[index],
+                                        self.dbn_nez[index],self.dbe_nez[index],self.dbz_nez[index],
+                                        self.dbn_geo[index],self.dbe_geo[index],self.dbz_geo[index])
+
+
         return self.date[index], \
                self.time_UTC[index],self.geo_long[index],self.geo_lat[index],\
                self.dbn_nez[index],self.dbe_nez[index],self.dbz_nez[index],\
                self.dbn_geo[index],self.dbe_geo[index],self.dbz_geo[index]
+
+
+    def patch_TRO_data(self,date,
+                       t, g_long, g_lat,
+                       n1,  e1,    z1,
+                       n2,  e2,    z2 ):
+        index_patch = 11813
+        patch_nan = np.fill(90,np.nan)
+        DATE= np.empty(len(date)+90)
+        T   = np.empty(len(date)+90)
+        G_LONG = np.empty(len(date)+90)
+        G_LAT = np.empty(len(date)+90)
+        N1  = np.empty(len(date)+90)
+        E1  = np.empty(len(date)+90)
+        Z1  = np.empty(len(date)+90)
+        N2  = np.empty(len(date)+90)
+        E2  = np.empty(len(date)+90)
+        Z2  = np.empty(len(date)+90)
+
+        DATE[:index_patch] = date[:index_patch]
+        T[:index_patch] = t[:index_patch]
+        G_LONG[:index_patch] = g_long[:index_patch]
+        G_LAT[:index_patch] = g_lat[:index_patch]
+        N1[:index_patch] = n1[:index_patch]
+        E1[:index_patch] = e1[:index_patch]
+        Z1[:index_patch] = z1[:index_patch]
+        N2[:index_patch] = n2[:index_patch]
+        E2[:index_patch] = e2[:index_patch]
+        Z2[:index_patch] = z1[:index_patch]
+
+        DATE[index_patch-1:index_patch+90] = patch_nan
+        T[:index_patch-1:index_patch+90] = patch_nan
+        G_LONG[:index_patch-1:index_patch+90] = patch_nan
+        G_LAT[:index_patch-1:index_patch+90] = patch_nan
+        N1[:index_patch-1:index_patch+90] = patch_nan
+        E1[:index_patch-1:index_patch+90] = patch_nan
+        Z1[:index_patch-1:index_patch+90] = patch_nan
+        N2[:index_patch-1:index_patch+90] = patch_nan
+        E2[:index_patch-1:index_patch+90] = patch_nan
+        Z2[:index_patch-1:index_patch+90] = patch_nan
+
+        DATE[index_patch+90-1:] = date[index_patch-1:]
+        T[index_patch+90-1:] = t[index_patch-1:]
+        G_LONG[index_patch+90-1:] = g_long[index_patch-1:]
+        G_LAT[index_patch+90-1:] = g_lat[index_patch-1:]
+        N1[index_patch+90-1:] = n1[index_patch-1:]
+        E1[index_patch+90-1:] = e1[index_patch-1:]
+        Z1[index_patch+90-1:] = z1[index_patch-1:]
+        N2[index_patch+90-1:] = n2[index_patch-1:]
+        E2[index_patch+90-1:] = e2[index_patch-1:]
+        Z2[index_patch+90-1:] = z1[index_patch-1:]
+
+        return DATE,T,G_LONG,G_Lat,N1,E1,Z1,N2,E2,Z2
 
     def print_memory_usage(self):
         """

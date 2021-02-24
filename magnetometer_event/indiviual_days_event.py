@@ -27,8 +27,8 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     fig,ax = plt.subplots(3,1, sharex = True)
     # np.nanmedian()
     # ax[0].plot(gps_time.flatten()[::],gps_noise.flatten()[::])
-    ax[0].plot(time_UTC_mag,magnetic_north)
-    ax[0].plot(time_of_event,np.zeros(len(time_of_event)), "r*", linewidth =0.5)
+    ax[0].plot(time_UTC_mag,magnetic_north, ".-")
+    ax[0].plot(time_of_event,np.zeros(len(time_of_event)), "r", linewidth =0.5)
     ax[0].plot(time_UTC_mag, np.ones(len(magnetic_north))*borders[0],alpha=0.4)
     ax[0].plot(time_UTC_mag, np.ones(len(magnetic_north))*borders[1],alpha=0.4)
     ax[0].set_ylabel("North component B-value [nT]")
@@ -36,13 +36,13 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     ax[0].set_ylim(-1000,400)
     ax[0].grid("on")
 
-    ax[1].plot(time_ROTI,ROTI_biints)
+    ax[1].plot(time_ROTI,ROTI_biints,".-")
     ax[1].set_ylabel("ROTI [TEC/min]")
     ax[1].grid("on")
     ax[1].set_xlabel("days")
 
 
-    ax[2].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],'.')
+    ax[2].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],".")
     ax[2].set_yscale("log")
     # ax[0].set_ylim(5e-5,1e-1)
     ax[2].set_ylabel("noise values from the NMEA")

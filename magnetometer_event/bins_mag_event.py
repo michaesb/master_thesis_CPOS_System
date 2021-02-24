@@ -142,8 +142,6 @@ except FileNotFoundError:
         = obj_mag.receiver_specific_data(station)
 
 
-#magnetometer reader
-
 #then event reader
 lat = obj_event.latitude
 mag_time = obj_event.magnetic_time

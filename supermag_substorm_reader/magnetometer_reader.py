@@ -152,13 +152,10 @@ class ReadMagnetomerData():
                self.dbn_geo[index],self.dbe_geo[index],self.dbz_geo[index]
 
 
-    def patch_TRO_data(self,date,
-                       t, g_long, g_lat,
-                       n1,  e1,    z1,
-                       n2,  e2,    z2 ):
+    def patch_TRO_data(self,date,t, g_long, g_lat, n1,e1,z1, n2,e2,z2 ):
         index_patch = 11813
-        patch_nan = np.fill(90,np.nan)
-        DATE= np.empty(len(date)+90)
+        patch_nan = np.full(90,np.nan)
+        DATE= np.chararray(len(date)+90)
         T   = np.empty(len(date)+90)
         G_LONG = np.empty(len(date)+90)
         G_LAT = np.empty(len(date)+90)
@@ -180,16 +177,16 @@ class ReadMagnetomerData():
         E2[:index_patch] = e2[:index_patch]
         Z2[:index_patch] = z1[:index_patch]
 
-        DATE[index_patch-1:index_patch+90] = patch_nan
-        T[:index_patch-1:index_patch+90] = patch_nan
-        G_LONG[:index_patch-1:index_patch+90] = patch_nan
-        G_LAT[:index_patch-1:index_patch+90] = patch_nan
-        N1[:index_patch-1:index_patch+90] = patch_nan
-        E1[:index_patch-1:index_patch+90] = patch_nan
-        Z1[:index_patch-1:index_patch+90] = patch_nan
-        N2[:index_patch-1:index_patch+90] = patch_nan
-        E2[:index_patch-1:index_patch+90] = patch_nan
-        Z2[:index_patch-1:index_patch+90] = patch_nan
+        DATE[index_patch:index_patch+90] = DATE[index_patch-90:index_patch]
+        T[index_patch:index_patch+90] = patch_nan
+        G_LONG[index_patch:index_patch+90] = patch_nan
+        G_LAT[index_patch:index_patch+90] = patch_nan
+        N1[index_patch:index_patch+90] = patch_nan
+        E1[index_patch:index_patch+90] = patch_nan
+        Z1[index_patch:index_patch+90] = patch_nan
+        N2[index_patch:index_patch+90] = patch_nan
+        E2[index_patch:index_patch+90] = patch_nan
+        Z2[index_patch:index_patch+90] = patch_nan
 
         DATE[index_patch+90-1:] = date[index_patch-1:]
         T[index_patch+90-1:] = t[index_patch-1:]
@@ -202,7 +199,7 @@ class ReadMagnetomerData():
         E2[index_patch+90-1:] = e2[index_patch-1:]
         Z2[index_patch+90-1:] = z1[index_patch-1:]
 
-        return DATE,T,G_LONG,G_Lat,N1,E1,Z1,N2,E2,Z2
+        return DATE,T,G_LONG,G_LAT,N1,E1,Z1,N2,E2,Z2
 
     def print_memory_usage(self):
         """

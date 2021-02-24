@@ -39,10 +39,18 @@ try:
         geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
         = obj_mag.receiver_specific_data(station)
 except FileNotFoundError:
-    path = "/run/media/michaelsb/HDD Linux/data/20201025-17-57-supermag.csv"
-    obj.read_csv(path, verbose = True)
+    path_mag = "/run/media/michaelsb/data_ssd/data/20201025-17-57-supermag.csv"
+    file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
+    if save_ram_memory:
+        with open(file_path,"rb") as file:
+            time_UTC_mag  = np.load(file, allow_pickle=True)
+            dates_mag = np.load(file, allow_pickle=True)
+            magnetic_north = np.load(file, allow_pickle=True)
+    else:
+        obj_mag.read_csv(path_mag, verbose=False)
+        station = "TRO"
+        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
+        = obj_mag.receiver_specific_data(station)
 
-    dates,time_UTC,location_long,location_lat,\
-    geographic_north,geographic_east, geographic_z, \
-    magnetic_north,magnetic_east, magnetic_z = obj.receiver_specific_data("DON")
 plot_latitude_time(dates_mag, time_UTC_mag, magnetic_north)

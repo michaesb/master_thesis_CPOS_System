@@ -304,7 +304,7 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted):
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
 
-save_ram_memory = True
+save_ram_memory = False
 
 try:
     laptop_path = "/scratch/michaesb/"

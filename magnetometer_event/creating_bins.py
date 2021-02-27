@@ -251,8 +251,8 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                 max_time = time_of_event[ii_bins] + (hour_area/2)
 
                 #finding indexes for the magnetometer
-                index_min_mag, index_max_mag = int(day*24*60+(min_time-2)*60)\
-                                              ,int(day*24*60+(max_time-2)*60)
+                index_min_mag, index_max_mag = int(day*24*60+(min_time)*60)\
+                                              ,int(day*24*60+(max_time)*60)
 
                 if index_max_mag-index_min_mag != hour_area*60:
                     index_min_mag+=index_max_mag-index_min_mag-hour_area*60

@@ -107,7 +107,6 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
 
 
                     bin_value = np.min(magnetometer_values[index_min_mag:index_max_mag])
-                    print("hello",Counter(days_event)[days_magnetometer[i]],k,i/24/60)
 
                     if bin_value != bins[ii_bins-1]:
 
@@ -215,7 +214,7 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
            ROTI_event_sorted, noise_gps_sorted
 
 def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
-                time_UTC_mag, magnetometer_values, gps_noise, time_gps,
+                magnetometer_values, gps_noise, time_gps,
                 time_ROTI,ROTI_biint_TRO):
     #NB shifted forward by an hour
     #lenth of arrays

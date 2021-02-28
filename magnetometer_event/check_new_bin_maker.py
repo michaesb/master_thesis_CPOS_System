@@ -321,7 +321,7 @@ try:
     else:
         obj_mag.read_csv(path_mag, verbose=False)
         station = "TRO"
-        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        dates_mag,location_long,location_lat,geographic_north,\
         geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
         = obj_mag.receiver_specific_data(station)
 
@@ -339,7 +339,7 @@ except FileNotFoundError:
     else:
         obj_mag.read_csv(path_mag, verbose=False)
         station = "TRO"
-        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        dates_mag,location_long,location_lat,geographic_north,\
         geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
         = obj_mag.receiver_specific_data(station)
 
@@ -414,8 +414,8 @@ hour_area = 4
 
 bins_sorted,time_day_bins,time_of_event,\
 events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
-= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time,
-                              time_UTC_mag,magnetic_north,
+= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
+                              ,magnetic_north,
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
 

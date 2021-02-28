@@ -36,7 +36,7 @@ class ReadMagnetomerData():
             t1 = time_module.time()
 
         #opening the csv_file
-        self.dataframe_pd = pd.read_csv(csv_file)
+        self.dataframe_pd = pd.read_csv(csv_file,)
         if verbose:
             t2 = time_module.time()
             print("pandas work time",t2-t1)
@@ -47,12 +47,15 @@ class ReadMagnetomerData():
         IGRF_DECL,SZA,\
         self.dbn_nez,self.dbe_nez,self.dbz_nez,\
         self.dbn_geo,self.dbe_geo,self.dbz_geo = self.dataframe_pd.to_numpy().T
+
         if verbose:
             t3 = time_module.time()
             print("assigning to numpy array",t3-t2)
+
         self.time_UTC = np.zeros_like(self.date_UTC)
         self.date = np.zeros_like(self.date_UTC)
         self.year = int(self.date_UTC[0].split("-")[0])
+
         for i, dt in enumerate(self.date_UTC):
             self.date[i], self.time_UTC[i] = dt.split("T")
         if verbose:
@@ -136,17 +139,26 @@ class ReadMagnetomerData():
         df = self.dataframe_pd
         df["Date_UTC"] = pd.to_datetime(df["Date_UTC"],
                                         format="%Y-%m-%dT%H:%M:%S")
-        spec_receiv = df[df["IAGA"] == receiver_ID]
 
-        r = pd.date_range(start=spec_receiv["Date_UTC"].min(), end=spec_receiv["Date_UTC"].max(), freq="1 min")
-        spec_receiv = spec_receiv.set_index('Date_UTC').reindex(r).fillna(np.nan).rename_axis('Date_UTC').reset_index()
-        date_UTC, Extent, receiver_name,\
-        geo_long,geo_lat,\
-        MAGON,MAGLAT,MLT,MCOLAT,\
-        IGRF_DECL,SZA,\
-        n_mag,e_mag,z_mag,\
-        n_geo,e_geo,z_geo = spec_receiv.to_numpy().T
+        spec_receiver = df[df["IAGA"] == receiver_ID]
 
+        r = pd.date_range(start=spec_receiver["Date_UTC"].min(), end=spec_receiver["Date_UTC"].max(), freq="1 min")
+
+        spec_receiver = spec_receiver.set_index('Date_UTC').reindex(r).fillna(np.nan).rename_axis('Date_UTC').reset_index()
+
+        print("hello there \n", spec_receiver.index)
+        # date_UTC, Extent, receiver_name,\
+        # geo_long,geo_lat,\
+        # MAGON,MAGLAT,MLT,MCOLAT,\
+        # IGRF_DECL,SZA,\
+        # n_mag,e_mag,z_mag,\
+        # n_geo,e_geo,z_geo = spec_receiver.to_numpy().T
+        print(spec_receiver)
+        
+        date_UTC = spec_receiver["Date_UTC"].values
+        geo_long,geo_lat = spec_receiver["GEOLON"], spec_receiver["GEOLAT"]
+        n_mag,e_mag,z_mag = spec_receiver["dbn_nez"], spec_receiver["dbe_nez"],spec_receiver["dbz_nez"]
+        n_geo,e_geo,z_geo = spec_receiver["dbn_geo"], spec_receiver["dbe_geo"], spec_receiver["dbz_geo"]
         return date_UTC, \
                geo_long,geo_lat,\
                n_mag,e_mag,z_mag,\

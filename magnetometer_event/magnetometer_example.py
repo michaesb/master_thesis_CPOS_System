@@ -7,19 +7,21 @@ from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 
 def plot_latitude_time(dates,mag_nt):
     days = date_to_days(dates)
-    start_date=7
+    start_date=8
     end_date=9
 
     actual_days = np.linspace(1,366,24*60*365)
-    counter = np.round(days[1]-days[0],12)
-    print("------------------------------")
-    for i in range(1,len(days)):
-        print(days[i])
-        if days[i] == np.nan:
+    print(magnetic_north.dtype)
+    print(np.sum(np.isnan(magnetic_north)))
+
+    for i in range(start_date*24*60,end_date*24*60):
+        if magnetic_north[i] == np.nan:
+            print(days[i], magnetic_north)
             print(np.round(days[i]-days[i-1],12),"==",counter)
             print("------------------------------")
-            time.sleep(0.1)
+            # time.sleep(0.1)
         counter = days[i]
+
     plt.plot(np.linspace(1,366,24*60*365),"b")
     plt.plot(days, "r")
     plt.show()
@@ -42,6 +44,7 @@ try:
             dates_mag = np.load(file, allow_pickle=True)
             magnetic_north = np.load(file, allow_pickle=True)
     else:
+
         obj_mag.read_csv(path_mag, verbose=False)
         station = "TRO"
         dates_mag,location_long,location_lat,geographic_north,\

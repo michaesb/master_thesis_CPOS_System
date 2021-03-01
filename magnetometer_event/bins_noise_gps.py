@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import sys, time
 from numba import njit, prange
+import pandas as pd
 from collections import Counter
 
 sys.path.insert(0, "../")  # to get access to adjecent packages in the repository
@@ -371,6 +372,7 @@ lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
 dates_event, year = obj_event.day_of_year
+dates_event = pd.to_datetime(dates_event,format="%Y-%m-%d %H:%M:%S")
 
 Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(

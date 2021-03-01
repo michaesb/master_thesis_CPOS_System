@@ -146,19 +146,10 @@ class ReadMagnetomerData():
 
         spec_receiver = spec_receiver.set_index('Date_UTC').reindex(r).fillna(np.nan).rename_axis('Date_UTC').reset_index()
 
-        print("hello there \n", spec_receiver.index)
-        # date_UTC, Extent, receiver_name,\
-        # geo_long,geo_lat,\
-        # MAGON,MAGLAT,MLT,MCOLAT,\
-        # IGRF_DECL,SZA,\
-        # n_mag,e_mag,z_mag,\
-        # n_geo,e_geo,z_geo = spec_receiver.to_numpy().T
-        print(spec_receiver)
-        
         date_UTC = spec_receiver["Date_UTC"].values
-        geo_long,geo_lat = spec_receiver["GEOLON"], spec_receiver["GEOLAT"]
-        n_mag,e_mag,z_mag = spec_receiver["dbn_nez"], spec_receiver["dbe_nez"],spec_receiver["dbz_nez"]
-        n_geo,e_geo,z_geo = spec_receiver["dbn_geo"], spec_receiver["dbe_geo"], spec_receiver["dbz_geo"]
+        geo_long,geo_lat = spec_receiver["GEOLON"].values, spec_receiver["GEOLAT"].values
+        n_mag,e_mag,z_mag = spec_receiver["dbn_nez"].values, spec_receiver["dbe_nez"].values,spec_receiver["dbz_nez"].values
+        n_geo,e_geo,z_geo = spec_receiver["dbn_geo"].values, spec_receiver["dbe_geo"].values, spec_receiver["dbz_geo"].values
         return date_UTC, \
                geo_long,geo_lat,\
                n_mag,e_mag,z_mag,\

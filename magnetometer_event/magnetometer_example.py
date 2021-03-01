@@ -6,21 +6,23 @@ from extra.time_date_conversion import date_to_days
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 
 def plot_latitude_time(dates,mag_nt):
+    """
+    For investigating the magnetometer values, as it had missing data that needed
+    to be filled.
+    """
     days = date_to_days(dates)
     start_date=8
     end_date=9
 
     actual_days = np.linspace(1,366,24*60*365)
-    print(magnetic_north.dtype)
-    print(np.sum(np.isnan(magnetic_north)))
 
     for i in range(start_date*24*60,end_date*24*60):
+        # print(magnetic_north[i])
+        time.sleep(0.01)
         if magnetic_north[i] == np.nan:
             print(days[i], magnetic_north)
-            print(np.round(days[i]-days[i-1],12),"==",counter)
             print("------------------------------")
             # time.sleep(0.1)
-        counter = days[i]
 
     plt.plot(np.linspace(1,366,24*60*365),"b")
     plt.plot(days, "r")

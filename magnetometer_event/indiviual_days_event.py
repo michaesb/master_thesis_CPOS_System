@@ -4,7 +4,7 @@ import matplotlib
 import sys, time
 from numba import njit, prange
 from collections import Counter
-
+import pandas as pd
 sys.path.insert(0, "../")  # to get access to adjecent packages in the repository
 from extra.time_date_conversion import date_to_days
 from magnetometer_event.filtering_events import filtering_to_Norway_night
@@ -51,7 +51,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
 
-save_ram_memory = True
+save_ram_memory = False
 station = "TRO"
 
 try:
@@ -68,7 +68,7 @@ try:
     else:
         obj_mag.read_csv(path_mag, verbose=False)
         station = "TRO"
-        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        dates_mag,location_long,location_lat,geographic_north,\
         geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
         = obj_mag.receiver_specific_data(station)
 
@@ -86,7 +86,7 @@ except FileNotFoundError:
     else:
         obj_mag.read_csv(path_mag, verbose=False)
         station = "TRO"
-        dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+        dates_mag,location_long,location_lat,geographic_north,\
         geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
         = obj_mag.receiver_specific_data(station)
 
@@ -103,7 +103,9 @@ lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
 dates_event, year = obj_event.day_of_year
-
+print(dates_event.dtype)
+dates_event = pd.to_datetime(dates_event,format="%Y-%m-%d %H:%M:%S")
+print(dates_event.dtype)
 Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(
 lat, mag_time, Norway_time, dates_event)
@@ -158,12 +160,9 @@ time_ROTI, ROTI_biint_TRO = load_ROTI_data()
 
 
 ################### Conversion or adjustment of different arrays ###############
-days_magnetometer = date_to_days(dates_mag)
-days_event = date_to_days(dates_event)
-
-time_of_event = days_event + mag_time/24
-time_mag = days_magnetometer + time_UTC_mag/24.
-
+time_mag = date_to_days(dates_mag)
+time_of_event = date_to_days(dates_event) +mag_time/24
+print(time_of_event)
 ###########################plotting different data ##########################
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
 time_of_event,time_ROTI,ROTI_biint_TRO)

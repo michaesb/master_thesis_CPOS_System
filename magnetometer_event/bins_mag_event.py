@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys, time
 from collections import Counter
+import pandas as pd
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
 from extra.time_date_conversion import date_to_days
 from magnetometer_event.filtering_events import filtering_to_Norway_night
@@ -147,6 +148,7 @@ lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
 dates_event, year = obj_event.day_of_year
+dates_event = pd.to_datetime(dates_event,format="%Y-%m-%d %H:%M:%S")
 UT_adjustment = 1
 Norway_time = time_UTC_event + UT_adjustment
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(lat,mag_time,Norway_time,dates_event)

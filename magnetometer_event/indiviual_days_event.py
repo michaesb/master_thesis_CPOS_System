@@ -39,10 +39,10 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     ax[1].plot(time_ROTI,ROTI_biints,".-")
     ax[1].set_ylabel("ROTI [TEC/min]")
     ax[1].grid("on")
-    ax[1].set_xlabel("days")
 
     ax[2].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],".")
     ax[2].set_yscale("log")
+    ax[2].set_xlabel("days")
     # ax[0].set_ylim(5e-5,1e-1)
     ax[2].set_ylabel("GPS noise")
     ax[2].grid("on")
@@ -51,7 +51,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
 obj_event = ReadSubstormEvent()
 obj_mag = ReadMagnetomerData()
 
-save_ram_memory = False
+save_ram_memory = True
 station = "TRO"
 
 try:
@@ -62,7 +62,6 @@ try:
     if save_ram_memory:
         file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
         with open(file_path,"rb") as file:
-            time_UTC_mag  = np.load(file, allow_pickle=True)
             dates_mag = np.load(file, allow_pickle=True)
             magnetic_north = np.load(file, allow_pickle=True)
     else:
@@ -80,7 +79,6 @@ except FileNotFoundError:
     if save_ram_memory:
         file_path = "../../data_storage_arrays/TRM_Magnetometer_data.txt"
         with open(file_path,"rb") as file:
-            time_UTC_mag  = np.load(file, allow_pickle=True)
             dates_mag = np.load(file, allow_pickle=True)
             magnetic_north = np.load(file, allow_pickle=True)
     else:
@@ -146,7 +144,6 @@ time_ROTI, ROTI_biint_TRO = load_ROTI_data()
 
 
 ########################## creating bins ###################################
-
 # bins_sorted,time_day_bins,time_of_event,events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
 # = create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
 #                               time_UTC_mag,magnetic_north,

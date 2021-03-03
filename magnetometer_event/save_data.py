@@ -52,11 +52,10 @@ def magnetometer_save_data():
         desktop_path = "/run/media/michaelsb/data_ssd/data"
         path_mag = desktop_path + "/20201025-17-57-supermag.csv"
         obj_mag.read_csv(path_mag, verbose=False)
-    dates_mag,time_UTC_mag,location_long,location_lat,geographic_north,\
+    dates_mag,location_long,location_lat,geographic_north,\
     geographic_east,geographic_z,magnetic_north,magnetic_east,magnetic_z\
     = obj_mag.receiver_specific_data(station)
     with open(file_path,"wb") as file:
-        np.save(file,time_UTC_mag,allow_pickle= True)
         np.save(file,dates_mag, allow_pickle= True)
         np.save(file,magnetic_north, allow_pickle= True)
 
@@ -66,11 +65,9 @@ def load_magnetometer_data():
     with open(file_path,"rb") as file:
         a = np.load(file, allow_pickle=True)
         b = np.load(file, allow_pickle=True)
-        c = np.load(file, allow_pickle=True)
 
     print(a)
     print(b)
-    print(c)
 
 
 

@@ -36,6 +36,7 @@ def create_bins(dates_mag,dates_event, time_of_event, time_UTC_mag, magnetometer
                     else:
                         bins[j] = np.nan
                         time_day_bins[j] = np.nan
+                        #legge til counter
                     j+=1
     events_collection = events_collection[np.logical_not(np.isnan(bins)),:]
     bins = bins[np.logical_not(np.isnan(bins))]
@@ -51,7 +52,7 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                 time_ROTI,ROTI_biint_TRO):
     #NB shifted forward by an hour
     #lenth of arrays
-    verbose = False
+    verbose = True
     N_mag = len(dates_mag)
     N_event = len(dates_event)
     #conversion of days
@@ -100,8 +101,6 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                     index_min_ROTI, index_max_ROTI = int(i/5 + min_time*12) \
                                                     ,int(i/5 + max_time*12)
 
-                    # print(i/5 + min_time*12, i/5 + max_time*12)
-                    # print(index_max_ROTI-index_min_ROTI,int(i/5 + min_time*12) - int(i/5 + max_time*12))
                     if index_max_ROTI-index_min_ROTI != hour_area*12:
                         index_min_ROTI+=index_max_ROTI-index_min_ROTI-hour_area*12
 
@@ -119,17 +118,6 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                         events_collection_ROTI[ii_bins,:] = ROTI_biint_TRO[index_min_ROTI:index_max_ROTI]
 
                         ###################### gps ######################
-                        if verbose:
-                            print("--------")
-                            print(index_min_ROTI,index_max_ROTI)
-                        print("---------------------------")
-                        print("day:",days_magnetometer[i],"time of event",time_of_event[ii_bins])
-                        print("min_time",min_time*12,"max time",max_time *12)
-                        print((time_ROTI[index_min_ROTI]-days_magnetometer[i])*24*12 , \
-                           (time_ROTI[index_max_ROTI]-days_magnetometer[i])*24*12)
-                            # time.sleep(5)
-                            # print("min",min_time, time_gps[int(days_magnetometer[i]),index_min_gps] )
-                            # print("max",max_time, time_gps[int(days_magnetometer[i]),index_max_gps] )
                         if np.nansum(gps_noise[int(days_magnetometer[i])-1,:]) == 0:
                             if verbose:
                                 print("empty day")
@@ -146,11 +134,11 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                                 print(time_gps[int(days_magnetometer[i]),:])
                             try:
                                 index_max_gps = int(index_max_gps[0][-1])
-                                index_min_limit = len(gps_noise[day,index_min_gps:])
+                                index_border = len(gps_noise[day,index_min_gps:])
                                 #filling the events_collection_gps with the first array
-                                events_collection_gps[ii_bins,0:index_min_limit] = gps_noise[day,index_min_gps:]
+                                events_collection_gps[ii_bins,0:index_border] = gps_noise[day,index_min_gps:]
                                 #filling the events_collection_gps with the second array
-                                events_collection_gps[ii_bins,index_min_limit:index_min_limit+index_max_gps] =\
+                                events_collection_gps[ii_bins,index_border:index_border+index_max_gps] =\
                                 gps_noise[day+1,0:index_max_gps]
                             except:
                                 pass
@@ -166,11 +154,11 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                                 index_min_gps = int(index_min_gps[0][0])
                                 index_max_gps = np.where(max_time < np.round(time_gps[int(days_magnetometer[i])-1,:],2))
                                 index_max_gps = int(index_max_gps[0][0])
-                                index_min_limit = len(gps_noise[int(days_magnetometer[i]-2),index_min_gps:])
+                                index_border = len(gps_noise[int(days_magnetometer[i]-2),index_min_gps:])
                                 #filling the events_collection_gps with the first array
-                                events_collection_gps[ii_bins,0:index_min_limit] = gps_noise[int(days_magnetometer[i]-2),index_min_gps:]
+                                events_collection_gps[ii_bins,0:index_border] = gps_noise[int(days_magnetometer[i]-2),index_min_gps:]
 
-                                events_collection_gps[ii_bins,index_min_limit:index_min_limit+index_max_gps] =\
+                                events_collection_gps[ii_bins,index_border:index_border+index_max_gps] =\
                                 gps_noise[int(days_magnetometer[i])-1,0:index_max_gps]
                         else:
                             if verbose:
@@ -191,10 +179,6 @@ def create_bins_with_noise_sort(dates_mag,dates_event, time_of_event, \
                         if verbose:
                             print("min",min_time, time_gps[int(days_magnetometer[i]),index_min_gps])
                             print("max",max_time,time_gps[int(days_magnetometer[i]),index_max_gps])
-                        plt.plot(events_collection_gps[ii_bins,:])
-                        plt.title(f"day {day+1}")
-                        plt.yscale("log")
-                        plt.show()
                     ii_bins+=1
                     # if ii_bins ==10:
                     #     # break
@@ -218,6 +202,7 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                              time_ROTI,ROTI_biint_TRO):
     #NB shifted forward by an hour
     #lenth of arrays
+    show_individual_plot= False
     verbose = True
     N_mag = len(dates_mag)
     N_event = len(dates_event)
@@ -235,13 +220,15 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
     events_collection_mag = np.zeros((N_event,int(hour_area*60)))*np.nan
     events_collection_ROTI = np.zeros((N_event,int(hour_area*12)))*np.nan
     events_collection_gps = np.zeros((N_event, 2*60*60*(hour_area+1)))*np.nan
-
+    events_collection_time_gps = np.zeros((N_event, 2*60*60*(hour_area+1)))*np.nan
     # counters in the for loops
 
     ii_bins = 0
     iii_gps = 0
     date = 0
     nr_storms = 0
+    duplicate_avoided = 0
+    missing_data_gps = 0
     for day in range(365):
         if day+1 in days_event:
             for k in range(Counter(days_event)[day+1]):
@@ -280,67 +267,124 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                         print("--------")
                         print(day+1, time_of_event[ii_bins])
 
-                    if np.nansum(gps_noise[day,:]) == 0:
+                    if np.nansum(gps_noise[day,:]) == 0 or day==236 or day == 237:
+                        missing_data_gps+= 1
                         if verbose:
                             print("empty day")
-                        pass
-                    elif max_time>24 and min_time <24:
-                       if verbose:
+                        # continue
+                    elif max_time>24:
+                        """
+                        if the day overlaps to the next day
+                        """
+                        if verbose:
                            print("Special condition nr 1")
-                       try:
-                           index_min_gps = np.where(min_time < np.round(time_gps[day,:],2))
-                           index_min_gps = int(index_min_gps[0][0])
-                           index_max_gps = np.where(max_time-24>np.round(time_gps[day+1,:],2))
-                       except:
-                           pass
-                       try:
-                           index_max_gps = int(index_max_gps[0][-1])
-                           index_min_limit = len(gps_noise[day,index_min_gps:])
-                           #filling the events_collection_gps with the first array
-                           events_collection_gps[ii_bins,0:index_min_limit] = gps_noise[day,index_min_gps:]
-                           #filling the events_collection_gps with the second array
-                           events_collection_gps[ii_bins,index_min_limit:index_min_limit+index_max_gps] =\
-                           gps_noise[day+1,0:index_max_gps]
-                           nr_storms+=1
-                       except:
-                           pass
+                        try:
+                            index_min_gps = np.where(min_time < np.round(time_gps[day,:],2))
+                            index_min_gps = int(index_min_gps[0][0])
+                            index_max_gps = np.where(max_time-24>np.round(time_gps[day+1,:],2))
+                            index_max_gps = int(index_max_gps[0][-1])
+                            index_border = len(gps_noise[day,index_min_gps:])
+                            #filling the events_collection_gps with the first array
+                            events_collection_gps[ii_bins,:index_border] = gps_noise[day,index_min_gps:]
+                            events_collection_time_gps[ii_bins,0:index_border] = \
+                            time_gps[day,index_min_gps:] -time_gps[day,index_min_gps]
+                            #filling the events_collection_gps with the second array
+                            events_collection_gps[ii_bins,index_border:index_border+index_max_gps] =\
+                            gps_noise[day+1,:index_max_gps]
+                            events_collection_time_gps[ii_bins,index_border:index_border+index_max_gps] =\
+                            time_gps[day+1,:index_max_gps]+ 24-time_gps[day,index_min_gps]
+                            nr_storms+=1
+                        except IndexError:
+                            missing_data_gps+=1
+                            # plt.plot(time_gps[day,:], label= "first day" )
+                            # plt.plot(time_gps[day+1,:],label="second day")
+                            # plt.title(f"{day+1}")
+                            # plt.legend()
+                            # plt.show()
+                            pass
                     elif min_time <0:
+                        """
+                        if the day overlaps to the previous day
+                        """
                         if verbose:
                             print("Special condition nr 2")
-                        else:
-                            nr_storms += 1
+                        try:
                             index_min_gps = np.where(24+min_time < np.round(time_gps[day-1,:],2))
                             index_min_gps = int(index_min_gps[0][0])
                             index_max_gps = np.where(max_time < np.round(time_gps[day,:],2))
                             index_max_gps = int(index_max_gps[0][0])
-                            index_min_limit = len(gps_noise[day-1,index_min_gps:])
+                            index_border = len(gps_noise[day-1,index_min_gps:])
                             #filling the events_collection_gps with the first array
-                            events_collection_gps[ii_bins,0:index_min_limit] = gps_noise[day-1,index_min_gps:]
-                            events_collection_gps[ii_bins,index_min_limit:index_min_limit+index_max_gps] =\
+                            events_collection_gps[ii_bins,0:index_border] = gps_noise[day-1,index_min_gps:]
+                            events_collection_time_gps[ii_bins,0:index_border] = \
+                            time_gps[day-1,index_min_gps:] -24-min_time
+                            events_collection_gps[ii_bins,index_border:index_border+index_max_gps] =\
                             gps_noise[day,0:index_max_gps]
+                            events_collection_time_gps[ii_bins,index_border:index_border+index_max_gps] =\
+                            time_gps[day,0:index_max_gps] -min_time
                             nr_storms+=1
+                        except IndexError:
+                           # plt.plot(time_gps[day,:],label= "date of event")
+                           # plt.plot(time_gps[day-1,:],label="previous day")
+                           # plt.legend()
+                           # plt.title(f"{day+1}")
+                           # plt.show()
+                           missing_data_gps += 1
+                           pass
+
                     else:
                         if verbose:
                             print("regular condition")
-
-                        else:
+                        try:
                             index_min_gps = np.where(min_time < np.round(time_gps[day,:],2))
                             index_min_gps = int(index_min_gps[0][0])
                             index_max_gps = np.where(max_time > np.round(time_gps[day,:],2))
                             index_max_gps = int(index_max_gps[0][-1])
                             events_collection_gps[ii_bins,:(index_max_gps - index_min_gps)] = \
                             gps_noise[day,index_min_gps:index_max_gps]
+                            events_collection_time_gps[ii_bins,:(index_max_gps - index_min_gps)] = \
+                            time_gps[day,index_min_gps:index_max_gps]-min_time
                             nr_storms+=1
+                        except IndexError:
+                           # plt.plot(time_gps[day,:], label= "first day" )
+                           # plt.title(f"{day+1}")
+                           # plt.show()
+                           missing_data_gps+=1
+                           pass
                     if verbose:
                         print("min",min_time, time_gps[day,index_min_gps])
                         print("max",max_time,time_gps[day,index_max_gps])
-                # plt.plot(events_collection_gps[ii_bins,:])
-                # plt.title()
+
+                    if show_individual_plot:
+                        fig,ax = plt.subplots(3,1)
+                        ax[0].plot(events_collection_mag[ii_bins,:])
+                        ax[0].plot(np.ones_like(events_collection_mag[ii_bins,:])*250,"g",linewidth=0.5)
+                        ax[0].plot(np.ones_like(events_collection_mag[ii_bins,:])*400,"g",linewidth=0.5)
+                        ax[0].set_ylabel("Magnetic North [nT]")
+                        ax[0].set_title(f"day {day+1} magnetometer values with substorm trigger, \n ROTI values and \n noise from gps at Tromsø in 2018")
+                        ax[0].set_ylim(-500,400)
+                        ax[0].grid("on")
+
+                        ax[1].plot(events_collection_ROTI[ii_bins,:],".-")
+                        ax[1].set_ylabel("ROTI [TEC/min]")
+                        ax[1].set_ylim(0,10)
+                        ax[1].grid("on")
+
+                        ax[2].plot(events_collection_time_gps[ii_bins,:],events_collection_gps[ii_bins,:],".")
+                        ax[2].set_yscale("log")
+                        ax[2].set_ylim(1e-4, 1e-1)
+                        ax[2].set_ylabel("GPS noise")
+                        ax[2].set_xlabel("days")
+                        ax[2].grid("on")
+                        plt.show()
+                else:
+                    duplicate_avoided += 1
                 ii_bins+=1
 
     events_collection_mag = events_collection_mag[np.logical_not(np.isnan(bins)),:]
-    events_collection_gps = events_collection_gps[np.logical_not(np.isnan(bins)),:]
     events_collection_ROTI = events_collection_ROTI[np.logical_not(np.isnan(bins)),:]
+    events_collection_gps = events_collection_gps[np.logical_not(np.isnan(bins)),:]
+    events_collection_time_gps = events_collection_time_gps[np.logical_not(np.isnan(bins)),:]
     bins = bins[np.logical_not(np.isnan(bins))]
     indexing_sorted_bins = np.argsort(bins)
     #sorting events after minimum mag value
@@ -348,6 +392,9 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
     events_collection_mag_sorted = events_collection_mag[indexing_sorted_bins,:]
     ROTI_event_sorted = events_collection_ROTI[indexing_sorted_bins,:]
     noise_gps_sorted = events_collection_gps[indexing_sorted_bins,:]
-    print("nr_storms", nr_storms, "N_event",N_event)
+    time_gps_sorted = events_collection_time_gps[indexing_sorted_bins,:]
+    if verbose:
+        print(f"nr_storms {nr_storms} N_event {N_event} duplicate substorms avoided {duplicate_avoided} \n",
+              f"missing data prevented collection of gps_data {missing_data_gps}")
     return bins_sorted,time_day_bins, time_of_event, events_collection_mag_sorted,\
-           ROTI_event_sorted, noise_gps_sorted
+           ROTI_event_sorted, noise_gps_sorted, time_gps_sorted

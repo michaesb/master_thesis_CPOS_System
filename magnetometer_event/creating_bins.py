@@ -205,4 +205,4 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
         print(f"nr_storms {nr_storms} N_event {N_event} duplicate substorms avoided {duplicate_avoided} \n",
               f"missing data prevented collection of gps_data {missing_data_gps}")
     return bins_sorted,time_day_bins, time_of_event, events_collection_mag_sorted,\
-           ROTI_event_sorted, noise_gps_sorted, time_gps_sorted
+           ROTI_event_sorted, noise_gps_sorted, time_gps_sorted, N_event-duplicate_avoided,N_event-missing_data_gps-duplicate_avoided

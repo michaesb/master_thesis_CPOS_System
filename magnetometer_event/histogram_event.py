@@ -16,7 +16,29 @@ from magnetometer_event.creating_bins import create_bins_gps_ROTI_mag
 from noise_gps_function import run_NMEA_data
 
 
-def plot_histogram_event_mag(events_collection, bins_sorted, fancy_latex = False):
+def style_chooser(style,i):
+    if style == "downwards":
+        if 4>i:
+            plt.subplot(4,2,1+i*2,)
+        else:
+            plt.subplot(4,2,2*i-6)
+        if i==3 or i==7:
+            pass
+        else:
+            plt.xticks([])
+    elif style == "right":
+        plt.subplot(4,2,i+1)
+        if i>5:
+            pass
+        else:
+            plt.xticks([])
+    else:
+        raise TypeError("need to select a correct way to plot the histogram"+\
+                        f", not {style}")
+
+
+def plot_histogram_event_mag(events_collection, bins_sorted, mag_events,fancy_latex = False):
+
         borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
 
         index_third, index_two_thirds = int(len(events_collection)/3),\
@@ -24,229 +46,156 @@ def plot_histogram_event_mag(events_collection, bins_sorted, fancy_latex = False
 
         if fancy_latex:
             plt.style.use("../format_for_latex.mplstyle")
-        nr_plots= 2
-        plt.title(f"All recorded substorms by the magnetometer in {station} in 2018")
-        for i in range(0,nr_plots*4,4):
-            plt.subplot(4,2,1+i)
+
+        style = "downwards"
+        nr_plots= 8
+        plt.figure(0)
+        plt.suptitle(f"All recorded substorms by the magnetometer at {station} in 2018."+\
+                            f"\n {mag_events} substorms collected ")
+        for i in range(0,nr_plots):
+            style_chooser(style,i)
             plt.hist(events_collection[:,i*30], orientation="vertical", bins = 40)
-            plt.ylabel(f"{(i-2)*30} min")
-            plt.yticks([])
-            plt.xlim(-800,10)
+            plt.title(f"{(i-2)*30} min")
+            plt.xlim(-700,100)
             plt.ylim(0,70)
-            plt.xticks([])
-
-            plt.subplot(4,2,2+i)
-            plt.hist(events_collection[:,(i+1)*30], orientation="vertical", bins = 40)
-            plt.ylabel(f"{(i-1)*30} min")
-            plt.xlim(-800,10)
-            plt.ylim(0,70)
-            plt.yticks([])
-            plt.xticks([])
-
-            plt.subplot(4,2,3+i)
-            plt.hist(events_collection[:,(i+2)*30], orientation="vertical", bins = 40)
-            plt.ylabel(f"{(i)*30} min")
-
-            if i==4:
-                pass
-            else:
-                plt.xticks([])
-
-            plt.yticks([])
-            plt.xlim(-800,10)
-            plt.ylim(0,70)
-            plt.subplot(4,2,4+i)
-            plt.hist(events_collection[:,(i+3)*30], orientation="vertical", bins = 40)
-            plt.ylabel(f"{(i+1)*30} min")
-            plt.yticks([])
-            if i==4:
-                pass
-            else:
-                plt.xticks([])
-            plt.xlim(-800,10)
-            plt.ylim(0,70)
-        plt.show()
-        """
-        plt.figure(1)
-        plt.hist(events_collection[:,60], orientation="vertical", bins = 35, color = "red")
-        plt.title("All recorded substorms by the magnetometer in "+station+" in 2018. \n at event" )
-        plt.xlabel("North component B-value [nT]")
-        plt.xlim(-1200,0)
-
-        plt.figure(2)
-
-        plt.hist(events_collection[:,120], orientation="vertical", bins = 35, color = "blue")
-        plt.title("All recorded substorms by the magnetometer in "+station+" in 2018. Hour after event")
-        plt.xlabel("North component B-value [nT]")
-        plt.xlim(-1200,0)
-        plt.show()
+            plt.tight_layout()
 
         plt.figure(1)
-        for i in range(index_two_thirds, len(events_collection)):
-            plt.plot(events_collection[i,:], linewidth = 0.5)
-        median_event = np.nanmedian(events_collection[index_two_thirds:], axis = 0)
-        nfive_percentile_third_bin = np.nanpercentile(events_collection[index_two_thirds:], 95, axis =0)
-        five_percentile_third_bin = np.nanpercentile(events_collection[index_two_thirds:], 5, axis =0)
-        plt.plot(nfive_percentile_third_bin, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile_third_bin, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title("Third bin of substorms by the magnetometer in "+station+" in 2018")
-        plt.xlabel("minutes")
-        plt.ylabel("North component B-value [nT] (smaller than "+str(borders[1])+" nT)")
-        plt.xticks(np.linspace(0,len(events_collection)*0.915,nr_of_xticks),time)
-        plt.legend()
-        plt.ylim(-700,np.max(events_collection))
-        # plt.show()
+        plt.suptitle(f"Third bin of recorded substorms by the magnetometer at {station} in 2018")
+        for i in range(0,nr_plots):
+            style_chooser(style,i)
+            plt.hist(events_collection[index_two_thirds:,i*30], orientation="vertical", bins = 40)
+            plt.title(f"{(i-2)*30} min")
+            plt.xlim(-800,50)
+            plt.ylim(0,30)
+            plt.tight_layout()
 
         plt.figure(2)
-        for i in range(index_third,index_two_thirds):
-            plt.plot(events_collection[i,:], linewidth = 0.5)
-        median_event = np.nanmedian(events_collection[index_third:index_two_thirds], axis = 0)
-        nfive_percentile_second_bin = np.percentile(events_collection[index_third:index_two_thirds], 95, axis =0)
-        five_percentile_second_bin = np.percentile(events_collection[index_third:index_two_thirds], 5, axis =0)
-        plt.plot(nfive_percentile_second_bin, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile_second_bin, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title("Second bin of substorms by the magnetometer in "+station+" in 2018")
-        plt.xlabel("minutes")
-        plt.ylabel("North component B-value [nT] (between "+str(borders[0])+"nT and "+str(borders[1])+" nT)")
-        plt.xticks(np.linspace(0,len(events_collection)*0.915,nr_of_xticks),time)
-        plt.ylim(-700,np.max(events_collection))
-        plt.legend()
-        # plt.show()
+        plt.suptitle(f"Second bin of recorded substorms by the magnetometer at {station} in 2018")
+        for i in range(0,nr_plots):
+            style_chooser(style,i)
+            plt.hist(events_collection[index_third:index_two_thirds,i*30], orientation="vertical", bins = 40)
+            plt.title(f"{(i-2)*30} min")
+            plt.xlim(-800,50)
+            plt.ylim(0,30)
+            plt.tight_layout()
 
+        # plt.show()
         plt.figure(3)
-        for i in range(index_third):
-            plt.plot(events_collection[i,:], linewidth = 0.5)
-        median_event = np.nanmedian(events_collection[:index_third], axis = 0)
-        nfive_percentile_first_bin = np.nanpercentile(events_collection[:index_third], 95, axis =0)
-        five_percentile_first_bin = np.nanpercentile(events_collection[:index_third], 5, axis =0)
-        plt.plot(nfive_percentile_first_bin, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile_first_bin, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title("First bin of recorded substorms by the magnetometer in "+station+" in 2018")
-        plt.ylabel("North component B-value [nT] (bigger than "+str(borders[0])+" nT)")
-        plt.xlabel("minutes")
-        plt.xticks(np.linspace(0,len(events_collection)*0.915,nr_of_xticks),time)
-        plt.ylim(-700,np.max(events_collection))
-        plt.legend()
+        plt.suptitle(f"First bin of recorded substorms by the magnetometer at {station} in 2018")
+        for i in range(0,nr_plots):
+            style_chooser(style,i)
+            plt.hist(events_collection[:index_third,i*30], orientation="vertical", bins = 40)
+            plt.title(f"{(i-2)*30} min")
+            plt.xlim(-800,50)
+            plt.ylim(0,30)
+            plt.tight_layout()
+
         plt.show()
-        """
+
         if fancy_latex:
             plt.style.use("default")
 
 
-def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,fancy_latex = False):
+def plot_histogram_event_ROTI(events_collection_ROTI, bins_sorted,mag_events,fancy_latex = False):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)]]
 
     index_third, index_two_thirds = int(len(events_collection_ROTI) / 3), int(
         len(events_collection_ROTI) * 2 / 3)
-    nr_of_xticks = hour_area*2 +1
+
     location = [69.66,18.94]
 
-    time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks, dtype=int)
     if fancy_latex:
         plt.style.use("../format_for_latex.mplstyle")
+    nr_plots= 8
+    style ="downwards"
     plt.figure(0)
-    for i in range(len(events_collection_ROTI)):
-        plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
+    plt.suptitle(f"All recorded substorms by the ROTI at {station} in 2018." +\
+                    f"\n {mag_events} substorms collected ")
+    for i in range(0,nr_plots):
+        style_chooser(style,i)
+        plt.hist(events_collection_ROTI[:,i*6], orientation="vertical", bins = 100)
+        plt.title(f"{(i-2)*30} min")
+        # plt.yticks([])
+        plt.xlim(0,5)
+        plt.ylim(0,80)
+        plt.tight_layout()
 
-    median_event = np.nanmedian(events_collection_ROTI, axis=0)
-    nfive_percentile = np.nanpercentile(events_collection_ROTI, 95, axis =0)
-    five_percentile = np.nanpercentile(events_collection_ROTI, 5, axis =0)
-    plt.figure(0)
-    plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
-    plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(median_event, linewidth=3, color="black", label="median value")
-    plt.title("All recorded substorms showed by ROTI at location " + str(location) + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("ROTI values [TEC/min]")
-
-    plt.xticks(np.linspace(0, 0.19*len(events_collection_ROTI), nr_of_xticks), time)
-    plt.legend()
-    plt.ylim(0,10)
     # plt.show()
-
     plt.figure(1)
-    for i in range(index_two_thirds, len(events_collection_ROTI)):
-        plt.plot(events_collection_ROTI[i, :], linewidth=0.5)
-    median_event = np.nanmedian(events_collection_ROTI[index_two_thirds:], axis = 0)
-    nfive_percentile = np.nanpercentile(events_collection_ROTI[index_two_thirds:], 95, axis =0)
-    five_percentile = np.nanpercentile(events_collection_ROTI[index_two_thirds:], 5, axis =0)
-    plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
-    plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(median_event, linewidth=3, color="black", label="median value")
-    plt.title("Third bin of substorms showed by ROTI at location " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 0.19*len(events_collection_ROTI), nr_of_xticks), time)
-    plt.legend()
-    plt.ylim(0,10)
-    # plt.show()
+    plt.suptitle(f"Third bin of recorded substorms by the ROTI at {station} in 2018")
+    for i in range(0,nr_plots):
+        style_chooser(style,i)
+        plt.hist(events_collection_ROTI[index_two_thirds:,i*6], orientation="vertical", bins = 100)
+        plt.title(f"{(i-2)*30} min")
+        # plt.yticks([])
+        plt.xlim(0,5)
+        plt.ylim(0,15)
+        plt.tight_layout()
 
+
+    # plt.show()
     plt.figure(2)
-    for i in range(index_third, index_two_thirds):
-        plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
-    median_event = np.nanmedian(events_collection_ROTI[index_third:index_two_thirds], axis = 0)
-    nfive_percentile = np.nanpercentile(events_collection_ROTI[index_third:index_two_thirds], 95, axis =0)
-    five_percentile = np.nanpercentile(events_collection_ROTI[index_third:index_two_thirds], 5, axis =0)
-    plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
-    plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(median_event, linewidth=3, color="black", label="median value" )
-    plt.title("Second bin of substorms showed by ROTI at location " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 0.19*len(events_collection_ROTI), nr_of_xticks), time)
-    plt.ylim(0,10)
-    plt.legend()
-    # plt.show()
+    plt.suptitle(f"Second bin of recorded substorms by the ROTI at {station} in 2018")
+    for i in range(0,nr_plots):
+        style_chooser(style,i)
 
+        plt.hist(events_collection_ROTI[index_third:index_two_thirds,i*6], orientation="vertical", bins = 100)
+        plt.title(f"{(i-2)*30} min")
+        # plt.yticks([])
+        plt.xlim(0,5)
+        plt.ylim(0,15)
+        plt.tight_layout()
+
+    # plt.show()
     plt.figure(3)
-    for i in range(index_third):
-        plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
-    median_event = np.nanmedian(events_collection_ROTI[:index_third], axis = 0)
-    nfive_percentile = np.nanpercentile(events_collection_ROTI[:index_third], 95, axis =0)
-    five_percentile = np.nanpercentile(events_collection_ROTI[:index_third], 5, axis =0)
-    plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-    plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
-    plt.title("First bin of recorded substorms by the gps receiver in " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("ROTI values [TEC/min]")
-    plt.xticks(np.linspace(0, 0.19*len(events_collection_ROTI), nr_of_xticks), time)
-    plt.legend()
-    plt.ylim(0,10)
+    plt.suptitle(f"First bin of recorded substorms by the ROTI at {station} in 2018")
+    for i in range(0,nr_plots):
+        style_chooser(style,i)
+
+        plt.hist(events_collection_ROTI[:index_third,i*6], orientation="vertical", bins = 100)
+        plt.title(f"{(i-2)*30} min")
+        # plt.yticks([])
+        plt.xlim(0,5)
+        plt.ylim(0,15)
+        plt.tight_layout()
     plt.show()
+
     if fancy_latex:
         plt.style.use("default")
 
 
-def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted, fancy_latex = False):
+def plot_histogram_event_GPS(events_collection_gps,time_gps_sorted, bins_sorted,GPS_events ,fancy_latex = False):
 
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
     index_third, index_two_thirds = int(len(events_collection_gps) / 3), int(
         len(events_collection_gps) * 2 / 3)
-    nr_of_xticks = hour_area*2 + 1
     station = "TRM"
-    time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
+    style ="downwards"
 
     if fancy_latex:
         plt.style.use("../format_for_latex.mplstyle")
+    plt.hist(events_collection_gps[:,0], orientation="vertical", bins = 100)
+    # plt.title(f"{(i-2)*30} min")
+    # plt.yticks([])
+    # plt.xlim(0,8)
+    # plt.ylim(0,15)
+    plt.tight_layout()
+    plt.figure(3)
+    plt.suptitle(f"First bin of recorded substorms by the ROTI at {station} in 2018")
 
-    plt.figure(0)
-    for i in range(len(events_collection_gps)):
-        plt.plot((time_gps_sorted[i,::60]-1)*60,events_collection_gps[i, ::60], linewidth=0.5)
-
-    plt.title("All recorded substorms by the gps receivers in " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("noise values from the NMEA")
-    # plt.ylim(5e-5,1)
-    plt.legend()
-    # plt.yscale("log")
-    # plt.show()
+    for i in range(0,8):
+        style_chooser(style,i)
+        plt.hist(events_collection_ROTI[:index_third,], orientation="vertical", bins = 100)
+        plt.title(f"{(i-2)*30} min")
+        # plt.yticks([])
+        plt.xlim(0,8)
+        plt.ylim(0,15)
+        plt.tight_layout()
+    """
 
     plt.figure(1)
     for i in range(index_two_thirds, len(events_collection_gps)):
@@ -295,6 +244,7 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted, fanc
     plt.yscale("log")
     plt.ylim(5e-5,1)
     plt.show()
+    """
     if fancy_latex:
         plt.style.use("default")
 
@@ -410,14 +360,20 @@ time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 ########################## creating bins ###################################
 hour_area = 4
 bins_sorted,time_day_bins,time_of_event,\
-events_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted \
+events_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
+mag_events, GPS_events \
 = create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
                               ,magnetic_north,
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
 
+plt.plot(np.sum(np.isnan(noise_gps_sorted),axis=1))
+plt.show()
+
+# noise_gps_sorted =noise_gps_sorted[abs(np.isnan(noise_gps_sorted))-1]
+# time_gps_sorted =time_gps_sorted[abs(np.isnan(time_gps_sorted))-1]
 #########################plotting data#########################
 
-plot_histogram_event_mag(events_collection_sorted,bins_sorted, fancy_latex=True)
-# plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
-# plot_all_gps_events(noise_gps_sorted, time_gps_sorted,bins_sorted)
+plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex=False)
+plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex=False)
+plot_histogram_event_GPS(noise_gps_sorted,time_gps_sorted, bins_sorted,GPS_events,fancy_latex = False)

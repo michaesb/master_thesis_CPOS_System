@@ -16,7 +16,7 @@ from magnetometer_event.creating_bins import create_bins_gps_ROTI_mag
 from noise_gps_function import run_NMEA_data
 
 
-def plot_event_histograms(bins_sorted, time_day_bins, time_of_event, latex_style = False):
+def plot_histograms(bins_sorted, time_day_bins, time_of_event, mag_events, latex_style = False):
     borders = [
         bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
@@ -31,15 +31,10 @@ def plot_event_histograms(bins_sorted, time_day_bins, time_of_event, latex_style
     plt.axvline(x=borders[0], color="r")
     plt.axvline(x=borders[1], color="r")
     plt.title(
-        "2018, "
-        + station
-        + ",\n Max magnetometer value of a substorm event. \n"
-        + "Red lines are the lines for the borders which is "
-        + str(borders[0])
-        + " and "
-        + str(borders[1])
-        + " nT"
-    )
+        f"2018 {station} \n"+\
+        f"Max magnetometer value of a substorm event with {mag_events} substorms collected. \n"+\
+        f"Red lines are the lines for the borders which is {borders[0]}"+\
+        f" and {borders[1]} nT")
     plt.xlabel("minimum of the north component magnetometer [nT]")
     plt.ylabel("number of occurances")
     # plt.show()
@@ -78,7 +73,8 @@ def plot_event_histograms(bins_sorted, time_day_bins, time_of_event, latex_style
     if latex_style:
         plt.style.use("default")
 
-def plot_all_mag_events(events_collection_mag, bins_sorted, latex_style = False):
+
+def plot_all_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style = False):
         borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
 
         index_third, index_two_thirds = int(len(events_collection_mag)/3),\
@@ -98,7 +94,8 @@ def plot_all_mag_events(events_collection_mag, bins_sorted, latex_style = False)
         plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
         plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
         plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title("All recorded substorms by the magnetometer in "+station+" in 2018")
+        plt.title(f"All recorded substorms by the magnetometer in {station} in 2018 \n"+\
+                  f"{mag_events} substorms collected")
         plt.xlabel("minutes")
         plt.ylabel("North component B-value [nT]")
         plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
@@ -159,7 +156,7 @@ def plot_all_mag_events(events_collection_mag, bins_sorted, latex_style = False)
         if latex_style:
             plt.style.use("default")
 
-def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,latex_style = False):
+def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style = False):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)]]
 
@@ -182,7 +179,8 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,latex_style = False
     plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
     plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
     plt.plot(median_event, linewidth=3, color="black", label="median value")
-    plt.title("All recorded substorms showed by ROTI at location " + str(location) + " in 2018")
+    plt.title(f"All recorded substorms showed by ROTI at location {location} in 2018 \n"+\
+              f"{mag_events} substorms collected")
     plt.xlabel("minutes")
     plt.ylabel("ROTI values [TEC/min]")
 
@@ -244,7 +242,7 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,latex_style = False
     if latex_style:
         plt.style.use("default")
 
-def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted, latex_style = False):
+def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_events, latex_style = False):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
@@ -261,13 +259,15 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted, late
     for i in range(len(events_collection_gps)):
         plt.plot((time_gps_sorted[i,::60]-1)*60,events_collection_gps[i, ::60], linewidth=0.5)
 
+    for i in range(len(time_gps_sorted[:,0])):
+        print(np.unique(time_gps_sorted[i,:]))
     # nfive_percentile = np.nanpercentile(events_collection_gps, 95, axis =0)
     # five_percentile = np.nanpercentile(events_collection_gps, 5, axis =0)
-    # median_event = np.nanmedian(events_collection_gps, axis=0)
     # plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
     # plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
     # plt.plot(median_event[::60], linewidth = 3, color="black", label="median value")
-    plt.title("All recorded substorms by the gps receivers in " + station + " in 2018")
+    plt.title(f"All recorded substorms by the gps receivers in {station} in 2018\n"+\
+              f"{GPS_events} substorms collected")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
     # plt.ylim(5e-5,1)
@@ -329,6 +329,7 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted, late
     plt.show()
     if latex_style:
         plt.style.use("default")
+
 
 
 obj_event = ReadSubstormEvent()
@@ -442,14 +443,17 @@ time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 ########################## creating bins ###################################
 hour_area = 4
 bins_sorted,time_day_bins,time_of_event,\
-events_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted \
+events_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
+mag_events, GPS_events \
 = create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
                               ,magnetic_north,
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
+print(noise_gps_sorted.shape, "shape noise_gps_sorted")
+print(time_gps_sorted.shape, "shape time_gps_sorted")
 
 #########################plotting data#########################
-plot_event_histograms(bins_sorted,time_day_bins, time_of_event, latex_style = True)
-plot_all_mag_events(events_collection_sorted,bins_sorted, latex_style = False)
-plot_all_ROTI_events(ROTI_event_sorted,bins_sorted)
-plot_all_gps_events(noise_gps_sorted, time_gps_sorted,bins_sorted)
+plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =False)
+plot_all_mag_events(events_collection_sorted,bins_sorted,mag_events ,latex_style = False)
+plot_all_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = False)
+plot_all_gps_events(noise_gps_sorted, time_gps_sorted,bins_sorted, GPS_events, latex_style = False)

@@ -178,23 +178,16 @@ def plot_histogram_event_GPS(events_collection_gps,time_gps_sorted, bins_sorted,
 
     if fancy_latex:
         plt.style.use("../format_for_latex.mplstyle")
-    plt.hist(events_collection_gps[:,0], orientation="vertical", bins = 100)
-    # plt.title(f"{(i-2)*30} min")
-    # plt.yticks([])
-    # plt.xlim(0,8)
-    # plt.ylim(0,15)
-    plt.tight_layout()
-    plt.figure(3)
-    plt.suptitle(f"First bin of recorded substorms by the ROTI at {station} in 2018")
 
     for i in range(0,8):
         style_chooser(style,i)
-        plt.hist(events_collection_ROTI[:index_third,], orientation="vertical", bins = 100)
+        plt.hist(events_collection_gps[:,i*90], orientation="vertical", bins = 100)
         plt.title(f"{(i-2)*30} min")
         # plt.yticks([])
         plt.xlim(0,8)
         plt.ylim(0,15)
         plt.tight_layout()
+    plt.show()
     """
 
     plt.figure(1)
@@ -367,13 +360,14 @@ mag_events, GPS_events \
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
 
-plt.plot(np.sum(np.isnan(noise_gps_sorted),axis=1))
-plt.show()
+
 
 # noise_gps_sorted =noise_gps_sorted[abs(np.isnan(noise_gps_sorted))-1]
 # time_gps_sorted =time_gps_sorted[abs(np.isnan(time_gps_sorted))-1]
 #########################plotting data#########################
 
-plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex=False)
-plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex=False)
+plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
+plt.plot(np.sum(np.isnan(noise_gps_sorted),axis=1))
+plt.show()
 plot_histogram_event_GPS(noise_gps_sorted,time_gps_sorted, bins_sorted,GPS_events,fancy_latex = False)

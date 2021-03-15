@@ -11,7 +11,6 @@ from magnetometer_event.filtering_events import filtering_to_Norway_night
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 from supermag_substorm_reader.substorm_event_reader import ReadSubstormEvent
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
-from magnetometer_event.creating_bins import create_bins_with_noise_sort, create_bins_gps_ROTI_mag
 from noise_gps_function import run_NMEA_data
 from ROTI_bilinear_interpolation import full_year_ROTI_bilinear_interpolation
 
@@ -101,9 +100,7 @@ lat = obj_event.latitude
 mag_time = obj_event.magnetic_time
 time_UTC_event = obj_event.dates_time
 dates_event, year = obj_event.day_of_year
-print(dates_event.dtype)
 dates_event = pd.to_datetime(dates_event,format="%Y-%m-%d %H:%M:%S")
-print(dates_event.dtype)
 Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(
 lat, mag_time, Norway_time, dates_event)
@@ -141,19 +138,6 @@ def load_ROTI_data():
     return time, ROTI_biint
 
 time_ROTI, ROTI_biint_TRO = load_ROTI_data()
-
-
-########################## creating bins ###################################
-# bins_sorted,time_day_bins,time_of_event,events_collection_sorted,ROTI_event_sorted,noise_gps_sorted \
-# = create_bins_with_noise_sort(dates_mag,dates_event,Norway_time,
-#                               time_UTC_mag,magnetic_north,
-#                               gps_noise,time_axis_gps,
-#                               time_ROTI_TRO, ROTI_biint_TRO)
-# = create_bins_gps_ROTI_mag(dates_mag,dates_event,Norway_time,
-# time_UTC_mag,magnetic_north,
-# gps_noise,time_axis_gps,
-# time_ROTI_TRO, ROTI_biint_TRO)
-
 
 
 ################### Conversion or adjustment of different arrays ###############

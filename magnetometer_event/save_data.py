@@ -70,8 +70,9 @@ def load_magnetometer_data():
     print(b)
 
 
-
+NMEA_save_data()
+load_NMEA_data()
 # ROTI_save_data()
 # load_ROTI_data()
-magnetometer_save_data()
-load_magnetometer_data()
+# magnetometer_save_data()
+# load_magnetometer_data()

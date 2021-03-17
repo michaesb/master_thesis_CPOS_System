@@ -289,8 +289,6 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_e
     for i in range(len(events_collection_gps)):
         plt.plot((time_gps_sorted[i,::60]-1)*60,events_collection_gps[i, ::60], linewidth=0.5)
 
-    for i in range(len(time_gps_sorted[:,0])):
-        print(np.unique(time_gps_sorted[i,:]))
     nfive_percentile = np.nanpercentile(events_collection_gps, 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_gps, 5, axis =0)
     plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
@@ -490,8 +488,14 @@ mag_events, GPS_events \
 print(noise_gps_sorted.shape, "shape noise_gps_sorted")
 print(time_gps_sorted.shape, "shape time_gps_sorted")
 
+for i in range(len(time_gps_sorted[0:100,:])):
+    if np.max(time_gps_sorted[:,i]) != np.nan:
+        print(np.nanmax(time_gps_sorted[:,i])*60, "max of time")
+
+r = pd.date_range(start="2018-01-01T00:00:00", end="2018-01-01T03:58:00", freq="1 min")
+
 #########################plotting data#########################
-plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
-plot_all_mag_events(events_collection_sorted,bins_sorted,mag_events ,latex_style = False)
-plot_all_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = False)
+# plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
+# plot_all_mag_events(events_collection_sorted,bins_sorted,mag_events ,latex_style = False)
+# plot_all_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = False)
 plot_all_gps_events(noise_gps_sorted, time_gps_sorted,bins_sorted, GPS_events, latex_style = False)

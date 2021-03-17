@@ -93,8 +93,8 @@ def run_filter_NMEA_data(nr_days, receiver):
 
 
 def run_NMEA_data(nr_days, receiver):
-        nr_datapoints = 50500
         noise = np.zeros((nr_days,nr_datapoints))*np.nan
+        nr_datapoints = 50400
         time_axis = np.zeros((nr_days,nr_datapoints))*np.nan
         year = "2018"
         date = create_date(1,nr_days)

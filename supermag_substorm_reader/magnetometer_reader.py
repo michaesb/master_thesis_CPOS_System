@@ -144,8 +144,8 @@ class ReadMagnetomerData():
 
         r = pd.date_range(start=spec_receiver["Date_UTC"].min(), end=spec_receiver["Date_UTC"].max(), freq="1 min")
 
+        # print("hello there",spec_receiver["Date_UTC"].min(),spec_receiver["Date_UTC"].max())
         spec_receiver = spec_receiver.set_index('Date_UTC').reindex(r).fillna(np.nan).rename_axis('Date_UTC').reset_index()
-
         date_UTC = spec_receiver["Date_UTC"].values
         geo_long,geo_lat = spec_receiver["GEOLON"].values, spec_receiver["GEOLAT"].values
         n_mag,e_mag,z_mag = spec_receiver["dbn_nez"].values, spec_receiver["dbe_nez"].values,spec_receiver["dbz_nez"].values

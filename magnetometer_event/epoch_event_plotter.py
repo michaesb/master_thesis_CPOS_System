@@ -184,7 +184,7 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_st
 
     index_third, index_two_thirds = int(len(events_collection_ROTI) / 3), int(
         len(events_collection_ROTI) * 2 / 3)
-    nr_of_xticks = hour_area*2 +1
+    nr_of_xticks = hour_area*12 +1
     location = [69.66,18.94]
 
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks, dtype=int)

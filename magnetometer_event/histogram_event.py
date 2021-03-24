@@ -61,7 +61,7 @@ def plot_histogram_event_mag(events_collection, bins_sorted, mag_events,fancy_la
             plt.tight_layout()
 
         plt.figure(1)
-        plt.suptitle(f"Third bin of recorded substorms by the magnetometer at {station} in 2018")
+        plt.suptitle(f"Magnetometer data of weak substorms at {station} in 2018")
         for i in range(0,nr_plots):
             style_chooser(style,i)
             plt.hist(events_collection[index_two_thirds:,i*30], bins = 40, range=(-800,100) )
@@ -70,7 +70,7 @@ def plot_histogram_event_mag(events_collection, bins_sorted, mag_events,fancy_la
             plt.tight_layout()
 
         plt.figure(2)
-        plt.suptitle(f"Second bin of recorded substorms by the magnetometer at {station} in 2018")
+        plt.suptitle(f"Magnetometer data of medium substorms at {station} in 2018")
         for i in range(0,nr_plots):
             style_chooser(style,i)
             plt.hist(events_collection[index_third:index_two_thirds,i*30], bins = 40, range=(-800,100))
@@ -80,7 +80,7 @@ def plot_histogram_event_mag(events_collection, bins_sorted, mag_events,fancy_la
 
         # plt.show()
         plt.figure(3)
-        plt.suptitle(f"First bin of recorded substorms by the magnetometer at {station} in 2018")
+        plt.suptitle(f"Magnetometer data of strong substorms at at {station} in 2018")
         for i in range(0,nr_plots):
             style_chooser(style,i)
             plt.hist(events_collection[:index_third,i*30], bins = 40, range=(-800,100))
@@ -119,7 +119,7 @@ def plot_histogram_event_ROTI(events_collection_ROTI, bins_sorted,mag_events,fan
         plt.tight_layout()
 
     plt.figure(1)
-    plt.suptitle(f"Third bin of recorded substorms by the ROTI at {station} in 2018")
+    plt.suptitle(f"ROTI of weak substorms at {station} in 2018")
     for i in range(nr_plots):
         style_chooser(style,i)
         plt.hist(events_collection_ROTI[index_two_thirds:,int((60+times_of_interest[i])/5)], bins = nr_bins,range=(0,5))
@@ -130,7 +130,7 @@ def plot_histogram_event_ROTI(events_collection_ROTI, bins_sorted,mag_events,fan
 
     # plt.show()
     plt.figure(2)
-    plt.suptitle(f"Second bin of recorded substorms by the ROTI at {station} in 2018")
+    plt.suptitle(f"ROTI of medium substorms at {station} in 2018")
     for i in range(nr_plots):
         style_chooser(style,i)
         plt.hist(events_collection_ROTI[index_third:index_two_thirds,int((60+times_of_interest[i])/5)], bins = nr_bins,range=(0,5))
@@ -140,7 +140,7 @@ def plot_histogram_event_ROTI(events_collection_ROTI, bins_sorted,mag_events,fan
 
     # plt.show()
     plt.figure(3)
-    plt.suptitle(f"First bin of recorded substorms by the ROTI at {station} in 2018")
+    plt.suptitle(f"ROTI of strong substorms at at {station} in 2018")
     for i in range(nr_plots):
         style_chooser(style,i)
         plt.hist(events_collection_ROTI[:index_third,int((60+times_of_interest[i])/5)], bins = nr_bins,range=(0,5))
@@ -168,7 +168,7 @@ def plot_histogram_event_GPS(events_collection_gps,time_gps_sorted, bins_sorted,
 
     for i in range(0,8):
         style_chooser(style,i)
-        plt.hist(events_collection_gps[:,i*90], orientation="vertical", bins = 100)
+        plt.hist(events_collection_gps[:,i*90], bins = 100,xmax =xmax,xmin = xmin)
         plt.title(f"{(i-2)*30} min")
         # plt.yticks([])
         plt.xlim(0,8)
@@ -353,7 +353,7 @@ mag_events, GPS_events \
 # time_gps_sorted =time_gps_sorted[abs(np.isnan(time_gps_sorted))-1]
 #########################plotting data#########################
 
-# plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
 plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
 plt.plot(np.sum(np.isnan(noise_gps_sorted),axis=1))
 plt.show()

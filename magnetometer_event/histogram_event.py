@@ -162,69 +162,19 @@ def plot_histogram_event_GPS(events_collection_gps,time_gps_sorted, bins_sorted,
         len(events_collection_gps) * 2 / 3)
     station = "TRM"
     style ="downwards"
-
+    times_of_interest = [-60,0,5,10,15,30,60,120]
+    xmax,xmin = 0,0.05
+    nr_bins=30
     if fancy_latex:
         plt.style.use("../format_for_latex.mplstyle")
 
     for i in range(0,8):
         style_chooser(style,i)
-        plt.hist(events_collection_gps[:,i*90], bins = 100,xmax =xmax,xmin = xmin)
-        plt.title(f"{(i-2)*30} min")
-        # plt.yticks([])
-        plt.xlim(0,8)
-        plt.ylim(0,15)
+        plt.hist(events_collection_gps[:,int((times_of_interest[i]+60)/60*1800)],bins=nr_bins,range=(0,0.01))
+        plt.title(f"{times_of_interest[i]} min ")
+        plt.yscale("log")
         plt.tight_layout()
     plt.show()
-    """
-
-    plt.figure(1)
-    for i in range(index_two_thirds, len(events_collection_gps)):
-        plt.plot((time_gps_sorted[i,::60]-1)*60,events_collection_gps[i, ::60], linewidth=0.5)
-
-    plt.title("Third bin of substorms by the gps receiver in " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("noise values from the NMEA ")
-    plt.legend()
-    plt.ylim(5e-5,1)
-    plt.yscale("log")
-    # plt.show()
-
-    plt.figure(2)
-    for i in range(index_third, index_two_thirds):
-        plt.plot((time_gps_sorted[i,::60]-1)*60,events_collection_gps[i, ::60], linewidth=0.5)
-    # nfive_percentile = np.nanpercentile(events_collection_gps[index_third:index_two_thirds], 95, axis =0)
-    # five_percentile = np.nanpercentile(events_collection_gps[index_third:index_two_thirds], 5, axis =0)
-    # median_event = np.nanmedian(events_collection_gps[index_third:index_two_thirds], axis=0)
-    # plt.plot(median_event[::60], linewidth = 3, color = "black", label="median value")
-    # plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    # plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
-    plt.title("Second bin of substorms by the gps receiver in " + station + " in 2018")
-    plt.xlabel("minutes")
-    plt.ylabel("noise values from the NMEA")
-    plt.legend()
-    plt.ylim(5e-5,1)
-    plt.yscale("log")
-    # plt.show()
-
-    plt.figure(3)
-    for i in range(index_third):
-        plt.plot((time_gps_sorted[i,::60]-1)*60,events_collection_gps[i, ::60], linewidth=0.5)
-
-    # median_event = np.nanmedian(events_collection_gps[:index_third], axis = 0)
-    # nfive_percentile = np.nanpercentile(events_collection_gps[:index_third], 95, axis =0)
-    # five_percentile = np.nanpercentile(events_collection_gps[:index_third], 5, axis =0)
-    # plt.plot(median_event[::60], linewidth = 3, color = "black", label="median value")
-    # plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    # plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
-    plt.title("First bin of recorded substorms by the gps receiver in " + station + " in 2018")
-    plt.ylabel("noise values from the NMEA")
-    plt.xlabel("minutes")
-    # plt.xticks(np.linspace(0, 1.3*len(events_collection_gps), nr_of_xticks), time)
-    plt.legend()
-    plt.yscale("log")
-    plt.ylim(5e-5,1)
-    plt.show()
-    """
     if fancy_latex:
         plt.style.use("default")
 
@@ -347,14 +297,20 @@ mag_events, GPS_events \
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
 
+def load_cleaned_gps_noise():
+    file_path = "../../data_storage_arrays/filtered_NMEA_data_TRM.txt"
+    with open(file_path,"rb") as file:
+        a = np.load(file)
+        b = np.load(file)
 
+    return a, b
+# clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
+new_time, new_gps_noise = load_cleaned_gps_noise()
 
 # noise_gps_sorted =noise_gps_sorted[abs(np.isnan(noise_gps_sorted))-1]
 # time_gps_sorted =time_gps_sorted[abs(np.isnan(time_gps_sorted))-1]
 #########################plotting data#########################
 
-plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
-plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
-plt.plot(np.sum(np.isnan(noise_gps_sorted),axis=1))
-plt.show()
-plot_histogram_event_GPS(noise_gps_sorted,time_gps_sorted, bins_sorted,GPS_events,fancy_latex = False)
+# plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
+# plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_GPS(new_gps_noise,new_time, bins_sorted,GPS_events,fancy_latex = False)

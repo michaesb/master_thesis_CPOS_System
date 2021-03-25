@@ -88,7 +88,7 @@ def plot_histograms(bins_sorted, time_day_bins, time_of_event, mag_events, latex
         plt.style.use("default")
 
 
-def plot_all_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style = False):
+def plot_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style = False):
         borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
 
         index_third, index_two_thirds = int(len(events_collection_mag)/3),\
@@ -178,7 +178,7 @@ def plot_all_mag_events(events_collection_mag, bins_sorted,mag_events, latex_sty
         if latex_style:
             plt.style.use("default")
 
-def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style = False):
+def plot_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style = False):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)]]
 
@@ -272,7 +272,7 @@ def plot_all_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_st
     if latex_style:
         plt.style.use("default")
 
-def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_events, latex_style = False):
+def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style = False):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
@@ -286,14 +286,16 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_e
         plt.style.use("../format_for_latex.mplstyle")
 
     plt.figure(0)
+
+    steps_gps = 20
     for i in range(len(events_collection_gps)):
-        plt.plot(events_collection_gps[i, ::60], linewidth=0.5)
+        plt.plot(events_collection_gps[i, ::steps_gps], linewidth=0.5)
     median_event = np.nanmedian(events_collection_gps, axis=0)
     nfive_percentile = np.nanpercentile(events_collection_gps, 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_gps, 5, axis =0)
-    plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
-    plt.plot(median_event[::60], linewidth = 3, color="black", label="median value")
+    plt.plot(nfive_percentile[::steps_gps], linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile[::steps_gps], linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event[::steps_gps], linewidth = 3, color="black", label="median value")
     plt.title(f"All recorded substorms by the gps receivers in {station} in 2018\n"+\
               f"{GPS_events} substorms collected")
     plt.xlabel("minutes")
@@ -308,13 +310,13 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_e
 
     plt.figure(1)
     for i in range(index_two_thirds, len(events_collection_gps)):
-        plt.plot(events_collection_gps[i, ::60], linewidth=0.5)
+        plt.plot(events_collection_gps[i, ::steps_gps], linewidth=0.5)
     nfive_percentile = np.nanpercentile(events_collection_gps[index_two_thirds:], 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_gps[index_two_thirds:], 5, axis =0)
     median_event = np.nanmedian(events_collection_gps[index_two_thirds:], axis=0)
-    plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
-    plt.plot(median_event[::60], linewidth = 3, color = "black", label="median value")
+    plt.plot(nfive_percentile[::steps_gps], linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile[::steps_gps], linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event[::steps_gps], linewidth = 3, color = "black", label="median value")
     plt.title("Weak substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA ")
@@ -328,13 +330,13 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_e
 
     plt.figure(2)
     for i in range(index_third, index_two_thirds):
-        plt.plot(events_collection_gps[i, ::60], linewidth=0.5)
+        plt.plot(events_collection_gps[i, ::steps_gps], linewidth=0.5)
     nfive_percentile = np.nanpercentile(events_collection_gps[index_third:index_two_thirds], 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_gps[index_third:index_two_thirds], 5, axis =0)
     median_event = np.nanmedian(events_collection_gps[index_third:index_two_thirds], axis=0)
-    plt.plot(median_event[::60], linewidth = 3, color = "black", label="median value")
-    plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event[::steps_gps], linewidth = 3, color = "black", label="median value")
+    plt.plot(nfive_percentile[::steps_gps], linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile[::steps_gps], linewidth = 3, color = "red", label="5th percentile")
     plt.title("Medium substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
@@ -349,14 +351,14 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_e
 
     plt.figure(3)
     for i in range(index_third):
-        plt.plot(events_collection_gps[i, ::60], linewidth=0.5)
+        plt.plot(events_collection_gps[i, ::steps_gps], linewidth=0.5)
 
     median_event = np.nanmedian(events_collection_gps[:index_third], axis = 0)
     nfive_percentile = np.nanpercentile(events_collection_gps[:index_third], 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_gps[:index_third], 5, axis =0)
-    plt.plot(median_event[::60], linewidth = 3, color = "black", label="median value")
-    plt.plot(nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    plt.plot(five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event[::steps_gps], linewidth = 3, color = "black", label="median value")
+    plt.plot(nfive_percentile[::steps_gps], linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile[::steps_gps], linewidth = 3, color = "red", label="5th percentile")
     plt.title("strong substorms by the gps receiver in " + station + " in 2018")
     plt.ylabel("noise values from the NMEA")
     plt.xlabel("minutes")
@@ -370,6 +372,37 @@ def plot_all_gps_events(events_collection_gps,time_gps_sorted, bins_sorted,GPS_e
     if latex_style:
         plt.style.use("default")
 
+def plot_all_data_events(mag,ROTI,gps,latex_style=False):
+    borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
+        bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
+
+    index_third, index_two_thirds = int(len(gps) / 3), int(
+        len(gps) * 2 / 3)
+    nr_of_xticks = hour_area*2 + 1
+    station = "TRM"
+    start_x, end_x = -(hour_area / 2 - 1)*60, (hour_area / 2 - 1)*60
+    time = np.linspace(start_x, end_x, nr_of_xticks,dtype=int)
+
+
+    fig,ax = plt.subplots(3,1, sharex = True)
+
+    for i in range(len(gps)):
+        ax[2].plot(np.linspace(0, len(gps), nr_of_xticks),gps[i, ::60], linewidth=0.5)
+    median_event = np.nanmedian(gps, axis=0)
+    nfive_percentile = np.nanpercentile(gps, 95, axis =0)
+    five_percentile = np.nanpercentile(gps, 5, axis =0)
+    ax[2].plot(np.linspace(start_x,end_x, len(gps))[::60],nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
+    ax[2].plot(np.linspace(start_x,end_x, len(gps))[::60],five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
+    ax[2].plot(np.linspace(start_x,end_x, len(gps))[::60],median_event[::60], linewidth = 3, color="black", label="median value")
+    ax[2].set_xlabel("minutes")
+    ax[2].set_ylabel("noise values from the NMEA")
+    ax[2].set_ylim(5e-5,1)
+    ax[2].set_xticks(time)
+    ax[2].legend()
+    ax[2].set_yscale("log")
+    if latex_style:
+        plt.tight_layout()
+    plt.show()
 
 
 obj_event = ReadSubstormEvent()
@@ -483,7 +516,7 @@ time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
 ########################## creating bins ###################################
 hour_area = 4
 bins_sorted,time_day_bins,time_of_event,\
-events_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
+mag_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
 mag_events, GPS_events \
 = create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
                               ,magnetic_north,
@@ -530,6 +563,7 @@ new_time, new_gps_noise = load_cleaned_gps_noise()
 
 #########################plotting data#########################
 # plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
-# plot_all_mag_events(events_collection_sorted,bins_sorted,mag_events ,latex_style = False)
-# plot_all_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = False)
-plot_all_gps_events(new_gps_noise, new_time,bins_sorted, GPS_events, latex_style = False)
+# plot_mag_events(mag_collection_sorted,bins_sorted,mag_events ,latex_style = False)
+# plot_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = False)
+plot_gps_events(new_gps_noise,bins_sorted, GPS_events, latex_style = False)
+# plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= False)

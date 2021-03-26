@@ -89,94 +89,94 @@ def plot_histograms(bins_sorted, time_day_bins, time_of_event, mag_events, latex
 
 
 def plot_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style = False):
-        borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
+    borders = [bins_sorted[int((len(bins_sorted)-1)/3)],bins_sorted[int((len(bins_sorted)-1)*2/3)]]
 
-        index_third, index_two_thirds = int(len(events_collection_mag)/3),\
-                                        int(len(events_collection_mag)*2/3)
-        nr_of_xticks = hour_area*2+1
-        median_event = np.nanmedian(events_collection_mag, axis = 0)
-        nfive_percentile = np.nanpercentile(events_collection_mag, 95, axis =0)
-        five_percentile = np.nanpercentile(events_collection_mag, 5, axis =0)
-        time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks, dtype = int)
+    index_third, index_two_thirds = int(len(events_collection_mag)/3),\
+                                    int(len(events_collection_mag)*2/3)
+    nr_of_xticks = hour_area*2+1
+    median_event = np.nanmedian(events_collection_mag, axis = 0)
+    nfive_percentile = np.nanpercentile(events_collection_mag, 95, axis =0)
+    five_percentile = np.nanpercentile(events_collection_mag, 5, axis =0)
+    time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks, dtype = int)
 
-        if latex_style:
-            plt.style.use("../format_for_latex.mplstyle")
+    if latex_style:
+        plt.style.use("../format_for_latex.mplstyle")
 
-        plt.figure(0)
-        for i in range(len(events_collection_mag)):
-            plt.plot(events_collection_mag[i,:], linewidth = 0.5)
-        plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title(f"All recorded substorms by the magnetometer in {station} in 2018 \n"+\
-                  f"{mag_events} substorms collected")
-        plt.xlabel("minutes")
-        plt.ylabel("North component B-value [nT]")
-        plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
-        plt.ylim(-700,np.max(events_collection_mag))
-        plt.legend()
-        if latex_style:
-            plt.tight_layout()
-        # plt.show()
+    plt.figure(0)
+    for i in range(len(events_collection_mag)):
+        plt.plot(events_collection_mag[i,:], linewidth = 0.5)
+    plt.plot(nfive_percentile, linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile, linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event, linewidth = 3, color = "black", label="median value")
+    plt.title(f"All recorded substorms by the magnetometer in {station} in 2018 \n"+\
+              f"{mag_events} substorms collected")
+    plt.xlabel("minutes")
+    plt.ylabel("North component B-value [nT]")
+    plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
+    plt.ylim(-700,np.max(events_collection_mag))
+    plt.legend()
+    if latex_style:
+        plt.tight_layout()
+    # plt.show()
 
-        plt.figure(1)
-        for i in range(index_two_thirds, len(events_collection_mag)):
-            plt.plot(events_collection_mag[i,:], linewidth = 0.5)
-        median_event = np.nanmedian(events_collection_mag[index_two_thirds:], axis = 0)
-        nfive_percentile_third_bin = np.nanpercentile(events_collection_mag[index_two_thirds:], 95, axis =0)
-        five_percentile_third_bin = np.nanpercentile(events_collection_mag[index_two_thirds:], 5, axis =0)
-        plt.plot(nfive_percentile_third_bin, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile_third_bin, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title(f"Magnetometer data of weak substorms at {station} in 2018")
-        plt.xlabel("minutes")
-        plt.ylabel("North component B-value [nT] \n (smaller than "+str(borders[1])+" nT)")
-        plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
-        plt.legend()
-        plt.ylim(-700,np.max(events_collection_mag))
-        if latex_style:
-            plt.tight_layout()
-        # plt.show()
+    plt.figure(1)
+    for i in range(index_two_thirds, len(events_collection_mag)):
+        plt.plot(events_collection_mag[i,:], linewidth = 0.5)
+    median_event = np.nanmedian(events_collection_mag[index_two_thirds:], axis = 0)
+    nfive_percentile_third_bin = np.nanpercentile(events_collection_mag[index_two_thirds:], 95, axis =0)
+    five_percentile_third_bin = np.nanpercentile(events_collection_mag[index_two_thirds:], 5, axis =0)
+    plt.plot(nfive_percentile_third_bin, linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile_third_bin, linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event, linewidth = 3, color = "black", label="median value")
+    plt.title(f"Magnetometer data of weak substorms at {station} in 2018")
+    plt.xlabel("minutes")
+    plt.ylabel("North component B-value [nT] \n (smaller than "+str(borders[1])+" nT)")
+    plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
+    plt.legend()
+    plt.ylim(-700,np.max(events_collection_mag))
+    if latex_style:
+        plt.tight_layout()
+    # plt.show()
 
-        plt.figure(2)
-        for i in range(index_third,index_two_thirds):
-            plt.plot(events_collection_mag[i,:], linewidth = 0.5)
-        median_event = np.nanmedian(events_collection_mag[index_third:index_two_thirds], axis = 0)
-        nfive_percentile_medium_bin = np.percentile(events_collection_mag[index_third:index_two_thirds], 95, axis =0)
-        five_percentile_medium_bin = np.percentile(events_collection_mag[index_third:index_two_thirds], 5, axis =0)
-        plt.plot(nfive_percentile_medium_bin, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile_medium_bin, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title(f"Magnetometer data of medium substorms at {station} in 2018")
-        plt.xlabel("minutes")
-        plt.ylabel("North component B-value [nT] \n (between "+str(borders[0])+"nT and "+str(borders[1])+" nT)")
-        plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
-        plt.ylim(-700,np.max(events_collection_mag))
-        plt.legend()
-        if latex_style:
-            plt.tight_layout()
-        # plt.show()
+    plt.figure(2)
+    for i in range(index_third,index_two_thirds):
+        plt.plot(events_collection_mag[i,:], linewidth = 0.5)
+    median_event = np.nanmedian(events_collection_mag[index_third:index_two_thirds], axis = 0)
+    nfive_percentile_medium_bin = np.percentile(events_collection_mag[index_third:index_two_thirds], 95, axis =0)
+    five_percentile_medium_bin = np.percentile(events_collection_mag[index_third:index_two_thirds], 5, axis =0)
+    plt.plot(nfive_percentile_medium_bin, linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile_medium_bin, linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event, linewidth = 3, color = "black", label="median value")
+    plt.title(f"Magnetometer data of medium substorms at {station} in 2018")
+    plt.xlabel("minutes")
+    plt.ylabel("North component B-value [nT] \n (between "+str(borders[0])+"nT and "+str(borders[1])+" nT)")
+    plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
+    plt.ylim(-700,np.max(events_collection_mag))
+    plt.legend()
+    if latex_style:
+        plt.tight_layout()
+    # plt.show()
 
-        plt.figure(3)
-        for i in range(index_third):
-            plt.plot(events_collection_mag[i,:], linewidth = 0.5)
-        median_event = np.nanmedian(events_collection_mag[:index_third], axis = 0)
-        nfive_percentile_strong_bin = np.nanpercentile(events_collection_mag[:index_third], 95, axis =0)
-        five_percentile_strong_bin = np.nanpercentile(events_collection_mag[:index_third], 5, axis =0)
-        plt.plot(nfive_percentile_strong_bin, linewidth = 3, color = "green", label="95th percentile")
-        plt.plot(five_percentile_strong_bin, linewidth = 3, color = "red", label="5th percentile")
-        plt.plot(median_event, linewidth = 3, color = "black", label="median value")
-        plt.title(f"Magnetometer data of strong substorms at {station} in 2018")
-        plt.ylabel("North component B-value [nT] \n (bigger than "+str(borders[0])+" nT)")
-        plt.xlabel("minutes")
-        plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
-        plt.ylim(-700,np.max(events_collection_mag))
-        plt.legend()
-        if latex_style:
-            plt.tight_layout()
-        plt.show()
-        if latex_style:
-            plt.style.use("default")
+    plt.figure(3)
+    for i in range(index_third):
+        plt.plot(events_collection_mag[i,:], linewidth = 0.5)
+    median_event = np.nanmedian(events_collection_mag[:index_third], axis = 0)
+    nfive_percentile_strong_bin = np.nanpercentile(events_collection_mag[:index_third], 95, axis =0)
+    five_percentile_strong_bin = np.nanpercentile(events_collection_mag[:index_third], 5, axis =0)
+    plt.plot(nfive_percentile_strong_bin, linewidth = 3, color = "green", label="95th percentile")
+    plt.plot(five_percentile_strong_bin, linewidth = 3, color = "red", label="5th percentile")
+    plt.plot(median_event, linewidth = 3, color = "black", label="median value")
+    plt.title(f"Magnetometer data of strong substorms at {station} in 2018")
+    plt.ylabel("North component B-value [nT] \n (bigger than "+str(borders[0])+" nT)")
+    plt.xlabel("minutes")
+    plt.xticks(np.linspace(0,len(events_collection_mag)*0.915,nr_of_xticks),time)
+    plt.ylim(-700,np.max(events_collection_mag))
+    plt.legend()
+    if latex_style:
+        plt.tight_layout()
+    plt.show()
+    if latex_style:
+        plt.style.use("default")
 
 def plot_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style = False):
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
@@ -287,7 +287,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
 
     plt.figure(0)
 
-    steps_gps = 20
+    steps_gps = 1
     for i in range(len(events_collection_gps)):
         plt.plot(events_collection_gps[i, ::steps_gps], linewidth=0.5)
     median_event = np.nanmedian(events_collection_gps, axis=0)
@@ -343,6 +343,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.legend()
     plt.xticks(np.linspace(0, len(events_collection_gps), nr_of_xticks), time)
     plt.ylim(5e-5,1)
+
     plt.yscale("log")
 
     if latex_style:
@@ -379,23 +380,56 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     index_third, index_two_thirds = int(len(gps) / 3), int(
         len(gps) * 2 / 3)
     nr_of_xticks = hour_area*2 + 1
-    station = "TRM"
-    start_x, end_x = -(hour_area / 2 - 1)*60, (hour_area / 2 - 1)*60
+    start_x, end_x = -(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60
     time = np.linspace(start_x, end_x, nr_of_xticks,dtype=int)
+    location = [69.66,18.94]
 
 
     fig,ax = plt.subplots(3,1, sharex = True)
 
+    if latex_style:
+        plt.style.use("../format_for_latex.mplstyle")
+
+    median_event = np.nanmedian(mag, axis = 0)
+    nfive_percentile = np.nanpercentile(mag, 95, axis =0)
+    five_percentile = np.nanpercentile(mag, 5, axis =0)
+
+    for i in range(len(mag)):
+        ax[0].plot(np.linspace(start_x,end_x, len(mag[0,:])),mag[i,:], linewidth = 0.5)
+    ax[0].plot(np.zeros(2000),np.linspace(-1000,np.max(mag),2000),"b", linewidth =2)
+    ax[0].plot(np.linspace(start_x,end_x, len(mag[0,:])),nfive_percentile, linewidth = 3, color = "green")
+    ax[0].plot(np.linspace(start_x,end_x, len(mag[0,:])),five_percentile, linewidth = 3, color = "red")
+    ax[0].plot(np.linspace(start_x,end_x, len(mag[0,:])),median_event, linewidth = 3, color = "black")
+    ax[0].set_ylabel("North B-value [nT]")
+    ax[0].set_xticks([])
+    ax[0].set_ylim(-600,np.max(mag))
+    ax[0].legend()
+
+    for i in range(len(ROTI)):
+        ax[1].plot(np.linspace(start_x,end_x, len(ROTI[0,:])),ROTI[i,:], linewidth=0.5)
+
+    median_event = np.nanmedian(ROTI, axis=0)
+    nfive_percentile = np.nanpercentile(ROTI, 95, axis =0)
+    five_percentile = np.nanpercentile(ROTI, 5, axis =0)
+    ax[1].plot(np.zeros(2000),np.linspace(0,10,2000),"b", linewidth =2)
+    ax[1].plot(np.linspace(start_x,end_x, len(ROTI[0,:])),five_percentile, linewidth = 3, color = "red")
+    ax[1].plot(np.linspace(start_x,end_x, len(ROTI[0,:])),nfive_percentile, linewidth = 3, color = "green")
+    ax[1].plot(np.linspace(start_x,end_x, len(ROTI[0,:])),median_event, linewidth=3, color="black")
+    ax[1].set_ylabel("ROTI values [TEC/min]")
+    ax[1].set_xticks([])
+    ax[1].set_ylim(0,10)
+
     for i in range(len(gps)):
-        ax[2].plot(np.linspace(0, len(gps), nr_of_xticks),gps[i, ::60], linewidth=0.5)
+        ax[2].plot(np.linspace(start_x, end_x,len(gps[0,:]))[::60],gps[i, ::60], linewidth=0.5)
     median_event = np.nanmedian(gps, axis=0)
     nfive_percentile = np.nanpercentile(gps, 95, axis =0)
     five_percentile = np.nanpercentile(gps, 5, axis =0)
-    ax[2].plot(np.linspace(start_x,end_x, len(gps))[::60],nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
-    ax[2].plot(np.linspace(start_x,end_x, len(gps))[::60],five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
-    ax[2].plot(np.linspace(start_x,end_x, len(gps))[::60],median_event[::60], linewidth = 3, color="black", label="median value")
+    ax[2].plot(np.zeros(2000),np.linspace(5e-5,1,2000),"b", linewidth =2)
+    ax[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],nfive_percentile[::60], linewidth = 3, color = "green", label="95th percentile")
+    ax[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
+    ax[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],median_event[::60], linewidth = 3, color="black", label="median value")
     ax[2].set_xlabel("minutes")
-    ax[2].set_ylabel("noise values from the NMEA")
+    ax[2].set_ylabel("noise from NMEA")
     ax[2].set_ylim(5e-5,1)
     ax[2].set_xticks(time)
     ax[2].legend()
@@ -566,4 +600,4 @@ new_time, new_gps_noise = load_cleaned_gps_noise()
 # plot_mag_events(mag_collection_sorted,bins_sorted,mag_events ,latex_style = False)
 # plot_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = False)
 plot_gps_events(new_gps_noise,bins_sorted, GPS_events, latex_style = False)
-# plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= False)
+plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= True)

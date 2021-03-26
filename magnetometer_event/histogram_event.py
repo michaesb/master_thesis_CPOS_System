@@ -170,7 +170,7 @@ def plot_histogram_event_GPS(events_collection_gps,time_gps_sorted, bins_sorted,
 
     for i in range(0,8):
         style_chooser(style,i)
-        plt.hist(events_collection_gps[:,int((times_of_interest[i]+60)/60*1800)],bins=nr_bins,range=(0,0.01))
+        plt.hist(events_collection_gps[:,int((times_of_interest[i]+60)/60*1800)],bins=nr_bins,range=(0,0.1))
         plt.title(f"{times_of_interest[i]} min ")
         plt.yscale("log")
         plt.tight_layout()
@@ -311,6 +311,6 @@ new_time, new_gps_noise = load_cleaned_gps_noise()
 # time_gps_sorted =time_gps_sorted[abs(np.isnan(time_gps_sorted))-1]
 #########################plotting data#########################
 
-# plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
-# plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
 plot_histogram_event_GPS(new_gps_noise,new_time, bins_sorted,GPS_events,fancy_latex = False)

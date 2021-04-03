@@ -38,8 +38,10 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     ax[1].plot(time_ROTI,ROTI_biints,".-")
     ax[1].set_ylabel("ROTI [TEC/min]")
     ax[1].grid("on")
-
     ax[2].plot(gps_time.flatten()[::4]+1,gps_noise.flatten()[::4],".")
+
+    ax[2].plot(np.ones(2000)*gps_time.flatten()[start_index_weird_time],np.linspace(0,1,2000), alpha = 0.5)
+    ax[2].plot(np.ones(2000)*gps_time.flatten()[end_index_weird_time],np.linspace(0,1,2000), alpha = 0.5)
     ax[2].set_yscale("log")
     ax[2].set_xlabel("days")
     # ax[0].set_ylim(5e-5,1e-1)
@@ -105,28 +107,6 @@ Norway_time = time_UTC_event + 1
 lat, mag_time, Norway_time, dates_event = filtering_to_Norway_night(
 lat, mag_time, Norway_time, dates_event)
 
-########################## gps noise  ##################################
-
-def create_fake_noise():
-    n = 50200
-    time_axis_gps = np.zeros((365, n + 365)) * np.nan
-    gps_noise = np.zeros((365, n + 365)) * np.nan
-    for i in range(365):
-        time_axis_gps[i, : n + i] = np.linspace(0, 24, n + i)
-        gps_noise[i, : n + i] = np.random.random(n + i)
-    return time_axis_gps, gps_noise
-
-def load_gps_noise():
-    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
-    with open(file_path,"rb") as file:
-        time = np.load(file)
-        noise = np.load(file)
-    return time, noise
-
-time_axis_gps,gps_noise = load_gps_noise()
-
-# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
-# time_axis_gps, gps_noise = create_fake_noise()
 ######################### ROTI data #####################################
 
 
@@ -139,11 +119,43 @@ def load_ROTI_data():
 
 time_ROTI, ROTI_biint_TRO = load_ROTI_data()
 
+########################## gps noise  ##################################
+def statistical_reduction_of_data(gps_data,start_index,end_index):
+    originial_shape = gps_data.shape
+    gps_data = gps_data.flatten()
+    print(gps_data[start_index:end_index])
+    median1 = np.nanmedian(gps_data[start_index:end_index])
+    median2 = np.nanmedian(gps_data[:start_index])
+    ratio = median1/median2
+    print("ratio",ratio)
+    gps_data[start_index:end_index] = gps_data[start_index:end_index]/ratio
+    gps_data = gps_data.reshape(365,50500)
+    return gps_data
+
+
+
+
+def load_gps_noise():
+    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        noise = np.load(file)
+    start_index_weird_time = 7649115 -50500
+    end_index_weird_time = 7858915 -50500
+    noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
+    return time, noise
+
+    # return adjusted_gps_data
+
+time_axis_gps,gps_noise = load_gps_noise()
+
+start_index_weird_time = 7649115
+end_index_weird_time = 7858915
 
 ################### Conversion or adjustment of different arrays ###############
 time_mag = date_to_days(dates_mag)
-time_of_event = date_to_days(dates_event) +mag_time/24
-print(time_of_event)
+time_of_event = date_to_days(dates_event) + mag_time/24
+# print(time_of_event)
 ###########################plotting different data ##########################
 plot_all_days_tagged_events(gps_noise,time_axis_gps,magnetic_north,time_mag,\
 time_of_event,time_ROTI,ROTI_biint_TRO)

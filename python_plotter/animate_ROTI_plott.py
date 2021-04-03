@@ -8,7 +8,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.animation import FuncAnimation
 
 # adress "../../../../../run/media/michaelsb/data_ssd/data/RTIM/2018/01/01/ROTI/"
-
+#to be made if of interest
 
 fig, ax = plt.subplots()
 def plot_the_grid(i):

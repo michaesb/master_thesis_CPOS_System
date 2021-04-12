@@ -695,7 +695,6 @@ def statistical_reduction_of_data(gps_data,start_index,end_index):
     median1 = np.nanmedian(gps_data[start_index:end_index])
     median2 = np.nanmedian(gps_data[:start_index])
     ratio = median1/median2
-    print("ratio",ratio)
     gps_data[start_index:end_index] = gps_data[start_index:end_index]/ratio
     gps_data = gps_data.reshape(365,50500)
     return gps_data
@@ -738,8 +737,8 @@ mag_events, GPS_events \
                               ,magnetic_north,
                               gps_noise,time_axis_gps,
                               time_ROTI_TRO, ROTI_biint_TRO)
-print(noise_gps_sorted.shape, "shape noise_gps_sorted")
-print(time_gps_sorted.shape, "shape time_gps_sorted")
+# print(noise_gps_sorted.shape, "shape noise_gps_sorted")
+# print(time_gps_sorted.shape, "shape time_gps_sorted")
 
 
 def clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted):

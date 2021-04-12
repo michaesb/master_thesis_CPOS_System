@@ -357,13 +357,13 @@ def load_cleaned_gps_noise():
         b = np.load(file)
 
     return a, b
-clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
+# clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
 new_time, new_gps_noise = load_cleaned_gps_noise()
 
 # noise_gps_sorted =noise_gps_sorted[abs(np.isnan(noise_gps_sorted))-1]
 # time_gps_sorted =time_gps_sorted[abs(np.isnan(time_gps_sorted))-1]
 #########################plotting data#########################
 
-# plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
-# plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_mag(events_collection_sorted,bins_sorted, mag_events, fancy_latex = False)
+plot_histogram_event_ROTI(ROTI_event_sorted,bins_sorted, mag_events, fancy_latex = False)
 plot_histogram_event_GPS(new_gps_noise,new_time, bins_sorted,GPS_events,fancy_latex = False)

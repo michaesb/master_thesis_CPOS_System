@@ -249,6 +249,14 @@ class ReadNMEAData():
             return self.nr_datapoints
 
     @property
+    def altitude_only(self):
+        """
+        returning an array of the altitude, unprocressed from the WGS-84 system
+        """
+        self.check_read_data()
+        return self.altitude
+
+    @property
     def time_period(self):
         """
         returns the list of the times the data was retrived
@@ -468,11 +476,13 @@ if __name__ == '__main__':
     plt.show()
     """
     obj = ReadNMEAData()
-    obj.read_textfile("/run/media/michaelsb/HDD Linux/data/NMEA/2018/080/NMEA_MTRM_0800.log", verbose=True)
+    obj.read_textfile("example_textfile_NMEA.txt", verbose=True)
     print(obj.datapoints,"nr_datapoints")
     print(obj.day_year, "day_year")
     print(obj.time_period, "time")
     obj.display_GPS_indicator()
     N, E, Z = obj.coordinates
     plt.plot(obj.time_4,"*")
+    plt.show()
+    plt.plot(obj.altitude_only,"*")
     plt.show()

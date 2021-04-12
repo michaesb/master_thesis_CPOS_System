@@ -77,6 +77,14 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
 
                     if np.nansum(gps_noise[day,:]) == 0 or day==236 or day == 237:
                         missing_data_gps+= 1
+                        bins[ii_bins] = np.nan
+                        #time of day value
+                        time_day_bins[ii_bins] = np.nan
+                        ############# magnetotmeter values ################
+                        events_collection_mag[ii_bins,:] = np.nan
+                        ############# ROTI values #########################
+                        events_collection_ROTI[ii_bins,:] = np.nan
+
                         if verbose:
                             print("empty day")
                         #continue

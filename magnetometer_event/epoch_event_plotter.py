@@ -97,7 +97,7 @@ def plot_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style =
     nfive_percentile = np.nanpercentile(events_collection_mag, 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_mag, 5, axis =0)
     time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks, dtype = int)
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
     if latex_style:
         plt.style.use("../format_for_latex.mplstyle")
 
@@ -188,7 +188,7 @@ def plot_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style 
         len(events_collection_ROTI) * 2 / 3)
     nr_of_xticks = hour_area*2 +1
     location = [69.66,18.94]
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks, dtype=int)
     if latex_style:
         plt.style.use("../format_for_latex.mplstyle")
@@ -285,7 +285,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
         len(events_collection_gps) * 2 / 3)
     nr_of_xticks = hour_area*2 + 1
     station = "TRM"
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
 
     if latex_style:
@@ -387,7 +387,7 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     nr_of_xticks = hour_area*2+1
     time = np.linspace(start_x, end_x, nr_of_xticks,dtype=int)
     location = [69.66,18.94]
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
 
     fig1,ax1 = plt.subplots(3,1, sharex = True)
     fig1.suptitle(f"All data comparison")
@@ -713,7 +713,7 @@ def statistical_reduction_of_data(gps_data,start_index,end_index):
     median2 = np.nanmedian(gps_data[:start_index])
     ratio = median1/median2
     gps_data[start_index:end_index] = gps_data[start_index:end_index]/ratio
-    gps_data = gps_data.reshape(365,50500)
+    gps_data = gps_data.reshape(365,50400)
     return gps_data
 
 
@@ -727,7 +727,7 @@ def load_gps_noise():
     noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
     return time, noise
 
-# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
+# time_axis_gps,gps_noise = run_NMEA_data_altitude_only(365,"TRM")
 # time_axis_gps, gps_noise = create_fake_noise()
 time_axis_gps,gps_noise = load_gps_noise()
 
@@ -758,12 +758,12 @@ mag_events, GPS_events \
 
 def clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted):
     r = pd.date_range(start="2018-01-01T00:00:00", end="2018-01-01T04:00:00", freq="S")
-    new_time = np.zeros((257,4*60*60+1))*np.nan
-    new_gps_noise = np.zeros((257,4*60*60+1))*np.nan
-    for i in range(257):
+    new_time = np.zeros((len(time_gps_sorted[:,0]),4*60*60+1))*np.nan
+    new_gps_noise = np.zeros((len(time_gps_sorted[:,0]),4*60*60+1))*np.nan
+    for i in range(len(time_gps_sorted[:,0])):
         df = pd.DataFrame(r, columns = ["time"])
         df["gps_noise"] = np.nan
-        print(i/257*100)
+        print(i/len(time_gps_sorted[:,0])*100)
         for ii in range(36000):
             if not np.isnan(time_gps_sorted[i,ii]):
                 index = round(time_gps_sorted[i,ii]*3600)

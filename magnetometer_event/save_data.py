@@ -2,12 +2,12 @@ import numpy as np
 import sys, time
 
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
-from noise_gps_function import run_NMEA_data
+from noise_gps_function import run_NMEA_data_altitude_only
 from ROTI_bilinear_interpolation import full_year_ROTI_bilinear_interpolation
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 
 def NMEA_save_data():
-    time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
+    time_axis_gps,gps_noise = run_NMEA_data_altitude_only(365,"TRM")
     file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
     with open(file_path,"wb") as file:
         np.save(file,time_axis_gps)

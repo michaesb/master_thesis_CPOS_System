@@ -90,8 +90,6 @@ def run_filter_NMEA_data(nr_days, receiver):
         noise_stored = sigma[index_21:]
     return date,noise, noise_21_3, noise_3_9
 
-
-
 def run_NMEA_data(nr_days, receiver):
         noise = np.zeros((nr_days,nr_datapoints))*np.nan
         nr_datapoints = 50400
@@ -123,11 +121,48 @@ def run_NMEA_data(nr_days, receiver):
                 noise[i,:] = np.nan
                 time_axis[i,:] = np.nan
                 continue
-            # tqdm.write(str((len(accuracy_NMEA_opt(Z-np.mean(Z)))+120)/(60*60)))
             noise_temp = accuracy_NMEA_opt(Z-np.mean(Z))
             noise[i,:len(noise_temp)]  = noise_temp
             time_axis[i,:len(obj.time_4)] = obj.time_4
         return time_axis,noise
+
+def run_NMEA_data_altitude_only(nr_days, receiver):
+        nr_datapoints = 50400
+        noise = np.zeros((nr_days,nr_datapoints))*np.nan
+        time_axis = np.zeros((nr_days,nr_datapoints))*np.nan
+        year = "2018"
+        date = create_date(1,nr_days)
+        for i in tqdm(range(len(date)),desc= "NMEA data"):
+            adress = "/run/media/michaelsb/data_ssd/data/NMEA/"+year+"/"+date[i]+"/"+\
+            "NMEA_M"+receiver +"_"+date[i]+"0.log"
+            obj = ReadNMEAData()
+            try:
+                obj.read_textfile(adress,verbose=False)
+                altitude = obj.altitude_only
+                home_computer = 1
+            except FileNotFoundError:
+                try:
+                    adress = "/scratch/michaesb/data/NMEA/"+year+"/"+date[i]+"/NMEA_M"+ \
+                    receiver+"_"+date[i]+"0.log"
+                    obj = ReadNMEAData()
+                    obj.read_textfile(adress,verbose=False)
+                    altitude = obj.altitude_only
+                    Office_computer = 1
+                except FileNotFoundError:
+                    tqdm.write("no "+receiver+" file here at day: " + str(i) +" year: "+year)
+                    tqdm.write(adress)
+                    noise[i,:] = np.nan
+                    continue
+            if len(altitude) < 60:
+                noise[i,:] = np.nan
+                time_axis[i,:] = np.nan
+                continue
+            noise_temp = accuracy_NMEA_opt(altitude)
+            noise[i,:len(noise_temp)] = noise_temp
+            time_axis[i,:len(obj.time_4)] = obj.time_4
+        return time_axis,noise
+
+
 
 def compare_altitude_transformation(nr_days,receiver):
     nr_datapoints = 50400
@@ -184,5 +219,6 @@ def compare_altitude_transformation(nr_days,receiver):
     return time_axis,noise
 
 if __name__ == '__main__':
-    compare_altitude_transformation(15,"TRM")
+    pass
+    # compare_altitude_transformation(15,"TRM")
     # t,gps =run_NMEA_data(100,"TRM")

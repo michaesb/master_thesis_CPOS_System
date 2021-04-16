@@ -283,7 +283,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
 
     index_third, index_two_thirds = int(len(events_collection_gps) / 3), int(
         len(events_collection_gps) * 2 / 3)
-    nr_of_xticks = hour_area*2 + 1
+    nr_of_xticks = hour_area*12 + 1
     station = "TRM"
     save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
@@ -307,7 +307,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
     plt.ylim(5e-5,1)
-    plt.xticks(np.linspace(0, len(events_collection_gps)*60/steps_gps, nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.legend()
     plt.yscale("log")
     if latex_style:
@@ -327,7 +327,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.title("Weak substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA ")
-    plt.xticks(np.linspace(0, len(events_collection_gps), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.legend()
     plt.ylim(5e-5,1)
     plt.yscale("log")
@@ -349,7 +349,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.xlabel("minutes")
     plt.ylabel("noise values from the NMEA")
     plt.legend()
-    plt.xticks(np.linspace(0, len(events_collection_gps), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.ylim(5e-5,1)
     plt.yscale("log")
     if latex_style:
@@ -370,7 +370,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.title("Strong substorms by the gps receiver in " + station + " in 2018")
     plt.ylabel("noise values from the NMEA")
     plt.xlabel("minutes")
-    plt.xticks(np.linspace(0, len(events_collection_gps), nr_of_xticks), time)
+    plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.legend()
     plt.yscale("log")
     plt.ylim(5e-5,1)
@@ -708,53 +708,14 @@ def create_fake_noise():
 
 def statistical_reduction_of_data(gps_data,start_index,end_index):
     originial_shape = gps_data.shape
+    print(originial_shape)
     gps_data = gps_data.flatten()
     median1 = np.nanmedian(gps_data[start_index:end_index])
     median2 = np.nanmedian(gps_data[:start_index])
     ratio = median1/median2
     gps_data[start_index:end_index] = gps_data[start_index:end_index]/ratio
-    gps_data = gps_data.reshape(365,50500)
+    gps_data = gps_data.reshape(originial_shape)
     return gps_data
-
-
-def load_gps_noise():
-    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
-    with open(file_path,"rb") as file:
-        time = np.load(file)
-        noise = np.load(file)
-    start_index_weird_time = 7649115 -50500
-    end_index_weird_time = 7858915 -50500
-    noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
-    return time, noise
-
-# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
-# time_axis_gps, gps_noise = create_fake_noise()
-time_axis_gps,gps_noise = load_gps_noise()
-
-########################## ROTI  ##################################
-
-def load_ROTI_data():
-    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
-    with open(file_path,"rb") as file:
-        time = np.load(file)
-        ROTI_biint = np.load(file)
-    return time, ROTI_biint
-
-time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
-
-
-########################## creating bins ###################################
-hour_area = 4
-bins_sorted,time_day_bins,time_of_event,\
-mag_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
-mag_events, GPS_events \
-= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
-                              ,magnetic_north,
-                              gps_noise,time_axis_gps,
-                              time_ROTI_TRO, ROTI_biint_TRO)
-# print(noise_gps_sorted.shape, "shape noise_gps_sorted")
-# print(time_gps_sorted.shape, "shape time_gps_sorted")
-
 
 def clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted):
     r = pd.date_range(start="2018-01-01T00:00:00", end="2018-01-01T04:00:00", freq="S")
@@ -784,17 +745,45 @@ def clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted):
 def load_cleaned_gps_noise():
     file_path = "../../data_storage_arrays/filtered_NMEA_data_TRM.txt"
     with open(file_path,"rb") as file:
-        a = np.load(file)
-        b = np.load(file)
-
-    return a, b
+        time = np.load(file)
+        noise = np.load(file)
+    start_index_weird_time = 7649115 -50400
+    end_index_weird_time = 7858915 -50400
+    noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
+    return time, noise
 
 # clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
-new_time, new_gps_noise = load_cleaned_gps_noise()
+new_time_gps, new_gps_noise = load_cleaned_gps_noise()
+
+# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
+# time_axis_gps, gps_noise = create_fake_noise()
+
+########################## ROTI  ##################################
+
+def load_ROTI_data():
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        ROTI_biint = np.load(file)
+    return time, ROTI_biint
+
+time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
+
+
+########################## creating bins ###################################
+hour_area = 4
+bins_sorted,time_day_bins,time_of_event,\
+mag_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
+mag_events, GPS_events \
+= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
+                              ,magnetic_north,
+                              new_gps_noise,new_time_gps,
+                              time_ROTI_TRO, ROTI_biint_TRO)
+
 
 #########################plotting data#########################
-plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
-plot_mag_events(mag_collection_sorted,bins_sorted,mag_events ,latex_style = True)
-plot_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = True)
-plot_gps_events(new_gps_noise,bins_sorted, GPS_events, latex_style = True)
-plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= True)
+# plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
+# plot_mag_events(mag_collection_sorted,bins_sorted,mag_events ,latex_style = True)
+# plot_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = True)
+plot_gps_events(new_gps_noise,bins_sorted, GPS_events, latex_style = False)
+# plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= True)

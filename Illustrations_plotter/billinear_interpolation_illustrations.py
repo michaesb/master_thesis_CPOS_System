@@ -7,12 +7,12 @@ def bilinear_interpolation_plot():
     n = 1000
     z1 = np.linspace(0,0.8,n)
     z2 = np.linspace(0,1.5,n)
-    z3 = np.linspace(0,1.8,n)
+    z3 = np.linspace(0,1.9,n)
     z4 = np.linspace(0,3,n)
 
     ax = fig.add_subplot(111, projection='3d')
     points= [[1,1],[1,2],[2,1],[2,2]]
-    intersection_point = [1.2,1.35]
+    intersection_point = [1.7,1.35]
     # points from the bottom
     ax.plot(points[0][0]*np.ones(n),points[0][1]*np.ones(n),z1,linewidth = 3,color="blue",alpha=0.4)
     ax.plot(points[1][0]*np.ones(n),points[1][1]*np.ones(n),z2,linewidth = 3,color="blue",alpha=0.4)
@@ -39,7 +39,7 @@ def bilinear_interpolation_plot():
     # point at the line
     z_point_5 = z_line[int((intersection_point[1]-1)*1000)-1]
     z5 = np.linspace(0,z_point_5,n)
-    ax.plot(intersection_point[0]*np.ones(n),intersection_point[1]*np.ones(n),z5,linewidth = 3.5,color = "green")
+    ax.plot(intersection_point[0]*np.ones(n),intersection_point[1]*np.ones(n),z5,linewidth = 3.5,color = "green",alpha=0.6)
     ax.scatter(intersection_point[0],intersection_point[1],z_point_5, color="green",linewidth=6)
 
     plt.tight_layout()

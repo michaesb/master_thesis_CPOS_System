@@ -97,7 +97,7 @@ def plot_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style =
     nfive_percentile = np.nanpercentile(events_collection_mag, 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_mag, 5, axis =0)
     time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks, dtype = int)
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
     if latex_style:
         plt.style.use("../format_for_latex.mplstyle")
 
@@ -188,7 +188,7 @@ def plot_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style 
         len(events_collection_ROTI) * 2 / 3)
     nr_of_xticks = hour_area*2 +1
     location = [69.66,18.94]
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks, dtype=int)
     if latex_style:
         plt.style.use("../format_for_latex.mplstyle")
@@ -285,7 +285,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
         len(events_collection_gps) * 2 / 3)
     nr_of_xticks = hour_area*12 + 1
     station = "TRM"
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
 
     if latex_style:
@@ -387,7 +387,7 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     nr_of_xticks = hour_area*2+1
     time = np.linspace(start_x, end_x, nr_of_xticks,dtype=int)
     location = [69.66,18.94]
-    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
 
     fig1,ax1 = plt.subplots(3,1, sharex = True)
     fig1.suptitle(f"All data comparison")

@@ -717,14 +717,55 @@ def statistical_reduction_of_data(gps_data,start_index,end_index):
     gps_data = gps_data.reshape(originial_shape)
     return gps_data
 
+def load_gps_noise():
+    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        noise = np.load(file)
+    start_index_weird_time = 7649115 -50500
+    end_index_weird_time = 7858915 -50500
+    noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
+    return time, noise
+
+time_axis_gps,gps_noise = load_gps_noise()
+
+# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
+# time_axis_gps, gps_noise = create_fake_noise()
+
+########################## ROTI  ##################################
+
+def load_ROTI_data():
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        ROTI_biint = np.load(file)
+    return time, ROTI_biint
+
+time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
+
+
+
+
+########################## creating bins ###################################
+hour_area = 4
+bins_sorted,time_day_bins,time_of_event,\
+mag_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
+mag_events, GPS_events \
+= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
+                              ,magnetic_north,
+                              gps_noise,time_axis_gps,
+                              time_ROTI_TRO, ROTI_biint_TRO)
+
+
 def clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted):
     r = pd.date_range(start="2018-01-01T00:00:00", end="2018-01-01T04:00:00", freq="S")
-    new_time = np.zeros((257,4*60*60+1))*np.nan
-    new_gps_noise = np.zeros((257,4*60*60+1))*np.nan
-    for i in range(257):
+    new_time = np.zeros((196,4*60*60+1))*np.nan
+    new_gps_noise = np.zeros((196,4*60*60+1))*np.nan
+    print(len(noise_gps_sorted[0,:]), len(noise_gps_sorted))
+    for i in range(196):
         df = pd.DataFrame(r, columns = ["time"])
         df["gps_noise"] = np.nan
-        print(i/257*100)
+        print(i*100)
         for ii in range(36000):
             if not np.isnan(time_gps_sorted[i,ii]):
                 index = round(time_gps_sorted[i,ii]*3600)
@@ -749,36 +790,13 @@ def load_cleaned_gps_noise():
         noise = np.load(file)
     start_index_weird_time = 7649115 -50400
     end_index_weird_time = 7858915 -50400
+    print(noise)
     noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
     return time, noise
 
-# clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
+clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
 new_time_gps, new_gps_noise = load_cleaned_gps_noise()
 
-# time_axis_gps,gps_noise = run_NMEA_data(365,"TRM")
-# time_axis_gps, gps_noise = create_fake_noise()
-
-########################## ROTI  ##################################
-
-def load_ROTI_data():
-    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
-    with open(file_path,"rb") as file:
-        time = np.load(file)
-        ROTI_biint = np.load(file)
-    return time, ROTI_biint
-
-time_ROTI_TRO, ROTI_biint_TRO = load_ROTI_data()
-
-
-########################## creating bins ###################################
-hour_area = 4
-bins_sorted,time_day_bins,time_of_event,\
-mag_collection_sorted,ROTI_event_sorted,noise_gps_sorted,time_gps_sorted, \
-mag_events, GPS_events \
-= create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event,Norway_time
-                              ,magnetic_north,
-                              new_gps_noise,new_time_gps,
-                              time_ROTI_TRO, ROTI_biint_TRO)
 
 
 #########################plotting data#########################

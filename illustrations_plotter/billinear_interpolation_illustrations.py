@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+plot_path ="../../../Desktop/master_thesis_plots/latex_ready_plots/"
+
 def bilinear_interpolation_plot():
     fig = plt.figure(figsize=(7,6))
     n = 1000
@@ -43,16 +45,16 @@ def bilinear_interpolation_plot():
     ax.scatter(intersection_point[0],intersection_point[1],z_point_5, color="green",linewidth=6)
 
     plt.tight_layout()
-    plt.style.use("../format_for_latex.mplstyle")
     ax.set_xlabel('x')
     ax.set_xticks([1,2])
     ax.set_ylabel('y')
     ax.set_yticks([1,2])
     ax.set_zlabel('z')
     ax.set_zticks([])
+    ax.view_init(14,-160)
+    plt.style.use("../format_for_latex_3D_plot.mplstyle")
     plt.tight_layout()
+    plt.savefig(plot_path+"bilinear_interpolation_plot.pdf")
     plt.show()
-
-
 
 bilinear_interpolation_plot()

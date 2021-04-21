@@ -24,7 +24,7 @@ def plot_histograms(bins_sorted, time_day_bins, time_of_event, mag_events, latex
     index_third, index_two_thirds = int(len(bins_sorted) / 3), int(
         len(bins_sorted) * 2 / 3)
     if latex_style:
-        plt.style.use("../format_for_latex.mplstyle")
+        plt.style.use("../format_for_latex_standard.mplstyle")
 
     plt.figure(0)
     plt.hist(bins_sorted, bins=30)
@@ -97,9 +97,9 @@ def plot_mag_events(events_collection_mag, bins_sorted,mag_events, latex_style =
     nfive_percentile = np.nanpercentile(events_collection_mag, 95, axis =0)
     five_percentile = np.nanpercentile(events_collection_mag, 5, axis =0)
     time = np.linspace(-(hour_area/2 -1)*60,(hour_area/2+1)*60,nr_of_xticks, dtype = int)
-    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
     if latex_style:
-        plt.style.use("../format_for_latex.mplstyle")
+        plt.style.use("../format_for_latex_standard.mplstyle")
 
     plt.figure(0)
     for i in range(len(events_collection_mag)):
@@ -188,10 +188,10 @@ def plot_ROTI_events(events_collection_ROTI, bins_sorted,mag_events,latex_style 
         len(events_collection_ROTI) * 2 / 3)
     nr_of_xticks = hour_area*2 +1
     location = [69.66,18.94]
-    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks, dtype=int)
     if latex_style:
-        plt.style.use("../format_for_latex.mplstyle")
+        plt.style.use("../format_for_latex_standard.mplstyle")
     plt.figure(0)
     for i in range(len(events_collection_ROTI)):
         plt.plot(events_collection_ROTI[i,:], linewidth=0.5)
@@ -285,11 +285,11 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
         len(events_collection_gps) * 2 / 3)
     nr_of_xticks = hour_area*12 + 1
     station = "TRM"
-    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
     time = np.linspace(-(hour_area / 2 - 1)*60, (hour_area / 2 + 1)*60, nr_of_xticks,dtype=int)
 
     if latex_style:
-        plt.style.use("../format_for_latex.mplstyle")
+        plt.style.use("../format_for_latex_standard.mplstyle")
 
     plt.figure(0)
 
@@ -305,7 +305,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.title(f"All recorded substorms by the gps receivers in {station} in 2018\n"+\
               f"{GPS_events} substorms collected")
     plt.xlabel("minutes")
-    plt.ylabel("noise values from the NMEA")
+    plt.ylabel("noise values from the NMEA [m]")
     plt.ylim(5e-5,1)
     plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.legend()
@@ -326,7 +326,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.plot(median_event[::steps_gps], linewidth = 3, color = "black", label="median value")
     plt.title("Weak substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
-    plt.ylabel("noise values from the NMEA ")
+    plt.ylabel("noise values from the NMEA [m]")
     plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.legend()
     plt.ylim(5e-5,1)
@@ -347,7 +347,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.plot(five_percentile[::steps_gps], linewidth = 3, color = "red", label="5th percentile")
     plt.title("Medium substorms by the gps receiver in " + station + " in 2018")
     plt.xlabel("minutes")
-    plt.ylabel("noise values from the NMEA")
+    plt.ylabel("noise values from the NMEA [m]")
     plt.legend()
     plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.ylim(5e-5,1)
@@ -368,7 +368,7 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.plot(nfive_percentile[::steps_gps], linewidth = 3, color = "green", label="95th percentile")
     plt.plot(five_percentile[::steps_gps], linewidth = 3, color = "red", label="5th percentile")
     plt.title("Strong substorms by the gps receiver in " + station + " in 2018")
-    plt.ylabel("noise values from the NMEA")
+    plt.ylabel("noise values from the NMEA [m]")
     plt.xlabel("minutes")
     plt.xticks(np.linspace(0, len(events_collection_gps)*72.5/steps_gps, nr_of_xticks), time)
     plt.legend()
@@ -376,7 +376,6 @@ def plot_gps_events(events_collection_gps, bins_sorted,GPS_events, latex_style =
     plt.ylim(5e-5,1)
     if latex_style:
         plt.tight_layout()
-    if latex_style:
         plt.style.use("default")
         plt.savefig(save_path+ "Strong_GPS_noise_epoch_latex_ready.pdf")
     plt.show()
@@ -387,18 +386,19 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     nr_of_xticks = hour_area*2+1
     time = np.linspace(start_x, end_x, nr_of_xticks,dtype=int)
     location = [69.66,18.94]
-    save_path = "/home/michaelsb/Desktop/master_thesis_plots/latex_ready_plots/"
+    save_path = "/home/michael/Desktop/master_thesis_plots/latex_ready_plots/"
+    if latex_style:
+        plt.style.use("../format_for_latex_triple_plot.mplstyle")
 
     fig1,ax1 = plt.subplots(3,1, sharex = True)
     fig1.suptitle(f"All data comparison")
-    if latex_style:
-        plt.style.use("../format_for_latex.mplstyle")
     """
     all bins
     """
     median_event = np.nanmedian(mag, axis = 0)
     nfive_percentile = np.nanpercentile(mag, 95, axis =0)
     five_percentile = np.nanpercentile(mag, 5, axis =0)
+
     for i in range(len(mag)):
         ax1[0].plot(np.linspace(start_x,end_x, len(mag[0,:])),mag[i,:], linewidth = 0.5 )
     ax1[0].plot(np.zeros(2000),np.linspace(-1000,np.max(mag),2000),"b", linewidth = 1.5 )
@@ -434,7 +434,7 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     ax1[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
     ax1[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],median_event[::60], linewidth = 3, color="black", label="median value")
     ax1[2].set_xlabel("minutes")
-    ax1[2].set_ylabel("noise from NMEA [m]")
+    ax1[2].set_ylabel("CPOS noise [m]")
     ax1[2].set_ylim(5e-5,1)
     ax1[2].set_xticks(time)
     ax1[2].legend()
@@ -442,13 +442,10 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     if latex_style:
         plt.tight_layout()
         plt.savefig(save_path+ "All_data_epoch_latex_ready.pdf")
-        plt.style.use("default")
 
     """
     Weak bin
     """
-    if latex_style:
-        plt.style.use("../format_for_latex.mplstyle")
     borders = [bins_sorted[int((len(bins_sorted) - 1) / 3)],
         bins_sorted[int((len(bins_sorted) - 1) * 2 / 3)],]
 
@@ -456,6 +453,7 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
         len(gps) * 2 / 3)
 
     fig2,ax2 = plt.subplots(3,1, sharex = True)
+
     fig2.suptitle(f"Weak bin comparison of data")
     median_event = np.nanmedian(mag[index_two_thirds:], axis = 0)
     nfive_percentile = np.nanpercentile(mag[index_two_thirds:], 95, axis =0)
@@ -497,14 +495,14 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     ax2[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
     ax2[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],median_event[::60], linewidth = 3, color="black", label="median value")
     ax2[2].set_xlabel("minutes")
-    ax2[2].set_ylabel("noise from NMEA")
+    ax2[2].set_ylabel("CPOS noise [m]")
     ax2[2].set_ylim(5e-5,1)
     ax2[2].set_xticks(time)
     ax2[2].legend()
     ax2[2].set_yscale("log")
     if latex_style:
         plt.tight_layout()
-        plt.savefig(save_path+ "Weak_data_epoch_latex_ready.pdf")
+        plt.savefig(save_path+ "Weak_data_all_epoch_latex_ready.pdf")
 
     """
     Medium bin
@@ -551,15 +549,14 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     ax3[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],five_percentile[::60], linewidth = 3, color = "red", label="5th percentile")
     ax3[2].plot(np.linspace(start_x,end_x, len(gps[0,:]))[::60],median_event[::60], linewidth = 3, color="black", label="median value")
     ax3[2].set_xlabel("minutes")
-    ax3[2].set_ylabel("noise from NMEA")
+    ax3[2].set_ylabel("CPOS noise [m]")
     ax3[2].set_ylim(5e-5,1)
     ax3[2].set_xticks(time)
     ax3[2].legend()
     ax3[2].set_yscale("log")
     if latex_style:
         plt.tight_layout()
-
-
+        plt.savefig(save_path+ "Medium_data_all_epoch_latex_ready.pdf")
 
     """
     Strong bin
@@ -614,11 +611,12 @@ def plot_all_data_events(mag,ROTI,gps,latex_style=False):
     ax4[2].set_yscale("log")
     if latex_style:
         plt.tight_layout()
-        plt.savefig(save_path+ "Strong_data_epoch_latex_ready.pdf")
+        plt.savefig(save_path+ "Strong_data_all_epoch_latex_ready.pdf")
+    plt.show()
+    if latex_style:
         plt.style.use("default")
 
 
-    plt.show()
 
 
 obj_event = ReadSubstormEvent()
@@ -794,14 +792,14 @@ def load_cleaned_gps_noise():
     noise = statistical_reduction_of_data(noise,start_index_weird_time,end_index_weird_time)
     return time, noise
 
-clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
+# clean_nans_gps_noise(time_gps_sorted,noise_gps_sorted)
 new_time_gps, new_gps_noise = load_cleaned_gps_noise()
 
 
 
 #########################plotting data#########################
-# plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
-# plot_mag_events(mag_collection_sorted,bins_sorted,mag_events ,latex_style = True)
-# plot_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = True)
-plot_gps_events(new_gps_noise,bins_sorted, GPS_events, latex_style = False)
-# plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= True)
+plot_histograms(bins_sorted,time_day_bins, time_of_event, mag_events, latex_style =True)
+plot_mag_events(mag_collection_sorted,bins_sorted,mag_events ,latex_style = True)
+plot_ROTI_events(ROTI_event_sorted,bins_sorted, mag_events ,latex_style = True)
+plot_gps_events(new_gps_noise,bins_sorted, GPS_events, latex_style = True)
+plot_all_data_events(mag_collection_sorted,ROTI_event_sorted,new_gps_noise,latex_style= True)

@@ -31,7 +31,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     ax[0].plot(time_UTC_mag, np.ones(len(magnetic_north))*borders[0],alpha=0.4)
     ax[0].plot(time_UTC_mag, np.ones(len(magnetic_north))*borders[1],alpha=0.4)
     ax[0].set_ylabel("Magnetic North [nT]")
-    ax[0].set_title("magnetometer values with substorm trigger, \n ROTI values and \n noise from gps at Tromsø in 2018")
+    ax[0].set_title("Magnetometer values with substorm event times, \n ROTI values and \n noise from gps at Tromsø in 2018")
     ax[0].set_ylim(-1000,400)
     ax[0].grid("on")
 
@@ -45,7 +45,7 @@ def plot_all_days_tagged_events(gps_noise, gps_time,magnetic_north,time_UTC_mag,
     ax[2].set_yscale("log")
     ax[2].set_xlabel("days")
     # ax[0].set_ylim(5e-5,1e-1)
-    ax[2].set_ylabel("GPS noise")
+    ax[2].set_ylabel("GPS noise [m]")
     ax[2].grid("on")
     plt.show()
 

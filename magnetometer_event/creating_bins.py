@@ -5,11 +5,10 @@ from collections import Counter
 sys.path.insert(0, "../") # to get access to adjecent packages in the repository
 from extra.time_date_conversion import date_to_days
 
-def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
+def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event,
                              magnetometer_values, gps_noise, time_gps,
                              time_ROTI,ROTI_biint_TRO):
     #NB shifted forward by an hour
-    #lenth of arrays
     show_individual_plot= False
     verbose = True
     N_mag = len(dates_mag)
@@ -58,7 +57,6 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                 if index_max_ROTI-index_min_ROTI != hour_area*12:
                     index_min_ROTI+=index_max_ROTI-index_min_ROTI-hour_area*12
 
-
                 bin_value = np.min(magnetometer_values[index_min_mag:index_max_mag])
 
                 if bin_value != bins[ii_bins-1]:
@@ -71,6 +69,7 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                     ############# ROTI values #########################
                     events_collection_ROTI[ii_bins,:] = ROTI_biint_TRO[index_min_ROTI:index_max_ROTI]
                     ###################### gps ######################
+                    nr_storms+=1
                     if verbose:
                         print("--------")
                         print(day+1, time_of_event[ii_bins])
@@ -84,7 +83,7 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                         events_collection_mag[ii_bins,:] = np.nan
                         ############# ROTI values #########################
                         events_collection_ROTI[ii_bins,:] = np.nan
-
+                        nr_storms-=1
                         if verbose:
                             print("empty day")
                         #continue
@@ -109,7 +108,6 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                             gps_noise[day+1,:index_max_gps]
                             events_collection_time_gps[ii_bins,index_border:index_border+index_max_gps] =\
                             time_gps[day+1,:index_max_gps]+ 24-time_gps[day,index_min_gps]
-                            nr_storms+=1
                         except IndexError:
                             missing_data_gps+=1
                             # plt.plot(time_gps[day,:], label= "first day" )
@@ -138,7 +136,6 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                             gps_noise[day,0:index_max_gps]
                             events_collection_time_gps[ii_bins,index_border:index_border+index_max_gps] =\
                             time_gps[day,0:index_max_gps] -min_time
-                            nr_storms+=1
                         except IndexError:
                            # plt.plot(time_gps[day,:],label= "date of event")
                            # plt.plot(time_gps[day-1,:],label="previous day")
@@ -160,7 +157,6 @@ def create_bins_gps_ROTI_mag(hour_area,dates_mag,dates_event, time_of_event, \
                             gps_noise[day,index_min_gps:index_max_gps]
                             events_collection_time_gps[ii_bins,:(index_max_gps - index_min_gps)] = \
                             time_gps[day,index_min_gps:index_max_gps]-min_time
-                            nr_storms+=1
                         except IndexError:
                            # plt.plot(time_gps[day,:], label= "first day" )
                            # plt.title(f"{day+1}")

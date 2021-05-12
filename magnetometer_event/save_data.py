@@ -6,39 +6,6 @@ from noise_gps_function import run_NMEA_data_altitude_only
 from ROTI_bilinear_interpolation import full_year_ROTI_bilinear_interpolation
 from supermag_substorm_reader.magnetometer_reader import ReadMagnetomerData
 
-def NMEA_save_data():
-    time_axis_gps,gps_noise = run_NMEA_data_altitude_only(365,"TRM")
-    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
-    with open(file_path,"wb") as file:
-        np.save(file,time_axis_gps)
-        np.save(file,gps_noise)
-
-def load_NMEA_data():
-    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
-    with open(file_path,"rb") as file:
-        a = np.load(file)
-        b = np.load(file)
-
-    print(a)
-    print(b)
-
-
-def ROTI_save_data():
-    TRO = [69.66, 18.94]
-    time,ROTI_biint = full_year_ROTI_bilinear_interpolation(TRO)
-    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
-    with open(file_path,"wb") as file:
-        np.save(file,time)
-        np.save(file,gps_noise)
-
-def load_ROTI_data():
-    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
-    with open(file_path,"rb") as file:
-        a = np.load(file)
-        b = np.load(file)
-
-    print(a)
-    print(b)
 
 def magnetometer_save_data():
     obj_mag = ReadMagnetomerData()
@@ -70,8 +37,43 @@ def load_magnetometer_data():
     print(b)
 
 
-NMEA_save_data()
-load_NMEA_data()
+
+def ROTI_save_data():
+    TRO = [69.66, 18.94]
+    time,ROTI_biint = full_year_ROTI_bilinear_interpolation(TRO)
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"wb") as file:
+        np.save(file,time)
+        np.save(file,gps_noise)
+
+def load_ROTI_data():
+    file_path = "../../data_storage_arrays/TRO_ROTI_biint.txt"
+    with open(file_path,"rb") as file:
+        a = np.load(file)
+        b = np.load(file)
+
+    print(a)
+    print(b)
+
+
+def NMEA_save_data():
+    time_axis_gps,gps_noise = run_NMEA_data_altitude_only(365,"TRM")
+    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
+    with open(file_path,"wb") as file:
+        np.save(file,time_axis_gps)
+        np.save(file,gps_noise)
+
+def load_NMEA_data():
+    file_path = "../../data_storage_arrays/NMEA_data_TRM.txt"
+    with open(file_path,"rb") as file:
+        time = np.load(file)
+        gps_noise = np.load(file)
+
+    print(time)
+    print(gps_noise)
+
+# NMEA_save_data()
+# load_NMEA_data()
 # ROTI_save_data()
 # load_ROTI_data()
 # magnetometer_save_data()

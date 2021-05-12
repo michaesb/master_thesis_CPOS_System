@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 plot_path ="../../../Desktop/master_thesis_plots/latex_ready_plots/"
 
 def bilinear_interpolation_plot():
-    fig = plt.figure(figsize=(7,6))
+    fig = plt.figure(figsize=(4.7747*1.8, 2.9509*1.8))
     n = 1000
     z1 = np.linspace(0,0.8,n)
     z2 = np.linspace(0,1.5,n)

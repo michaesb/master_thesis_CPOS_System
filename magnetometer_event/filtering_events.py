@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 
-def filtering_to_Norway_night(latitude, magnetic_time, time_UTC, dates, verbose=False):
+def filtering_to_Norway_night(latitude, magnetic_time, time_UTC, dates, verbose=True):
     N = len(latitude)
     evening_time = 20
     morning_time = 4
@@ -26,7 +26,6 @@ def filtering_to_Norway_night(latitude, magnetic_time, time_UTC, dates, verbose=
     magnetic_time = magnetic_time[np.logical_not(np.isnan(ind_arr))]
     time_UTC = time_UTC[np.logical_not(np.isnan(ind_arr))]
     dates = dates[np.logical_not(np.isnan(ind_arr))]
-    if verbose:
-        print(f"Total reduced from {N} events  to  {len(time_UTC)};  "
-            + f"ratio: {100*len(time_UTC)/N} %")
+    print(f"Total reduced from {N} events  to  {len(time_UTC)};  "
+        + f"ratio: {100*len(time_UTC)/N} %")
     return latitude, magnetic_time, time_UTC, dates

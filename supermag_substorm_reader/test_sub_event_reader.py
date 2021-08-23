@@ -7,7 +7,7 @@ SUBSTORM
 
 class SubstormDataReaderTest(unittest.TestCase):
     """
-    This class is a testfunction for the datareader.
+    This class is a testfunction for the substorm datareader.
     """
     def test_canary(self):
         """
@@ -17,8 +17,7 @@ class SubstormDataReaderTest(unittest.TestCase):
 
     def test_error_raises(self):
         """
-        testing that the correct error is raised, when inporoperly used and
-        given bad files. (Here we just test that there's not a missing number)
+        testing that the correct error is raised, when inporoperly used.
         """
         obj = ReadSubstormEvent()
 

@@ -1,14 +1,17 @@
 import numpy as np
 import unittest, sys
 from data_reader_NMEA.NMEA_data_reader import ReadNMEAData
+
 """
 NMEA
 """
 
+
 class NMEADataReaderTest(unittest.TestCase):
     """
-    This class is a testfunction for the datareader.
+    This class is a testfunction for the NMEA datareader.
     """
+
     def test_canary(self):
         """
         testing that the simplest case works.
@@ -21,7 +24,7 @@ class NMEADataReaderTest(unittest.TestCase):
         """
         obj = ReadNMEAData()
 
-        #testing displays
+        # testing displays
         with self.assertRaises(SyntaxError):
             obj.display_date()
         with self.assertRaises(SyntaxError):
@@ -31,7 +34,7 @@ class NMEADataReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.display_GPS_indicator()
 
-        #testing properties
+        # testing properties
         with self.assertRaises(SyntaxError):
             obj.time_period
         with self.assertRaises(SyntaxError):
@@ -63,27 +66,23 @@ class NMEADataReaderTest(unittest.TestCase):
 
     def test_known_example(self):
         """
-        Testing know values from NMEA_test data
-        """
-
-        """
-        Testing the time aspects of the Class
+        Testing known values from NMEA_test data
         """
         obj = ReadNMEAData()
         obj.read_textfile("data_reader_NMEA/example_textfile_NMEA.txt")
-        #checking number of datapoints
-        self.assertEqual(obj.datapoints,(40,60))
-        #day and year check
-        self.assertEqual(obj.day_year[2],2015)
-        self.assertEqual(obj.day_year[1],3)
-        self.assertEqual(obj.day_year[0],17)
-        #checking the time
-        self.assertEqual(obj.time_m[0],0)
+        # checking number of datapoints
+        self.assertEqual(obj.datapoints, (40, 60))
+        # day and year check
+        self.assertEqual(obj.day_year[2], 2015)
+        self.assertEqual(obj.day_year[1], 3)
+        self.assertEqual(obj.day_year[0], 17)
+        # checking the time
+        self.assertEqual(obj.time_m[0], 0)
         start, end = obj.time_period
-        self.assertEqual(start[0]+start[1]+start[2],0)
-        self.assertEqual(end[0]+end[1]+end[2],59)
-        self.assertEqual(sum(obj.track_4),46)
+        self.assertEqual(start[0] + start[1] + start[2], 0)
+        self.assertEqual(end[0] + end[1] + end[2], 59)
+        self.assertEqual(sum(obj.track_4), 46)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

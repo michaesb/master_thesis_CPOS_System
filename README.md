@@ -1,6 +1,8 @@
 # Master thesis CPOS System
 A repository for the work done during Michael Bitneys master thesis in Space physics. This contains multiple datareaders, processing and plotting tools use to further investigate substorms impact on GPS. Mainly tested in Linux, but should in theory work with Windows, except programs in runscripts that requires xterm.
 
+Currently done with working on the results. Currently working on master thesis writing which is done elsewhere
+
 ## Folders
 
 ### Data

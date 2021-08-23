@@ -1,19 +1,24 @@
 import numpy as np
 import unittest, sys
-sys.path.insert(0, "../") # to get access to adjecent packages in the repository
+
+sys.path.insert(0, "../")  # to get access to adjecent packages in the repository
 from data_reader_OMNI.OMNI_data_reader import ReadOMNIData
+
 """
 OMNI
 """
+
+
 class OMNIReaderTest(unittest.TestCase):
     """
     This class is a testfunction for the magnetometer datareader.
     """
+
     def test_canary(self):
         """
         testing that the simplest case works.
         """
-        self.assertEqual(2,2)
+        self.assertEqual(2, 2)
 
     def test_error_raises(self):
         """
@@ -22,7 +27,7 @@ class OMNIReaderTest(unittest.TestCase):
         """
         obj = ReadOMNIData()
 
-        #testing properties
+        # testing properties
         with self.assertRaises(SyntaxError):
             obj.datapoints
         with self.assertRaises(SyntaxError):
@@ -34,7 +39,7 @@ class OMNIReaderTest(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             obj.AE_index
 
-        #testing printing
+        # testing printing
         with self.assertRaises(SyntaxError):
             obj.print_dataframe()
         with self.assertRaises(SyntaxError):
@@ -47,14 +52,14 @@ class OMNIReaderTest(unittest.TestCase):
         n = 61
         obj = ReadOMNIData()
         obj.read_csv("data_reader_OMNI/example_OMNI.csv")
-        #checking number of datapoints and sizes of arrays
-        self.assertEqual(obj.datapoints,n)
-        self.assertEqual(len(obj.day_of_year[0]),n)
-        self.assertEqual(len(obj.time),n)
-        #day and year check
-        self.assertEqual(int(sum(obj.ACE_B_z)),-331)
-        self.assertEqual(int(sum(obj.AE_index)),20204)
+        # checking number of datapoints and sizes of arrays
+        self.assertEqual(obj.datapoints, n)
+        self.assertEqual(len(obj.day_of_year[0]), n)
+        self.assertEqual(len(obj.time), n)
+        # day and year check
+        self.assertEqual(int(sum(obj.ACE_B_z)), -331)
+        self.assertEqual(int(sum(obj.AE_index)), 20204)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

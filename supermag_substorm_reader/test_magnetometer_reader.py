@@ -19,8 +19,7 @@ class MagnetomerReaderTest(unittest.TestCase):
 
     def test_error_raises(self):
         """
-        testing that the correct error is raised, when inporoperly used and
-        given bad files. (Here we just test that there's not a missing number)
+        testing that the correct error is raised, when improperly used.
         """
         obj = ReadMagnetomerData()
 

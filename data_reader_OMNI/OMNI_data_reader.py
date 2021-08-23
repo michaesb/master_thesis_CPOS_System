@@ -4,54 +4,58 @@ import pandas as pd
 from numba import njit, prange
 import time, sys
 
-sys.path.insert(1, "../") # to get access to adjecent packages in the repository
+sys.path.insert(1, "../")  # to get access to adjecent packages in the repository
 from extra.progressbar import progress_bar
+
 """
 OMNI
+Not used in the thesis
 """
-class ReadOMNIData():
+
+class ReadOMNIData:
+    """
+    Reading specific OMNI data input. Not used in the thesis.
+    """
+
     def __init__(self):
         """
         initializing variables and lists
         """
-        #info about the file
-        self.csv_file = False # name for the csv_file
+        # info about the file
+        self.csv_file = False  # name for the csv_file
         self.nr_lines = -1
-        #datasets property
+        # datasets property
         self.date = None
         self.time_UTC = None
 
-
-    def read_csv(self,csv_file, verbose=False):
+    def read_csv(self, csv_file, verbose=False):
         """
         Reads the substorm event list from supermag
         """
         self.verbose = verbose
-        self.nr_lines = sum(1 for line in open(csv_file)) #getting the number of lines
+        self.nr_lines = sum(1 for line in open(csv_file))  # getting the number of lines
         self.nr_datapoints = sum(line[0] != "#" for line in open(csv_file))
         self.csv_file = csv_file
         if self.verbose:
-            print("reading OMNI data with " + \
-            str(self.nr_datapoints)+" datapoints")
+            print("reading OMNI data with " + str(self.nr_datapoints) + " datapoints")
             t1 = time.time()
 
-        #opening the csv_file
-        self.dataframe_pd = pd.read_csv(csv_file,
-                                        comment = "#")
-                                        #na_values={'by': 9999.99,})
+        # opening the csv_file
+        self.dataframe_pd = pd.read_csv(csv_file, comment="#")
+        # na_values={'by': 9999.99,})
 
         if verbose:
             t2 = time.time()
-            print("pandas work time",t2-t1)
-        date_time,self.BZ,self.AE = self.dataframe_pd.to_numpy().T
+            print("pandas work time", t2 - t1)
+        date_time, self.BZ, self.AE = self.dataframe_pd.to_numpy().T
         self.nr_datapoints = len(date_time)
-        #remove comments at the end.
+        # remove comments at the end.
         self.year = int(date_time[0].split("-")[0])
         self.date = np.zeros_like(date_time)
         self.time_UTC = np.zeros(self.nr_datapoints)
         for i, dt in enumerate(date_time):
-            self.date[i],temp = dt.split("T")
-            self.time_UTC[i] = float(temp[:2])+ float(temp[3:5])/60
+            self.date[i], temp = dt.split("T")
+            self.time_UTC[i] = float(temp[:2]) + float(temp[3:5]) / 60
             if float(self.BZ[i]) == 9999.99:
                 self.BZ[i] = np.nan
             else:
@@ -62,9 +66,9 @@ class ReadOMNIData():
                 self.AE[i] = float(self.AE[i])
         if verbose:
             t3 = time.time()
-            print("convert to numpy array", t3-t2)
+            print("convert to numpy array", t3 - t2)
             t4 = time.time()
-            print("time taken to read = ","%g"%(t4-t1))
+            print("time taken to read = ", "%g" % (t4 - t1))
 
     def check_read_data(self):
         """
@@ -76,7 +80,7 @@ class ReadOMNIData():
             raise SyntaxError("need to read the data first, using read_csv")
             exit()
 
-    #properties returns value
+    # properties returns value
     @property
     def datapoints(self):
         """
@@ -133,8 +137,8 @@ class ReadOMNIData():
         print(self.dataframe_pd)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     obj = ReadOMNIData()
-    obj.read_csv("example_OMNI.csv",verbose = True)
+    obj.read_csv("example_OMNI.csv", verbose=True)
     obj.print_dataframe()
     print("day_of_year", obj.day_of_year)

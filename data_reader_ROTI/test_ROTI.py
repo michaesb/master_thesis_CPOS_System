@@ -1,19 +1,22 @@
 import numpy as np
 import unittest, sys
 from data_reader_ROTI.ROTI_data_reader import ReadROTIData
+
 """
 ROTI
 """
 
+
 class ROTIDataReaderTest(unittest.TestCase):
     """
-    This class is a testfunction for the datareader.
+    This class is a testfunction for the ROTI datareader.
     """
+
     def test_canary(self):
         """
         testing that the simplest case works.
         """
-        self.assertEqual(2,2)
+        self.assertEqual(2, 2)
 
     def test_error_raises(self):
         """
@@ -22,11 +25,11 @@ class ROTIDataReaderTest(unittest.TestCase):
         """
         obj = ReadROTIData()
 
-        #testing displays
+        # testing displays
         with self.assertRaises(SyntaxError):
             obj.display_date()
 
-        #testing properties
+        # testing properties
         with self.assertRaises(SyntaxError):
             obj.time_period
         with self.assertRaises(SyntaxError):
@@ -51,29 +54,28 @@ class ROTIDataReaderTest(unittest.TestCase):
 
         obj = ReadROTIData()
         obj.read_textfile("data_reader_ROTI/example_textfile_ROTI.txt")
-        #checking number of datapoints
-        self.assertEqual(obj.datapoints,6324)
-        self.assertEqual(obj.datasets,2)
-        #day and year check
-        self.assertEqual(obj.day_year[0],17)
-        self.assertEqual(obj.day_year[1],2015)
+        # checking number of datapoints
+        self.assertEqual(obj.datapoints, 6324)
+        self.assertEqual(obj.datasets, 2)
+        # day and year check
+        self.assertEqual(obj.day_year[0], 17)
+        self.assertEqual(obj.day_year[1], 2015)
 
-        #checking the time
-        self.assertEqual(obj.time[0],0)
-        self.assertEqual(obj.time[1],5)
+        # checking the time
+        self.assertEqual(obj.time[0], 0)
+        self.assertEqual(obj.time[1], 5)
         start, end = obj.time_period
-        self.assertEqual(start,[0,0,0])
-        self.assertEqual(end,[0,5,0])
-        #checking coordinates
-        latitude,longitude = obj.coordinates
-        self.assertEqual(latitude[0],-10)
-        self.assertEqual(latitude[1],40)
-        self.assertEqual(latitude[2],1) #interval check
-        self.assertEqual(longitude[0],50)
-        self.assertEqual(longitude[1],80)
-        self.assertEqual(longitude[2],1) #interval check
+        self.assertEqual(start, [0, 0, 0])
+        self.assertEqual(end, [0, 5, 0])
+        # checking coordinates
+        latitude, longitude = obj.coordinates
+        self.assertEqual(latitude[0], -10)
+        self.assertEqual(latitude[1], 40)
+        self.assertEqual(latitude[2], 1)  # interval check
+        self.assertEqual(longitude[0], 50)
+        self.assertEqual(longitude[1], 80)
+        self.assertEqual(longitude[2], 1)  # interval check
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

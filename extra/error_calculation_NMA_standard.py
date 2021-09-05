@@ -3,13 +3,13 @@ import time
 from numba import njit, prange
 
 """
-the accuracy of a sample mean
+Rolling standard deviation
 """
 
 
 def filtering_outliers(z, verbose=False, t=np.array([False])):
     """
-    filtering outliers
+    filtering outliers in the substorm event list
     """
     N = len(z)
     interval = 60
